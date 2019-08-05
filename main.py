@@ -1,10 +1,7 @@
-from flask import Flask
+#!/usr/bin/env python3
 
-app = Flask(__name__)
+from FindYourNest import app 
 
-@app.route('/')
-def main():
-    return "Come and find your nest"
 
-if __name__=='__main__':
-    app.run('0.0.0.0', debug="True")
+if __name__ == '__main__':
+    app.run(host="0.0.0.0")
