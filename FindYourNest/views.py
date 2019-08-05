@@ -13,3 +13,11 @@ def main():
 @app.route("/connexion/")
 def connexion():
     return render_template("connexion.html")
+
+@app.route("/moncompte")
+def infocompte():
+    return render_template("moncompte.html")
+
+@app.route("/Apt/<int: id>")
+def aptInfo()
+    return render_template("ficheappart.html")
