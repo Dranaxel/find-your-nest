@@ -17,12 +17,16 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
         integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
         crossorigin="" />
+    <!-- Leaflet -->
     <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
         integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
         crossorigin=""></script>
     <!-- Jquery -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <!-- Jquery UI -->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 </head>
 
 <body class="bg">
@@ -69,6 +73,7 @@
 
     <script>
         window.onload = function () {
+            // Adding map function 
             var map = L.map('map').setView([48.871620, 2.345940], 18);
 
             var layer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
@@ -76,11 +81,39 @@
             });
 
             map.addLayer(layer);
-	 $("InputAddress").autocomplete({
-	 	source: function{
-		$ajax
-		}
-	 })	
+            // Creating a layer to add marker in it
+            var markerLayer = L.layerGroup().addTo(map)
+
+            // Autocomplete function 
+            $("#InputAddress").autocomplete({
+                minLength: 3,
+                source: function(requete, reponse){
+                    // API call 
+                $.get({
+                    url: "https://api-adresse.data.gouv.fr/search/",
+                    data: {
+                        limit: 3,
+                        q: $("#InputAddress").val()
+                    },
+                    // function in case of success autocomplete
+                    success: function(data){
+                        list = {}
+                        reponse($.map(data.features, function(obj){
+                            address = obj.properties.label
+                            coordinates = obj.geometry.coordinates
+                            list[address] = coordinates
+                            return address
+                        }))
+                    }
+                });
+                
+                },
+                // When an address is selected delete all the marker and add a marker to the map
+                select: function(event, ui){
+                    markerLayer.clearLayers();
+                    L.marker(list[ui.item.label].reverse()).addTo(markerLayer)
+                }
+            })	
         }; 
     </script>
 
