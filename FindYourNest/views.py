@@ -19,9 +19,9 @@ def connexion():
     return render_template("connexion.html")
 
 @app.route("/moncompte/")
-#@login_required
+@login_required
 def infocompte():
-    return render_template("moncompte.html")
+    return render_template("infoscompte.html")
 
 @app.route("/Apt/<int:id>/")
 def aptInfo(id):
