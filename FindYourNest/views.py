@@ -18,13 +18,13 @@ def main():
 def connexion():
     return render_template("connexion.html")
 
-@app.route("/moncompte")
-@login_required
+@app.route("/moncompte/")
+#@login_required
 def infocompte():
     return render_template("moncompte.html")
 
-@app.route("/Apt/<int:id>")
-def aptInfo():
+@app.route("/Apt/<int:id>/")
+def aptInfo(id):
     return render_template("ficheappart.html")
 
 @app.route("/upAppt/")
