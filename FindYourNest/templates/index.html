@@ -47,14 +47,14 @@
         <div class="row d-flex justify-content-center">
             <div class="row m-0">
                 <div class="back col-12 col-lg-6 pt-3 px-2">
-                    <input type="text" class="case form-control" id="exampleInputAddress" placeholder="Entrez une adresse">
+                    <input type="text" class="case form-control" id="InputAddress" placeholder="Entrez une adresse">
                 </div>
                 <div class="back col-12 col-lg-6 d-flex row m-0 px-2">
                     <div class="col-5 pt-3 px-2">
-                        <input type="number" class="case form-control" id="exampleInputHour" placeholder="Heure">
+                        <input type="number" class="case form-control" id="InputHour" placeholder="Heure">
                     </div>
                     <div class="col-5 pt-3 px-2">
-                        <input type="number" class="case form-control" id="exampleInputMin" placeholder="Minutes">
+                        <input type="number" class="case form-control" id="InputMin" placeholder="Minutes">
                     </div>
                     <div class="col-2 pt-3 px-2">
                         <button id="btn-1" type="button" class="btn btn-primary align-top">GO</button>
@@ -76,6 +76,11 @@
             });
 
             map.addLayer(layer);
+	 $("InputAddress").autocomplete({
+	 	source: function{
+		$ajax
+		}
+	 })	
         }; 
     </script>
 
