@@ -111,7 +111,8 @@
                 // When an address is selected delete all the marker and add a marker to the map
                 select: function(event, ui){
                     markerLayer.clearLayers();
-                    L.marker(list[ui.item.label].reverse()).addTo(markerLayer)
+                    map.setView(list[ui.item.label].reverse())
+                    L.marker(list[ui.item.label]).addTo(markerLayer)
                 }
             })	
         }; 
