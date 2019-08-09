@@ -45,16 +45,20 @@
           <form>
             <div class="form-group">
               <label for="exampleInputName">Prénom</label>
-              <input type="text" class="form-control" id="exampleInputName" placeholder="Entrez votre prénom">
+              <input type="text" name="prenom" class="form-control" id="exampleInputName" placeholder="Entrez votre prénom">
             </div>
             <div class="form-group">
               <label for="exampleInputMail">Adresse e-mail</label>
-              <input type="email" class="form-control" aria-describedby="emailHelp" id="exampleInputMail"
+              <input type="email" name="email" class="form-control" aria-describedby="emailHelp" id="exampleInputMail"
                 placeholder="Entrez votre adresse e-mail">
             </div>
             <div class="form-group">
               <label for="exampleInputPassword">Mot de passe</label>
-              <input type="password" class="form-control" id="exampleInputPassword" placeholder="Entrez votre mot de passe">
+              <input type="password" name="pasword" class="form-control" id="exampleInputPassword" placeholder="Entrez votre mot de passe">
+            </div>
+            <div class="form-group">
+              <label for="exampleInputPassword">Confirmation du mot de passe</label>
+              <input type="password" name="confirmer" class="form-control" id="exampleInputPassword" placeholder="Confirmez votre mot de passe">
             </div>
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option3">
@@ -68,19 +72,19 @@
           <form>
               <div class="form-group">
                 <label for="exampleInputNumber">Numéro</label>
-                <input type="number" class="form-control" id="exampleInputNumber" placeholder="Entrez le numéro de rue">
+                <input type="number" name="nb" class="form-control" id="exampleInputNumber" placeholder="Entrez le numéro de rue">
               </div>
               <div class="form-group">
                   <label for="exampleInputStreet">Rue, allée, ...</label>
-                  <input type="text" class="form-control" id="exampleInputStreet" placeholder="Entrez la rue">
+                  <input type="text" name="rue" class="form-control" id="exampleInputStreet" placeholder="Entrez la rue">
                 </div>
               <div class="form-group">
                 <label for="exampleInputCity">Ville</label>
-                <input type="text" class="form-control" id="exampleInputCity" placeholder="Entrez une ville">
+                <input type="text" name="ville" class="form-control" id="exampleInputCity" placeholder="Entrez une ville">
               </div>
               <div class="form-group">
                 <label for="exampleInputZip">Code postal</label>
-                <input type="text" class="form-control" id="exampleInputZip" placeholder="Entrez un code postal" maxlength="4">
+                <input type="text" name="code_postal" class="form-control" id="exampleInputZip" placeholder="Entrez un code postal" maxlength="4">
               </div>
               <div class="form-group">
                 <label for="exampleInputTime">Temps de trajet</label>
