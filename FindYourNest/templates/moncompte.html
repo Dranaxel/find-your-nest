@@ -30,8 +30,8 @@
   <header>
     <div class="d-flex justify-content-between">
             <div class="p-2 flex-fill "></div>
-            <div id="box2" class="p-2 flex-fill h1"><a href="accueil.html"> Find Your Nest </a></div>
-            <div id="box3" class="p-2"><button type="button" class="btn btn-outline-light right mt-3 mr-3 pb-1"><a href="connexion.html">Se connecter</a></button></div>
+            <div id="box2" class="p-2 flex-fill h1"><a href="{{url_for('main')}}"> Find Your Nest </a></div>
+            <div id="box3" class="p-2"><button type="button" class="btn btn-outline-light right mt-3 mr-3 pb-1"><a href="{{url_for('connexion')}}">Se connecter</a></button></div>
     </div>
    
 </header>
@@ -42,7 +42,7 @@
     <div class="d-flex justify-content-center my-2">
       <div class="card w-75">
         <div class="card-body">
-          <form>
+          <form method="POST", action="/moncompte">
             <div class="form-group">
               <label for="exampleInputName">Prénom</label>
               <input type="text" name="prenom" class="form-control" id="exampleInputName" placeholder="Entrez votre prénom">
@@ -54,22 +54,18 @@
             </div>
             <div class="form-group">
               <label for="exampleInputPassword">Mot de passe</label>
-              <input type="password" name="pasword" class="form-control" id="exampleInputPassword" placeholder="Entrez votre mot de passe">
+              <input type="password" name="password" class="form-control" id="exampleInputPassword" placeholder="Entrez votre mot de passe">
             </div>
             <div class="form-group">
               <label for="exampleInputPassword">Confirmation du mot de passe</label>
               <input type="password" name="confirmer" class="form-control" id="exampleInputPassword" placeholder="Confirmez votre mot de passe">
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option3">
+              <input class="form-check-input" name="pro" type="checkbox" id="inlineCheckbox1" value="option3">
               <label class="form-check-label" for="inlineCheckbox3">Je suis un(e) professionnel(le)</label>
             </div>
-
-
-          </form>
           <hr>
-          <h4 class="Card-title">Ce que vous recherchez</h4>
-          <form>
+            <h4 class="Card-title">Ce que vous recherchez</h4>
               <div class="form-group">
                 <label for="exampleInputNumber">Numéro</label>
                 <input type="number" name="nb" class="form-control" id="exampleInputNumber" placeholder="Entrez le numéro de rue">
@@ -84,15 +80,15 @@
               </div>
               <div class="form-group">
                 <label for="exampleInputZip">Code postal</label>
-                <input type="text" name="code_postal" class="form-control" id="exampleInputZip" placeholder="Entrez un code postal" maxlength="4">
+                <input type="text" name="code_postal" class="form-control" id="exampleInputZip" placeholder="Entrez un code postal" maxlength="5">
               </div>
               <div class="form-group">
                 <label for="exampleInputTime">Temps de trajet</label>
-                <input type="time" class="form-control" id="Time">
+                <input type="time" name="temps" class="form-control" id="Time">
               </div>
               <div class="form-group">
                 <label for="formControlRange">Prix maximal</label>
-                <input onmousemove="sliderFunction()" type="range" class="form-control-range" id="priceRange" min='0'
+                <input onmousemove="sliderFunction()" type="range" name="budget" class="form-control-range" id="priceRange" min='0'
                   max='5000' step='50'>
                 <label id="formControlSlider" for="formControlRange">2500</label><label>€</label>
               </div>
@@ -101,11 +97,11 @@
                   <label for="formControlRange">Type de logement</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+                  <input class="form-check-input" type="checkbox" name="type_logement" id="inlineCheckbox1" value="option1">
                   <label class="form-check-label" for="inlineCheckbox1">Appartement</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
+                  <input class="form-check-input" name="type_logement" type="checkbox" id="inlineCheckbox2" value="option2">
                   <label class="form-check-label" for="inlineCheckbox2">Maison</label>
                 </div>
               </div>
