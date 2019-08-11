@@ -9,6 +9,7 @@
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="static/style.css">
     <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
     <!--police -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans%7CRoboto&display=swap" rel="stylesheet">
@@ -17,25 +18,22 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
         integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
         crossorigin="" />
-    <!-- Leaflet -->
     <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
         integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
         crossorigin=""></script>
     <!-- Jquery -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-    <!-- Jquery UI -->
-    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 </head>
 
 <body class="bg">
     <header>
-            <div class="d-flex justify-content-between">
-                    <div class="p-2 flex-fill "></div>
-                    <div id="box2" class="p-2 flex-fill h1" >Find Your Nest</div>
-		    <div id="box3" class="p-2"><a href="{{url_for('connexion')}}" class="btn btn-outline-light right mt-3 mr-3 pb-1">Se connecter</a></div>
-            </div>
+        <div class="d-flex justify-content-between">
+            <div class="p-2 flex-fill "></div>
+            <div id="box2" class="p-2 flex-fill h1"> <a href="accueil.html"> Find Your Nest </a></div>
+            <div id="box3" class="p-2"><button type="button" class="btn btn-outline-light right mt-3 mr-3 pb-1"><a href="/connexion/">Se connecter</a></button></div>
+    </div>
+   
            
     </header>
 
@@ -48,21 +46,22 @@
         </div>
 
         <!-- BARRE DE RECHERCHE -->
-        <div class="row d-flex justify-content-center">
+        <div action="" method="post" class="row d-flex justify-content-center">
             <div class="row m-0">
                 <div class="back col-12 col-lg-6 pt-3 px-2">
-                    <input type="text" class="case form-control" id="InputAddress" placeholder="Entrez une adresse">
+                    <input type="text" class="case form-control" id="exampleInputAddress" placeholder="Entrez une adresse" autocomplete="off" >
                 </div>
                 <div class="back col-12 col-lg-6 d-flex row m-0 px-2">
                     <div class="col-5 pt-3 px-2">
-                        <input type="number" class="case form-control" id="InputHour" placeholder="Heure">
+                        <input type="number" class="case form-control" id="exampleInputHour" placeholder="Heure"  autocomplete="off" >
                     </div>
                     <div class="col-5 pt-3 px-2">
-                        <input type="number" class="case form-control" id="InputMin" placeholder="Minutes">
+                        <input type="number" class="case form-control" id="exampleInputMin" placeholder="Minutes" autocomplete="off">
                     </div>
                     <div class="col-2 pt-3 px-2">
-                        <button id="btn-1" type="button" class="btn btn-primary align-top">GO</button>
+                        <button id="btn-1" type="button" disabled="disabled" class="btn btn-primary align-top">GO</button>
                     </div>
+                    
                 </div>
 
             </div>
@@ -72,18 +71,16 @@
     </div>
 
     <script>
+        // API
         window.onload = function () {
             // Adding map function 
             var map = L.map('map').setView([48.871620, 2.345940], 18);
-
             var layer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
             });
-
             map.addLayer(layer);
             // Creating a layer to add marker in it
             var markerLayer = L.layerGroup().addTo(map)
-
             // Autocomplete function 
             $("#InputAddress").autocomplete({
                 minLength: 3,
@@ -117,7 +114,35 @@
             })	
         }; 
     </script>
+    
+    <script>
+        // Enables button GO when all inputs filled 
+function check() {
+    var inputs = document.getElementsByTagName("input");
+    var filled = true;
+    
+    for (var i = 0; i < inputs.length; i++) {
+        if (inputs[i].type === "text" && !inputs[i].value) {
+            filled = false;
+        }
+    }
 
+    for (var i = 0; i < inputs.length; i++) {
+        if (inputs[i].type === "number" && !inputs[i].value) {
+            filled = false;
+        }
+    }
+
+    if (filled) {
+        document.getElementById("btn-1").disabled = false;
+    } else {
+        document.getElementById("btn-1").disabled = true;
+    }
+}
+
+window.addEventListener("keyup", check);
+window.addEventListener("click", check);
+    </script>
 </body>
 
 </html>
