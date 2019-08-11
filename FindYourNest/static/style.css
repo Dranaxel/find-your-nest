@@ -92,3 +92,7 @@ img{
     display: flex;
     align-items: center;
 }
+
+a[title="Pas encore inscrit(e)?"]{
+    color: white;
+}
