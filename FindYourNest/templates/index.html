@@ -30,9 +30,13 @@
     <header>
         <div class="d-flex justify-content-between">
             <div class="p-2 flex-fill "></div>
-            <div id="box2" class="p-2 flex-fill h1"> <a href="accueil.html"> Find Your Nest </a></div>
+            <div id="box2" class="p-2 flex-fill h1"> <a href="index.html"> Find Your Nest </a></div>
+        {% if current_user.is_anonymous %}   
             <div id="box3" class="p-2"><button type="button" class="btn btn-outline-light right mt-3 mr-3 pb-1"><a href="/connexion/">Se connecter</a></button></div>
-    </div>
+        {% else %}
+            <div id="box3" class="deco p-2"><a href="{{url_for('deconnexion')}}" class="btn btn-outline-danger right mt-3 mr-3 pb-1">Se déconnecter</a></div>
+        {% endif %}    
+        </div>
    
            
     </header>
