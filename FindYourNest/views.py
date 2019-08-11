@@ -89,7 +89,7 @@ def moncompte():
         
 
         if not (email and password):
-            flash("Il est nécessaire d'entrer un email et un mot de passe") 
+            flash("Il est nécessaire d'entrer un email et un mot de passe", "danger") 
             return render_template("moncompte.html")
         
         elif password == confirmer:
