@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+        <title>{% block title %}{% endblock %}FindYourNest</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>FindYourNest</title>
+        <!-- Bootstrap -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" href="static/style.css">
+        <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+        <!--police -->
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans%7CRoboto&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+          integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+          integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+          crossorigin="" />
+        <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+          integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+          crossorigin=""></script>
+      
+</head>
+
+<body class="bg">
+  <header>
+        <div class="d-flex justify-content-between">
+                {% if g.user %}
+                <span>{{ g.user['username'] }}</span>
+                <div class="p-2 flex-fill "></div>
+                <div id="boxh1" class="p-2 flex-fill h1" ><a href="accueil.html"> Find Your Nest </a></div>
+                <div id="btn-logout" class="p-2"><button type="button" class="btn btn-outline-light right mt-3 mr-3 pb-1"><a href="{{ url_for('auth.index') }}">Se déconnecter</a></button></div>
+                {% else %}
+                <div id="btn-login" class="p-2"><button type="button" class="btn btn-outline-light right mt-3 mr-3 pb-1"><a href="{{ url_for('auth.moncompte') }}">Se connecter</a></button></div>
+                {% endif %}
+            </div>
+  </header>
+ 
+  <div class="h2 mt-4">Le moyen le plus rapide pour trouver un logement adapté à vos déplacements</div>
+
+  {% block content %}{% endblock %}
+
+    <script>
+        // API
+        window.onload = function () {
+            // Adding map function 
+            var map = L.map('map').setView([48.871620, 2.345940], 18);
+            var layer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
+            });
+            map.addLayer(layer);
+            // Creating a layer to add marker in it
+            var markerLayer = L.layerGroup().addTo(map)
+            // Autocomplete function 
+            $("#InputAddress").autocomplete({
+                minLength: 3,
+                source: function(requete, reponse){
+                    // API call 
+                $.get({
+                    url: "https://api-adresse.data.gouv.fr/search/",
+                    data: {
+                        limit: 3,
+                        q: $("#InputAddress").val()
+                    },
+                    // function in case of success autocomplete
+                    success: function(data){
+                        list = {}
+                        reponse($.map(data.features, function(obj){
+                            address = obj.properties.label
+                            coordinates = obj.geometry.coordinates
+                            list[address] = coordinates
+                            return address
+                        }))
+                    }
+                });
+                
+                },
+                // When an address is selected delete all the marker and add a marker to the map
+                select: function(event, ui){
+                    markerLayer.clearLayers();
+                    map.setView(list[ui.item.label].reverse())
+                    L.marker(list[ui.item.label]).addTo(markerLayer)
+                }
+            })	
+        }; 
+  
+        // Enables button GO when all inputs filled 
+//         function success() {
+//             if (document.getElementsByClassName("case form-control").value === "") {
+//         document.getElementById("btn-1").setAttribute("disabled");
+//          } else { 
+//         document.getElementById("btn-1").removeAttribute("disabled");
+ 
+//  }
+// }
+</script>
+<script>
+function check() {
+    var inputs = document.getElementsByTagName("input");
+    var filled = true;
+    
+    for (var i = 0; i < inputs.length; i++) {
+        if (inputs[i].type === "text" && !inputs[i].value) {
+            filled = false;
+        }
+    }
+
+    for (var i = 0; i < inputs.length; i++) {
+        if (inputs[i].type === "number" && !inputs[i].value) {
+            filled = false;
+        }
+    }
+
+    if (filled) {
+        document.getElementById("btn-1").disabled = false;
+    } else {
+        document.getElementById("btn-1").disabled = true;
+    }
+}
+window.addEventListener("keyup", check);
+window.addEventListener("click", check);
+    </script>
+  </body>
+</html>
