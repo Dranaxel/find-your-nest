@@ -10,14 +10,19 @@
     background-attachment: fixed; 
 }
 
-#box2{
+#boxh1{
     display: flex;
     margin-bottom: 0px;
     margin-top: 10px;
     margin-left: 100px;
 }
 
-#box3{
+#btn-login{
+    display: flex;
+    flex-direction: column;
+    align-content: end;
+}
+#btn-logout{
     display: flex;
     flex-direction: column;
     align-content: end;
