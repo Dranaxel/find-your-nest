@@ -121,20 +121,22 @@ def deconnexion():
 # def up_Appt():
 #     return render_template("chargementappart.html")
 
-#Valeurs checkboxes
+
+#Valeurs checkboxes moncompte
 @app.route("/moncompte", methods = ['GET', 'POST'])
 def valuesformmoncompte():
-    if request.form.get('checkboxPro') == 'off':
-        var valuepro = {'checkboxpro'= request.form.values()}
-        print valuepro
+    if request.method == "POST":
+        if request.form.get('checkboxPro') == 'off':
+            var valuepro = {'checkboxpro'= request.form.values()}
+            print valuepro
         if request.form.get('checkboxFlat') == 'off':
             var valueflat = {'checkboxFlat'= request.form.values()}
             print valueflat
-            if request.form.get('checkboxHouse') == 'off':
-                var valuehouse = {'checkboxHouse'= request.form.values()}
-                print valuehouse
+        if request.form.get('checkboxHouse') == 'off':
+            var valuehouse = {'checkboxHouse'= request.form.values()}
+            print valuehouse
     else:
         print request.form.values('checkboxpro')
         print request.form.values('checkboxflat')
         print request.form.values('checkboxhouse')
-
+       
