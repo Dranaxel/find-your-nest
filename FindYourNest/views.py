@@ -23,9 +23,9 @@ def connexion():
 def infocompte():
     return render_template("infoscompte.html")
 
-@app.route("/Apt/<int:id>/")
-def aptInfo(id):
-    return render_template("ficheappart.html")
+@app.route("/Apt/")
+def aptInfo():
+    return render_template("results.html")
 
 @app.route("/upAppt/")
 def up_Appt():
