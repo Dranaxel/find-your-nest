@@ -30,9 +30,9 @@
   <header>
         <div class="d-flex justify-content-between">
             <div class="p-2 flex-fill "></div>
-            <div id="boxh1" class="p-2 flex-fill h1"> <a href={{url_for('main')}}> Find Your Nest </a></div>
+            <div id="boxh1" class="p-2 flex-fill h1"> <a href="{{url_for('main')}}"> Find Your Nest </a></div>
         {% if current_user.is_anonymous %}   
-            <div id="btn-login" class="p-2"><button type="button" class="btn btn-outline-light right mt-3 mr-3 pb-1"><a href={{url_for('connexion')}}>Se connecter</a></button></div>
+            <div id="btn-login" class="p-2"><button type="button" class="btn btn-outline-light right mt-3 mr-3 pb-1"><a href="{{url_for('connexion')}}">Se connecter</a></button></div>
         {% else %}
             <div id="btn-logout" class="deco p-2"><a href="{{url_for('deconnexion')}}" class="btn btn-outline-danger right mt-3 mr-3 pb-1">Se déconnecter</a></div>
         {% endif %}    
