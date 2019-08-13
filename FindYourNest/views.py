@@ -93,7 +93,7 @@ def moncompte():
             return render_template("moncompte.html")
         
         elif password == confirmer:
-            c.execute("INSERT INTO utilisateur (prenom, email, password) VALUES(?, ?, ?)", (prenom, email, secure_password,))
+            c.execute("INSERT INTO utilisateur (prenom, email, password, temps) VALUES(?, ?, ?, ?)", (prenom, email, secure_password, temps))
             c.execute("INSERT INTO adresse (nb, rue, ville, code_postal) VALUES(?, ?, ?, ?)", (nb, rue, ville, code_postal,))
             conn.commit()
             return redirect(url_for('connexion'))
