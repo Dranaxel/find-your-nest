@@ -28,14 +28,16 @@
 
 <body class="bg">
   <header>
-    <div class="d-flex justify-content-between">
+        <div class="d-flex justify-content-between">
             <div class="p-2 flex-fill "></div>
-            <div id="box2" class="p-2 flex-fill h1"><a href="{{url_for('main')}}"> Find Your Nest </a></div>
-            <div id="box3" class="p-2"><button type="button" class="btn btn-outline-light right mt-3 mr-3 pb-1"><a href="{{url_for('connexion')}}">Se connecter</a></button></div>
-    </div>
-   
-</header>
-
+            <div id="box2" class="p-2 flex-fill h1"> <a href="index.html"> Find Your Nest </a></div>
+        {% if current_user.is_anonymous %}   
+            <div id="btn-login" class="p-2"><button type="button" class="btn btn-outline-light right mt-3 mr-3 pb-1"><a href={{url_for('connexion')}}>Se connecter</a></button></div>
+        {% else %}
+            <div id="btn-logout" class="deco p-2"><a href="{{url_for('deconnexion')}}" class="btn btn-outline-danger right mt-3 mr-3 pb-1">Se déconnecter</a></div>
+        {% endif %}    
+       </div>          
+  </header>
 
 <div class="h2 mt-4">Le moyen le plus rapide pour trouver un logement adapté à vos déplacements</div>   
  <hr>
@@ -62,8 +64,8 @@
               <input type="password" name="confirmer" class="form-control" id="exampleInputPassword" placeholder="Confirmez votre mot de passe">
             </div>
             <div class="form-check">
-              <input class="form-check-input" name="pro" type="checkbox" id="inlineCheckbox1" value="option3">
-              <label class="form-check-label" for="inlineCheckbox3">Je suis un(e) professionnel(le)</label>
+              <input class="form-check-input" name="pro" type="checkbox" id="checkBoxPro">
+              <label class="form-check-label" for="checkboxPro">Je suis un(e) professionnel(le)</label>
             </div>
           <hr>
             <h4 class="Card-title">Ce que vous recherchez</h4>
@@ -98,12 +100,12 @@
                   <label for="formControlRange">Type de logement</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="checkbox" name="type_logement" id="inlineCheckbox1" value="option1">
-                  <label class="form-check-label" for="inlineCheckbox1">Appartement</label>
+                  <input class="form-check-input" type="checkbox" name="type_logement" id="checkboxFlat">
+                  <label class="form-check-label" for="checkboxFlat">Appartement</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" name="type_logement" type="checkbox" id="inlineCheckbox2" value="option2">
-                  <label class="form-check-label" for="inlineCheckbox2">Maison</label>
+                  <input class="form-check-input" name="type_logement" type="checkbox" id="checkboxHouse" >
+                  <label class="form-check-label" for="checkboxHouse">Maison</label>
                 </div>
               </div>
 
