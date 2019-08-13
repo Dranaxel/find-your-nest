@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>FindYourNest</title>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <!--police -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans%7CRoboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+    crossorigin=""></script>
+</head>
+
+<body class="bg">
+        <header>
+            <div class="sign d-flex justify-content-end">
+                <button type="button" class="btn btn-1 mt-3 mr-3">Se connecter</button>     
+            </div>
+        </header>
+
+        
+        <div class="container-fluid">
+            <div class="h1 row d-flex justify-content-center">Find Your Nest</div>
+            <hr>
+            <div class="d-flex justify-content-center my-2">
+                    <div class="card w-75">
+                            <div class="card-body">
+                              <h2 class="card-title">Appartement</h2>
+                              <h3 class="card-subtitle mb-2 text-muted">500€</h3>
+                              <div class="row d-flex justify-content-center my-2">
+                                      <img src="images/bg.jpg" style="width: 500px">
+                              </div>
+                              <div class="row my-3">
+                                    <p class="card-text ">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec consequat ipsum vitae metus molestie vestibulum. Vivamus id quam nunc. Sed at eleifend libero. Suspendisse vel sapien id sem laoreet molestie. Nulla in felis eu sapien volutpat fringilla. Vivamus pharetra imperdiet est, et tincidunt sapien viverra sit amet. </p>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3">Paris 13</div>
+                                    <div class="col-md-3">2 Pièces</div>
+                                    <div class="col-md-3">1 Chambre</div>
+                                    <div class="col-md-3">40 m²</div>
+                                </div>
+                            </div>
+                    </div>
+            </div>
+
+        </div>
+
+    <script>
+        window.onload = function(){
+        var map = L.map('map').setView([48.871620, 2.345940], 18);
+
+        var layer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
+        });
+
+        map.addLayer(layer);
+        }; 
+    </script>   
+    
+</body>
+</html>
