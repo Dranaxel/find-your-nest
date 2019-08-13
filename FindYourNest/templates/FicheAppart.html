@@ -7,7 +7,7 @@
     <title>FindYourNest</title>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
     <!--police -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans%7CRoboto&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
@@ -31,7 +31,7 @@
                     <div class="card w-75">
                             <div class="card-body">
                               <h2 class="card-title">Appartement</h2>
-                              <h3 class="card-subtitle mb-2 text-muted">500€</h3>
+			      <h3 class="card-subtitle mb-2 text-muted">{{Prix}} €</h3>
                               <div class="row d-flex justify-content-center my-2">
                                       <img src="images/bg.jpg" style="width: 500px">
                               </div>
@@ -39,10 +39,10 @@
                                     <p class="card-text ">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec consequat ipsum vitae metus molestie vestibulum. Vivamus id quam nunc. Sed at eleifend libero. Suspendisse vel sapien id sem laoreet molestie. Nulla in felis eu sapien volutpat fringilla. Vivamus pharetra imperdiet est, et tincidunt sapien viverra sit amet. </p>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-3">Paris 13</div>
-                                    <div class="col-md-3">2 Pièces</div>
+					<div class="col-md-3">{{PostalCode}}</div>
+					<div class="col-md-3">{{nb_pieces}}  Pièces</div>
                                     <div class="col-md-3">1 Chambre</div>
-                                    <div class="col-md-3">40 m²</div>
+				    <div class="col-md-3">{{surface}} m²</div>
                                 </div>
                             </div>
                     </div>
