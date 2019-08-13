@@ -25,14 +25,17 @@
 </head>
 
 <body class="bg">
-  <header>
-    <div class="d-flex justify-content-between">
+ <header>
+        <div class="d-flex justify-content-between">
             <div class="p-2 flex-fill "></div>
-            <div id="box2" class="p-2 flex-fill h1"> <a href="accueil.html"> Find Your Nest </a></div>
-            <div id="box3" class="p-2"><button type="button" class="btn btn-outline-light right mt-3 mr-3 pb-1"><a href="/connexion/">Se connecter</a></button></div>
-    </div>
-   
-</header>
+            <div id="box2" class="p-2 flex-fill h1"> <a href="index.html"> Find Your Nest </a></div>
+        {% if current_user.is_anonymous %}   
+            <div id="btn-login" class="p-2"><button type="button" class="btn btn-outline-light right mt-3 mr-3 pb-1"><a href={{url_for('connexion')}}>Se connecter</a></button></div>
+        {% else %}
+            <div id="btn-logout" class="deco p-2"><a href="{{url_for('deconnexion')}}" class="btn btn-outline-danger right mt-3 mr-3 pb-1">Se déconnecter</a></div>
+        {% endif %}    
+        </div>       
+ </header>
 
 
 <div class="h2 mt-4">Le moyen le plus rapide pour trouver un logement adapté à vos déplacements</div>
@@ -66,7 +69,7 @@
             </div>
             <div class="form-group">
               <label for="exampleInputPrice">Prix</label>
-              <input type="text" class="form-control" id="exampleInputCity" placeholder="Entrez le prix de votre bien">
+              <input type="text" class="form-control" id="exampleInputPrice" placeholder="Entrez le prix de votre bien">
             </div>
             <label for="exampleInputImage">Joindre une image</label> <br />
             <label for="file-upload" class="custom-file-upload">
