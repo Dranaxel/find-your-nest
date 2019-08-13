@@ -64,6 +64,9 @@ c.execute("""INSERT INTO utilisateur (prenom, email, password, budget, temps, id
 c.execute("""
     CREATE TABLE IF NOT EXISTS logement (
         id_logement INTEGER PRIMARY KEY AUTOINCREMENT,
+        titre VARCHAR(50),
+        description VARCHAR(255),
+        nb_chambre, INT
         type_logement VARCHAR(255),
         nb_piece INTEGER,
         prix INTEGER,
