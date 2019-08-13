@@ -45,7 +45,7 @@
       <div class="card w-75">
         <div class="card-body">
         {%include "_message.html "%}
-          <form method="POST", action="/moncompte">
+          <form method="POST" action="{{url_for("valuesformmoncompte")}}"  id="formmoncompte" >
             <div class="form-group">
               <label for="exampleInputName">Prénom</label>
               <input type="text" name="prenom" class="form-control" id="exampleInputName" placeholder="Entrez votre prénom">
@@ -63,8 +63,8 @@
               <label for="exampleInputPassword">Confirmation du mot de passe</label>
               <input type="password" name="confirmer" class="form-control" id="exampleInputPassword" placeholder="Confirmez votre mot de passe">
             </div>
-            <div class="form-check">
-              <input class="form-check-input" name="pro" type="checkbox" id="checkBoxPro" name="checkboxPro">
+            <div  class="form-check" > {{data_load|safe}}
+              <input class="form-check-input" name="pro" type="checkbox" id="checkBoxPro" value="unchecked" onclick="toggle_check(this)>
               <label class="form-check-label" for="checkboxPro">Je suis un(e) professionnel(le)</label>
             </div>
           <hr>
@@ -99,12 +99,12 @@
                 <div>
                   <label for="formControlRange">Type de logement</label>
                 </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="checkbox" name="type_logement" id="checkboxFlat">
+                <div class="form-check form-check-inline"> {{data_load|safe}}
+                  <input class="form-check-input" type="checkbox" name="checkboxFlat" id="checkboxFlat" value="unchecked" onclick="toggle_check(this)>
                   <label class="form-check-label" for="checkboxFlat"> Appartement</label>
                 </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" name="type_logement" type="checkbox" id="checkboxHouse" >
+                <div class="form-check form-check-inline"> {{data_load|safe}}
+                  <input class="form-check-input" name="checkboxHouse" type="checkbox" id="checkboxHouse" value="unchecked" onclick="toggle_check(this)>
                   <label class="form-check-label" for="checkboxHouse">Maison</label>
                 </div>
               </div>
@@ -114,8 +114,6 @@
       </div>
     </div>
   </div>
-
-</body>
 <!-- slider script -->
 <script>
   function sliderFunction() {
@@ -123,3 +121,17 @@
     $("#formControlSlider").html(val);
   }
 </script>
+<script>
+  // Register an event when the checkbox value is changed
+  function toggle_check(check) {
+      if (check.value=="unchecked") {
+        check.value="off";
+      }
+      else {
+        check.value="on";
+      }
+    }
+
+</script>
+</body>
+</html>
