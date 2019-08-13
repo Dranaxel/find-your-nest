@@ -24,6 +24,9 @@
     <!-- Jquery -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <!-- Jquery UI -->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 </head>
 
 <body class="bg">
@@ -46,7 +49,7 @@
         </div>
 
         <!-- BARRE DE RECHERCHE -->
-        <div action="" method="post" class="row d-flex justify-content-center">
+        <div action="" method="POST" class="row d-flex justify-content-center">
             <div class="row m-0">
                 <div class="back col-12 col-lg-6 pt-3 px-2">
                     <input type="text" class="case form-control" id="exampleInputAddress" placeholder="Entrez une adresse" autocomplete="off" >
@@ -59,7 +62,7 @@
                         <input type="number" class="case form-control" id="exampleInputMin" placeholder="Minutes" autocomplete="off">
                     </div>
                     <div class="col-2 pt-3 px-2">
-                        <button id="btn-1" type="button" disabled="disabled" class="btn btn-primary align-top">GO</button>
+                        <button id="btn-1" type="button submit" disabled="disabled" class="btn btn-primary align-top" formmethod="POST">GO</button>
                     </div>
                     
                 </div>
@@ -82,7 +85,7 @@
             // Creating a layer to add marker in it
             var markerLayer = L.layerGroup().addTo(map)
             // Autocomplete function 
-            $("#InputAddress").autocomplete({
+            $("#exampleInputAddress").autocomplete({
                 minLength: 3,
                 source: function(requete, reponse){
                     // API call 
@@ -90,7 +93,7 @@
                     url: "https://api-adresse.data.gouv.fr/search/",
                     data: {
                         limit: 3,
-                        q: $("#InputAddress").val()
+                        q: $("#exampleInputAddress").val()
                     },
                     // function in case of success autocomplete
                     success: function(data){

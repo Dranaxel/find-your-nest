@@ -19,7 +19,7 @@ login_manager.login_view ="/connexion"
 def main():
 	if request.method == "GET":
 		return render_template('index.html')
-	else:
+	elif request.method =="POST":
 		address = request.form['exampleInputAddress']
 		hours = request.form['exampleInputHour']
 		minutes = request.form['exampleInputMin']
