@@ -1,5 +1,5 @@
 from FindYourNest import app, login_manager 
-from flask import render_template
+from flask import render_template, request
 from flask_login import login_required
 import sqlite3
 
@@ -7,7 +7,7 @@ import sqlite3
 conn = sqlite3.connect('../findyournest.db', check_same_thread=False)
 c = conn.cursor()
 
-#laoding the login manager
+#loading the login manager
 @login_manager.user_loader
 def load_user(user_id):
     return User.get(user_id)
@@ -15,9 +15,15 @@ def load_user(user_id):
 # allows to redirect the user to the login page if not authentified
 login_manager.login_view ="/connexion"
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def main():
-    return render_template('index.html')
+	if request.method == "GET":
+		return render_template('index.html')
+	else:
+		address = request.form['exampleInputAddress']
+		hours = request.form['exampleInputHour']
+		minutes = request.form['exampleInputMin']
+		return redirect("/results")
 
 @app.route("/connexion/")
 def connexion():
