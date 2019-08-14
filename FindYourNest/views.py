@@ -1,8 +1,11 @@
 from FindYourNest import app, login_manager 
 from flask import render_template, request, redirect
 from flask_login import login_required
-import sqlite3
+import sqlite3, requests
 
+#Import Navitia key
+navitia_key = app.config.NAVITIA
+navitia_url = http://api.navitia.io/
 
 conn = sqlite3.connect('../findyournest.db', check_same_thread=False)
 c = conn.cursor()
@@ -20,9 +23,12 @@ def main():
 	if request.method == "GET":
 		return render_template('index.html')
 	elif request.method =="POST":
+		#get response from the form
 		address = request.form['addresse']
-		print(address)
-		return redirect("/results/add="+address)
+		hours = request.form['hours']
+		minutes = request.form['minutes']
+		#return the result page pasing the arguments
+		return redirect("/results/add="+address+"&h="+hours+"&m="+minutes)
 
 @app.route("/connexion/")
 def connexion():
@@ -33,9 +39,9 @@ def connexion():
 def infocompte():
     return render_template("infoscompte.html")
 
-@app.route("/results/<string:add>")
-def aptInfo(add):
-    return render_template("results.html")
+@app.route("/results/add=<string:add>&h=<int:hours>&m=<int:minutes>")
+def aptInfo(add,hours,minutes):
+	return render_template("results.html")
 
 @app.route("/Fiche/<int:id>")
 def Fiche(id):
