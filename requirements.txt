@@ -1,4 +1,4 @@
 # Python components
 Flask
 Flask-login
-Flask-WTF
+opencage

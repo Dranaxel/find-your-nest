@@ -1,11 +1,17 @@
 from FindYourNest import app, login_manager 
 from flask import render_template, request, redirect
 from flask_login import login_required
+from opencage.geocoder import OpenCageGeocode
+from urllib import parse
 import sqlite3, requests
 
 #Import Navitia key
 navitia_key = app.config['NAVITIA']
 navitia_url = "http://api.navitia.io/"
+
+#initializing geocoder wrapper
+opencagedata_key = "3c853893fc37402eb2ef1473b6629218"
+opencage = OpenCageGeocode(opencagedata_key)
 
 conn = sqlite3.connect('/root/Git/FindYourNest/findyournest.db', check_same_thread=False)
 c = conn.cursor()
@@ -41,8 +47,23 @@ def infocompte():
 
 @app.route("/results/add=<string:add>&h=<int:hours>&m=<int:minutes>")
 def aptInfo(add,hours,minutes):
+	#convert the main address in GPS position with opencau
+	add = parse.quote(add)
+	opencage_resp = opencage.geocode(add)
+	origin_coord = list(opencage_resp[0]['geometry'].values())		
+	
+	#convert time in seconds
+	max_time = hours*3600 + minutes*60
+
+	#get a list of all the apt in the database
 	apt_list = c.execute("select adresse.nb, adresse.rue, adresse.code_postal, logement.id_logement from adresse inner JOIN logement on logement.id_adresse=adresse.id_adresse").fetchall()
-	print(apt_list)
+	for ref in apt_list:
+		dest_add = ",".join(map(str,ref[:3]))
+		dest_add = parse.quote(dest_add)
+		print(dest_add)
+		opencage_resp = opencage.geocode(dest_add)
+		print(opencage_resp)
+		dest_coord = list(opencage_resp[0]['geometry'].values())
 	return render_template("results.html")
 
 @app.route("/Fiche/<int:id>")
