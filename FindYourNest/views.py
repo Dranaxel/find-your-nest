@@ -21,8 +21,6 @@ def load_user(user_id):
     user.prenom = userDansLaBase[1]
     return user
 
-# # allows to redirect the user to the login page if not authentified
-# login_manager.login_view ="/connexion"
 
 @app.route("/")
 def main():
@@ -93,7 +91,7 @@ def moncompte():
             return render_template("moncompte.html")
         
         elif password == confirmer:
-            c.execute("INSERT INTO utilisateur (prenom, email, password, temps) VALUES(?, ?, ?, ?)", (prenom, email, secure_password, temps))
+            c.execute("INSERT INTO utilisateur (prenom, email, password) VALUES(?, ?, ?)", (prenom, email, secure_password,))
             c.execute("INSERT INTO adresse (nb, rue, ville, code_postal) VALUES(?, ?, ?, ?)", (nb, rue, ville, code_postal,))
             conn.commit()
             return redirect(url_for('connexion'))
@@ -121,22 +119,3 @@ def deconnexion():
 # def up_Appt():
 #     return render_template("chargementappart.html")
 
-
-#Valeurs checkboxes moncompte
-@app.route("/moncompte", methods = ['GET', 'POST'])
-def valuesformmoncompte():
-    if request.method == "POST":
-        if request.form.get('checkboxPro') == 'off':
-            var valuepro = {'checkboxpro'= request.form.values()}
-            print valuepro
-        if request.form.get('checkboxFlat') == 'off':
-            var valueflat = {'checkboxFlat'= request.form.values()}
-            print valueflat
-        if request.form.get('checkboxHouse') == 'off':
-            var valuehouse = {'checkboxHouse'= request.form.values()}
-            print valuehouse
-    else:
-        print request.form.values('checkboxpro')
-        print request.form.values('checkboxflat')
-        print request.form.values('checkboxhouse')
-       
