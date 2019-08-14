@@ -1,5 +1,5 @@
 from FindYourNest import app, login_manager 
-from flask import render_template, request
+from flask import render_template, request, redirect
 from flask_login import login_required
 import sqlite3
 
@@ -20,10 +20,9 @@ def main():
 	if request.method == "GET":
 		return render_template('index.html')
 	elif request.method =="POST":
-		address = request.form['exampleInputAddress']
-		hours = request.form['exampleInputHour']
-		minutes = request.form['exampleInputMin']
-		return redirect("/results")
+		address = request.form['addresse']
+		print(address)
+		return redirect("/results/add="+address)
 
 @app.route("/connexion/")
 def connexion():
@@ -34,8 +33,8 @@ def connexion():
 def infocompte():
     return render_template("infoscompte.html")
 
-@app.route("/results/")
-def aptInfo():
+@app.route("/results/<string:add>")
+def aptInfo(add):
     return render_template("results.html")
 
 @app.route("/Fiche/<int:id>")

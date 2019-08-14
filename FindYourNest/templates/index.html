@@ -51,8 +51,9 @@
         <!-- BARRE DE RECHERCHE -->
         <div action="" method="POST" class="row d-flex justify-content-center">
             <div class="row m-0">
+<form method="POST">
                 <div class="back col-12 col-lg-6 pt-3 px-2">
-                    <input type="text" class="case form-control" id="exampleInputAddress" placeholder="Entrez une adresse" autocomplete="off" >
+                    <input name="addresse" type="text" class="case form-control" id="exampleInputAddress" placeholder="Entrez une adresse" autocomplete="off" >
                 </div>
                 <div class="back col-12 col-lg-6 d-flex row m-0 px-2">
                     <div class="col-5 pt-3 px-2">
@@ -64,13 +65,12 @@
                     <div class="col-2 pt-3 px-2">
                         <button id="btn-1" type="button submit" disabled="disabled" class="btn btn-primary align-top" formmethod="POST">GO</button>
                     </div>
-                    
+</form>                    
                 </div>
 
             </div>
 
         </div>
-
     </div>
 
     <script>
