@@ -4,8 +4,8 @@ from flask_login import login_required
 import sqlite3, requests
 
 #Import Navitia key
-navitia_key = app.config.NAVITIA
-navitia_url = http://api.navitia.io/
+navitia_key = app.config['NAVITIA']
+navitia_url = "http://api.navitia.io/"
 
 conn = sqlite3.connect('../findyournest.db', check_same_thread=False)
 c = conn.cursor()
@@ -41,6 +41,8 @@ def infocompte():
 
 @app.route("/results/add=<string:add>&h=<int:hours>&m=<int:minutes>")
 def aptInfo(add,hours,minutes):
+	appt_list = c.execute("select adresse.nb, adresse.rue, adresse.code_postal, logement.id_logement from adresse inner JOIN logement on logement.id_adresse=adresse.id_adresse").fetchall()
+	print(apt_list)
 	return render_template("results.html")
 
 @app.route("/Fiche/<int:id>")
