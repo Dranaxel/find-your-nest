@@ -17,16 +17,13 @@
     margin-left: 100px;
 }
 
-#btn-login{
+#btn-login, #btn-logout{
     display: flex;
     flex-direction: column;
     align-content: end;
 }
-#btn-logout{
-    display: flex;
-    flex-direction: column;
-    align-content: end;
-}
+
+
 
 .h1{
     text-align: center;
