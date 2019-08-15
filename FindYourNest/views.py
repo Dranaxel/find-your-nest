@@ -56,14 +56,15 @@ def aptInfo(add,hours,minutes):
 	max_time = hours*3600 + minutes*60
 
 	#get a list of all the apt in the database
-	apt_list = c.execute("select adresse.nb, adresse.rue, adresse.code_postal, logement.id_logement from adresse inner JOIN logement on logement.id_adresse=adresse.id_adresse").fetchall()
+	apt_list = c.execute("select adresse.nb, adresse.rue, adresse.ville, logement.id_logement from adresse inner JOIN logement on logement.id_adresse=adresse.id_adresse").fetchall()
 	for ref in apt_list:
-		dest_add = ",".join(map(str,ref[:3]))
-		dest_add = parse.quote(dest_add)
+		dest_add = ",".join(map(str,ref[:3]))+",FRANCE"
 		print(dest_add)
-		opencage_resp = opencage.geocode(dest_add)
+		dest_add = parse.quote(dest_add)
+		opencage_resp = opencage.geocode(dest_add, language='fr', no_annotations=1, limit=1, bounds="1.19202,48.41462,3.36182,49.26780")
 		print(opencage_resp)
 		dest_coord = list(opencage_resp[0]['geometry'].values())
+		print(dest_add, dest_coord)
 	return render_template("results.html")
 
 @app.route("/Fiche/<int:id>")
