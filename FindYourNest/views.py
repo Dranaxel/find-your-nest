@@ -10,7 +10,7 @@ c = conn.cursor()
 # app.secret_key = b'_\x95\xe8\xf1\x80\xe8\x9b\xd3J\x92\x10\xcaLd\x87&'
 
 
-# #laoding the login manager
+#loading the login manager
 @login_manager.user_loader
 def load_user(user_id):
     userDansLaBase = c.execute("SELECT email, prenom FROM utilisateur WHERE email=?", (user_id,)).fetchone()
@@ -24,7 +24,7 @@ def load_user(user_id):
 
 @app.route("/")
 def main():
-    return render_template('index.html')
+    return render_template("index.html")
 
 #se connecter
 @app.route("/connexion/", methods=["GET", "POST"])
@@ -33,7 +33,6 @@ def connexion():
         if current_user.is_anonymous:
             return render_template("connexion.html")
         else :
-            flash("Vous êtes déja connecter gros béta")
             return redirect(url_for('main'))
     
     elif request.method =='POST':
@@ -66,7 +65,6 @@ def moncompte():
         if current_user.is_anonymous:
             return render_template("moncompte.html")
         else:
-            flash("Vous êtes déja connecter gros béta")
             return redirect(url_for('main'))
 
     else :
@@ -106,6 +104,7 @@ def moncompte():
 def deconnexion():
     logout_user()
     return redirect(url_for('connexion'))
+
 # @app.route("/moncompte/")
 # @login_required
 # def infocompte():
