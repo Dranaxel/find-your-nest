@@ -27,7 +27,7 @@ def main():
     return render_template('index.html')
 
 #se connecter
-@app.route("/connexion", methods=["GET", "POST"])
+@app.route("/connexion/", methods=["GET", "POST"])
 def connexion():
     if request.method =='GET' :
         if current_user.is_anonymous:
@@ -60,7 +60,7 @@ def connexion():
             return render_template("connexion.html")
 
 #créer le compte
-@app.route("/moncompte", methods=["GET", "POST"])
+@app.route("/moncompte/", methods=["GET", "POST"])
 def moncompte():
     if request.method == 'GET' :
         if current_user.is_anonymous:
