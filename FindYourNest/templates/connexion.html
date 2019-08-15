@@ -9,7 +9,6 @@
   <!-- Bootstrap -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <link rel="stylesheet" href="static/style.css">
    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
   <!--police -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans%7CRoboto&display=swap" rel="stylesheet">
@@ -26,7 +25,6 @@
 <body class="bg">
   <header>
         <div class="d-flex justify-content-between">
-            <div class="p-2 flex-fill "></div>
             <div id="box2" class="p-2 flex-fill h1"> <a href="{{url_for('main')}}"> Find Your Nest </a></div>
         <!-- {% if current_user.is_anonymous %}   
             <div id="btn-login" class="p-2"><button type="button" class="btn btn-outline-light right mt-3 mr-3 pb-1"><a href="{{url_for('connexion')}}">Se connecter</a></button></div>
@@ -37,15 +35,13 @@
        </div>           -->
   </header>
 
-
-
 <div class="h2 mt-4">Le moyen le plus rapide pour trouver un logement adapté à vos déplacements</div>
     <hr>
     <div class="d-flex justify-content-center my-2">
       <div class="card w-75">
         <div class="card-body">
           {%include "_message.html "%}
-          <form method="POST", action="/connexion">
+          <form method="POST", action="/connexion/">
             <div class="form-group">
               <label for="exampleInputMail">Adresse e-mail</label>
               <input type="email" name="email" class="form-control" id="exampleInputMail" aria-describedby="emailHelp"
