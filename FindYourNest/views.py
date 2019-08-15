@@ -80,3 +80,10 @@ def Fiche(id):
 def up_Appt():
     return render_template("chargementappart.html")
 
+#Valeurs checkboxes moncompte
+@app.route("/moncompte", methods = ['GET', 'POST'])
+def valuescheckboxes(): 
+    if request.method == 'POST':
+        print (request.method.form.getlist('checkboxlist'))
+    return render_template("/moncompte")
+
