@@ -79,7 +79,7 @@ def moncompte():
         rue = request.form['rue']
         ville = request.form['ville']
         code_postal = request.form['code_postal']
-        temps = request.form.getlist('temps')
+        temps = request.form.get('temps')
         budget = request.form.get('budget')
         type_logement = request.form.getlist('type_logement')
         
@@ -89,7 +89,7 @@ def moncompte():
             return render_template("moncompte.html")
         
         elif password == confirmer:
-            c.execute("INSERT INTO utilisateur (prenom, email, password) VALUES(?, ?, ?)", (prenom, email, secure_password,))
+            c.execute("INSERT INTO utilisateur (prenom, email, password, temps) VALUES(?, ?, ?, ?)", (prenom, email, secure_password, temps,))
             c.execute("INSERT INTO adresse (nb, rue, ville, code_postal) VALUES(?, ?, ?, ?)", (nb, rue, ville, code_postal,))
             conn.commit()
             return redirect(url_for('connexion'))
