@@ -48,6 +48,7 @@ def infocompte():
 @app.route("/results/add=<string:add>&h=<int:hours>&m=<int:minutes>")
 def aptInfo(add,hours,minutes):
 	saved_ref =[]
+	results = []
 	#convert the main address in GPS position with opencau
 	opencage_resp = opencage.geocode(add)
 	origin_coord = list(opencage_resp[0]['geometry'].values())		
@@ -67,12 +68,17 @@ def aptInfo(add,hours,minutes):
 			navitia_param = {'from': origin_coord, "to": dest_coord} 
 			navitia_call = requests.get(navitia_url, navitia_param, auth=(navitia_key, ""))
 			navitia_call = json.loads(navitia_call.text)
+			duration = navitia_call['journeys'][0]["duration"]
 		except:
 			continue
-		duration = navitia_call['journeys'][0]["duration"]
 		if duration <=  max_time:
 			saved_ref.append(ref[3])
-	return render_template("results.html")
+	for i in saved_ref:
+		print(i)
+		results.append(c.execute("select type_logement, prix from logement where id_logement=%s"%i).fetchone())
+	print(results)
+	return render_template("results.html", result= results)
+
 
 
 @app.route("/Fiche/<int:id>")
