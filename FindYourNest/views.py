@@ -3,7 +3,7 @@ from flask import render_template, request, redirect
 from flask_login import login_required
 from opencage.geocoder import OpenCageGeocode
 from urllib import parse
-import sqlite3, requests
+import sqlite3, requests, json
 
 #Import Navitia key
 navitia_key = app.config['NAVITIA']
@@ -47,6 +47,7 @@ def infocompte():
 
 @app.route("/results/add=<string:add>&h=<int:hours>&m=<int:minutes>")
 def aptInfo(add,hours,minutes):
+	saved_ref =[]
 	#convert the main address in GPS position with opencau
 	opencage_resp = opencage.geocode(add)
 	origin_coord = list(opencage_resp[0]['geometry'].values())		
@@ -58,13 +59,19 @@ def aptInfo(add,hours,minutes):
 	#get a list of all the apt in the database
 	apt_list = c.execute("select adresse.nb, adresse.rue, adresse.ville, logement.id_logement from adresse inner JOIN logement on logement.id_adresse=adresse.id_adresse").fetchall()
 	for ref in apt_list:
-		dest_add = ",".join(map(str,ref[:3]))+",FRANCE"
-		opencage_resp = opencage.geocode(dest_add, language='fr', no_annotations=1, limit=1, bounds="1.19202,48.41462,3.36182,49.26780")
-		dest_coord = list(opencage_resp[0]['geometry'].values())
-		dest_coord = str(dest_coord[1])+";"+str(dest_coord[0])
-		navitia_param = {'from': origin_coord, "to": dest_coord} 
-		navitia_call = requests.get(navitia_url, navitia_param, auth=(navitia_key, ""))
-		print(navitia_call.text])
+		try:
+			dest_add = ",".join(map(str,ref[:3]))+",FRANCE"
+			opencage_resp = opencage.geocode(dest_add, language='fr', no_annotations=1, limit=1, bounds="1.19202,48.41462,3.36182,49.26780")
+			dest_coord = list(opencage_resp[0]['geometry'].values())
+			dest_coord = str(dest_coord[1])+";"+str(dest_coord[0])
+			navitia_param = {'from': origin_coord, "to": dest_coord} 
+			navitia_call = requests.get(navitia_url, navitia_param, auth=(navitia_key, ""))
+			navitia_call = json.loads(navitia_call.text)
+		except:
+			continue
+		duration = navitia_call['journeys'][0]["duration"]
+		if duration <=  max_time:
+			saved_ref.append(ref[3])
 	return render_template("results.html")
 
 
