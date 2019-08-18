@@ -163,7 +163,7 @@ c.execute("""
         prenom VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL,
         password VARCHAR(100) NOT NULL,
-        pro INTERGER,
+        pro INTEGER,
         budget INTEGER, 
         temps TIME, 
         id_adresse INTEGER,
@@ -195,7 +195,7 @@ c.execute("UPDATE utilisateur SET password=? where id_utilisateur = 3", (secure_
 c.execute("""
     CREATE TABLE IF NOT EXISTS favoris(
     id_favoris INTEGER PRIMARY KEY AUTOINCREMENT, 
-    id_utilisateur INTERGER,
+    id_utilisateur INTEGER,
     id_logement INTEGER,
     FOREIGN KEY (id_utilisateur) REFERENCES utilisateur (id_utilisateur),
     FOREIGN KEY (id_logement) REFERENCES logement (id_logement)
