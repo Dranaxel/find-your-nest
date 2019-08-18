@@ -167,15 +167,15 @@ c.execute("""
         budget INTEGER, 
         temps TIME, 
         id_adresse INTEGER,
-        type_logement VARCHAR(50),
+        type_logement INTEGER,
         FOREIGN KEY (id_adresse) REFERENCES adresse (id_adresse),
         FOREIGN KEY (type_logement) REFERENCES logement(type_logement)
     )
     """)
 
-c.execute("""INSERT INTO utilisateur (prenom, email, password, pro, budget, temps, id_adresse, type_logement) VALUES ('Lola', 'lola@gmail.com', 'lola', 0, 2700,'01:00', 19, 'appartement')""")
-c.execute("""INSERT INTO utilisateur (prenom, email, password, pro, budget, temps, id_adresse, type_logement) VALUES ('Damien', 'damien@gmail.com', 'damien', 0, 1900, '00:30', 20, 'appartement') """)
-c.execute("""INSERT INTO utilisateur (prenom, email, password, pro, budget, temps, id_adresse, type_logement) VALUES ('Sarah', 'sarah@gmail.com', 'sarah', 1, 4000, '00:45', 21, 'maison')""")
+c.execute("""INSERT INTO utilisateur (prenom, email, password, budget, temps, id_adresse) VALUES ('Lola', 'lola@gmail.com', 'lola', 2700,'01:00', 19)""")
+c.execute("""INSERT INTO utilisateur (prenom, email, password, budget, temps, id_adresse) VALUES ('Damien', 'damien@gmail.com', 'damien', 1900, '00:30', 20) """)
+c.execute("""INSERT INTO utilisateur (prenom, email, password, budget, temps, id_adresse) VALUES ('Sarah', 'sarah@gmail.com', 'sarah', 4000, '00:45', 21)""")
 
 password_lola = 'lola'
 secure_password_lola = sha256_crypt.hash(password_lola)
@@ -209,7 +209,5 @@ c.execute("""INSERT INTO favoris (id_utilisateur, id_logement) VALUES (2,4)""")
 
 conn.commit()
 conn.close()
-
-
 
 
