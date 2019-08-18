@@ -41,32 +41,12 @@ c.execute("""INSERT INTO adresse (nb, rue, code_postal, ville) VALUES (11, 'aven
 c.execute("""INSERT INTO adresse (nb, rue, code_postal, ville) VALUES (6, 'rue Rougemont', 75009, 'Paris')""")
 c.execute("""INSERT INTO adresse (nb, rue, code_postal, ville) VALUES (2, 'cour Saint-Emilion', 75012, 'Paris')""")
 
-
-#TABLE DES UTILISATEURS 
-c.execute("""
-    CREATE TABLE IF NOT EXISTS utilisateur (
-        id_utilisateur INTEGER PRIMARY KEY AUTOINCREMENT,
-        prenom VARCHAR(255) NOT NULL,
-        email VARCHAR(255) NOT NULL,
-        password VARCHAR(15) NOT NULL,
-        budget INTEGER, 
-        temps TIME, 
-        id_adresse INTEGER,
-        type_logement VARCHAR(50),
-        FOREIGN KEY (id_adresse) REFERENCES adresse (id_adresse),
-        FOREIGN KEY (type_logement) REFERENCES logement(type_logement)
-    )
-    """)
-
-c.execute("""INSERT INTO utilisateur (prenom, email, password, budget, temps, id_adresse, type_logement) VALUES ('Lola', 'lola@gmail.com', 'lolafyn', 2700,'01:00', 19, 'appartement')""")
-c.execute("""INSERT INTO utilisateur (prenom, email, password, budget, temps, id_adresse, type_logement) VALUES ('Hocan', 'hocan@gmail.com', 'hocanfyn', 1900, '00:30', 20, 'appartement') """)
-c.execute("""INSERT INTO utilisateur (prenom, email, password, budget, temps, id_adresse, type_logement) VALUES ('Sarah', 'sarah@gmail.com', 'sarahfyn', 4000, '00:45', 21, 'maison')""")
-
 # TABLE DES LOGEMENTS
 c.execute("""
     CREATE TABLE IF NOT EXISTS logement (
         id_logement INTEGER PRIMARY KEY AUTOINCREMENT,
         titre VARCHAR(50),
+        photo BLOB, 
         description VARCHAR(500), 
         nb_chambre INTEGER,
         type_logement VARCHAR(255),
@@ -78,7 +58,64 @@ c.execute("""
     )
     """)
 
-c.execute("""INSERT INTO logement (titre, description, nb_chambre, type_logement, nb_piece, prix, superficie, id_adresse) VALUES ('Location appartement 2 pièces 42 m²','Dans un immeuble ancien, 2/3 pièces de 42.01 m² au 3ème étage comprenant une entrée, un séjour, une chambre, un bureau, une cuisine, un wc séparé et une salle eau.Appartenant rénové, Disponible de suite. Le bien est soumis au statut de la copropriété. Loyer de 1565,00 euros par mois charges comprises dont 65,00 euros par mois de provision pour charge (soumis à la réglementation annuelle)', 1 ,'appartement', 2, 1565, 42, 1)""")
+with open ('image/appart1b.jpg', 'rb') as img1 :
+    appart1 = img1.read()
+
+with open('image/appart2.jpg', 'rb') as img2 :
+    appart2 = img2.read()
+
+with open('image/appart3.jpg', 'rb') as img3 :
+    appart3 = img3.read()
+
+with open('image/appart4.jpg', 'rb') as img4 :
+    appart4 = img4.read()
+
+with open('image/appart5.jpg', 'rb') as img5 :
+    appart5= img5.read()
+
+with open('image/appart6.jpg', 'rb') as img6 :
+    appart6 = img6.read()
+
+with open('image/appart7.jpg', 'rb') as img7 :
+    appart7 = img7.read()
+
+with open('image/appart8.jpg', 'rb') as img8 :
+    appart8 = img8.read()
+
+with open('image/appart9.jpg', 'rb') as img9 :
+    appart9 = img9.read()
+
+with open('image/appart10.jpg', 'rb') as img10 :
+    appart10 = img10.read()
+
+with open('image/maison11.jpg', 'rb') as img11 :
+    maison11= img11.read()
+
+with open('image/maison12.jpg', 'rb') as img12 :
+    maison12 = img12.read()
+
+with open('image/maison13.jpg', 'rb') as img13 :
+    maison13 = img13.read()
+
+with open('image/maison14.jpg', 'rb') as img14 :
+    maison14 = img14.read()
+
+with open('image/maison15.jpg', 'rb') as img15 :
+    maison15 = img15.read()
+
+with open('image/maison16.jpg', 'rb') as img16 :
+    maison16 = img16.read()
+
+with open('image/maison17.jpg', 'rb') as img17 :
+    maison17 = img17.read()
+
+with open('image/maison18.jpg', 'rb') as img18 :
+    maison18 = img18.read()
+
+with open('image/maison19.jpg', 'rb') as img19 :
+    maison19 = img19.read()
+
+c.execute("""INSERT INTO logement (titre, description, nb_chambre, type_logement, nb_piece, prix, superficie, id_adresse) VALUES ('Location appartement 2 pièces 42 m²', 'Dans un immeuble ancien, 2/3 pièces de 42.01 m² au 3ème étage comprenant une entrée, un séjour, une chambre, un bureau, une cuisine, un wc séparé et une salle eau.Appartenant rénové, Disponible de suite. Le bien est soumis au statut de la copropriété. Loyer de 1565,00 euros par mois charges comprises dont 65,00 euros par mois de provision pour charge (soumis à la réglementation annuelle)', 1 ,'appartement', 2, 1565, 42, 1)""")
 c.execute("""INSERT INTO logement (titre, description, nb_chambre, type_logement, nb_piece, prix, superficie, id_adresse) VALUES ('Location appartement meublé 1 pièce 27 m²', 'Entre père lachaise et voltaire. Nous vous proposons une pièce meublé au troisième étage sans ascenseur. Appartenant comprenant une salle de bains, une cuisine et un séjour. Appartenant entièrement équipé. Disponible immédiatement.', 1, 'appartement', 1, 950, 27, 2)""")
 c.execute("""INSERT INTO logement (titre, description, nb_chambre, type_logement, nb_piece, prix, superficie, id_adresse) VALUES ('Location appartement 4 pièces 77 m²', 'EXCLUSIVITE - APPARTEMENT 4 PIECES DANS IMMEUBLE ANCIEN - Venez découvrir cet appartement T4 une surface habitable de 77 mm² à Paris. Un ascenseur est disponible. Il comporte 2 chambres, une cuisine aménagée ainsi que 1 salle de bain. Un chauffage collectif fonctionnant au gaz. Quartier qui contient un très large choix de commerces. Loyer de 1765,00 euros par mois charges comprises dont 165,00 euros par mois de provision pour charges (soumis à la régulation annuelle).', 2, 'appartement', 4, 1765, 77, 3)""")
 c.execute("""INSERT INTO logement (titre, description, nb_chambre, type_logement, nb_piece, prix, superficie, id_adresse) VALUES ('Location appartement 5 pièces 110m²', '5 pièces à louer, cave, 1er arrondissement. 110 m², 3ème étage, immeuble ancien, ascenseur, entrée, séjour, salle à manger, 2 chambres, bureau, salle de bain/douche, salle de douche avec WC, WC séparé, cuisine bien équipée, chauffage électrique, cave', 2, 'appartement', 5, 4000, 110, 4  )""")
@@ -95,8 +132,48 @@ c.execute("""INSERT INTO logement (titre, description, nb_chambre, type_logement
 c.execute("""INSERT INTO logement (titre, description, nb_chambre, type_logement, nb_piece, prix, superficie, id_adresse) VALUES ('Location maison 4 pièces 76 m²', 'Au calme, dans un quartier pavillonnaire, proche école et transports, maison sousplex en arrière lot en bon état général comprenant séjour, cuisine ouverte aménagée et équipée (hotte et plaque), 2 chambres avec placards, bureau, salle de bains avec WC, salle eau, WC séparé et buanderie. Jardin de 60 m² environ avec cabanon.', 2, 'maison', 4, 1590, 76, 15)""")
 c.execute("""INSERT INTO logement (titre, description, nb_chambre, type_logement, nb_piece, prix, superficie, id_adresse) VALUES ('Location maison 8 pièces 153 m²', 'Au coeur du quartier classé du Village Anglais, magnifique maison entièrement rénovée en 2011 comprenant un rez-de-chaussée avec une entrée, 1 WC et un séjour double ouvrant sur une cuisine US aménagée et équipée. Au premier étage, 3 chambres, une salle de bain avec espace buanderie et un WC. Sous les combles, une belle suite parentale avec une salle de bains, dressing et climatisation. Dispose également 1 rez-de-jardin ouvrant sur une belle terrasse exposée sud et comprenant une salle de jeux, 1 chambre et garage.', 5, 'maison', 8, 3900, 153, 16)""")
 c.execute("""INSERT INTO logement (titre, description, nb_chambre, type_logement, nb_piece, prix, superficie, id_adresse) VALUES ('Location maison 3 pièces 83 m²', 'Vaste séjour, une cuisine équipée et aménagée (rangements, plaques, four, hottte, frigo), 2 chambres dont une avec un dressing, un dégagement avec placards, une salle de bains et WC séparés, une buanderie, et de nombreux rangements. Un jardinet avec une terrasse.', 2, 'maison', 3, 1299, 83, 17)""")
-c.execute("""INSERT INTO logement (titre, description, nb_chambre, type_logement, nb_piece, prix, superficie, id_adresse) VALUES ('Location maison 4 pièces 87 m²', 'chaleureuse maison familiale de 87, 32 m² au sol combiné aux avantages du confort moderne. Une belle pièce à vivre de plus de 34 m² composé de : 1 espace salon, une salle à manger, une cuisine ouverte aménagée avec accès direct à la terrasse. Deux salles eau avec 3 chambres donnant vue le jardin, un WC séparé, extérieur et jardin de 215 m² et garage fermer.', 3, 'maison', 4, 1911, 87, 18)""")
+c.execute("""INSERT INTO logement (titre, description, nb_chambre, type_logement, nb_piece, prix, superficie, id_adresse) VALUES ('Location maison 4 pièces 87 m²', 'Chaleureuse maison familiale de 87, 32 m² au sol combiné aux avantages du confort moderne. Une belle pièce à vivre de plus de 34 m² composé de : 1 espace salon, une salle à manger, une cuisine ouverte aménagée avec accès direct à la terrasse. Deux salles eau avec 3 chambres donnant vue le jardin, un WC séparé, extérieur et jardin de 215 m² et garage fermer.', 3, 'maison', 4, 1911, 87, 18)""")
 c.execute("""INSERT INTO logement (titre, description, nb_chambre, type_logement, nb_piece, prix, superficie, id_adresse) VALUES ('Location maison 11 pièces 260 m²', 'Vaste maison de près de 366 m² dont 260 m² habitables, bâtie sur 3 niveaux avec sous-sol. En rez-de-jardin, la double réception offre une jolie vue sur le jardin de 1000 m² clos de murs et aggrandissement sur une véranda lumineuse. Ce niveau comprend également un bureau et une cuisine aménagée. Au premier étage : deux suites. Au deuxième étages: une chambre avec une salle de douche, deux chambres, une salle de bains. Entresole : 3 chambres, une salle eau, un cellier, une buanderie et la chaufferie. Garage deux places et deux emplacements de stationnement extérieurs', 8, 'maison', 11, 5700, 260, 19)""")
+
+c.execute("UPDATE logement SET photo=? WHERE id_logement = 1", (appart1,))
+c.execute("UPDATE logement SET photo=? WHERE id_logement = 2", (appart2,))
+c.execute("UPDATE logement SET photo=? WHERE id_logement = 3", (appart3,))
+c.execute("UPDATE logement SET photo=? WHERE id_logement = 4", (appart4,))
+c.execute("UPDATE logement SET photo=? WHERE id_logement = 5", (appart5,))
+c.execute("UPDATE logement SET photo=? WHERE id_logement = 6", (appart6,))
+c.execute("UPDATE logement SET photo=? WHERE id_logement = 7", (appart7,))
+c.execute("UPDATE logement SET photo=? WHERE id_logement = 8", (appart8,))
+c.execute("UPDATE logement SET photo=? WHERE id_logement = 9", (appart9,))
+c.execute("UPDATE logement SET photo=? WHERE id_logement = 10", (appart10,))
+c.execute("UPDATE logement SET photo=? WHERE id_logement = 11", (maison11,))
+c.execute("UPDATE logement SET photo=? WHERE id_logement = 12", (maison12,))
+c.execute("UPDATE logement SET photo=? WHERE id_logement = 13", (maison13,))
+c.execute("UPDATE logement SET photo=? WHERE id_logement = 14", (maison14,))
+c.execute("UPDATE logement SET photo=? WHERE id_logement = 15", (maison15,))
+c.execute("UPDATE logement SET photo=? WHERE id_logement = 16", (maison16,))
+c.execute("UPDATE logement SET photo=? WHERE id_logement = 17", (maison17,))
+c.execute("UPDATE logement SET photo=? WHERE id_logement = 18", (maison18,))
+c.execute("UPDATE logement SET photo=? WHERE id_logement = 19", (maison19,))
+
+#TABLE DES UTILISATEURS 
+c.execute("""
+    CREATE TABLE IF NOT EXISTS utilisateur (
+        id_utilisateur INTEGER PRIMARY KEY AUTOINCREMENT,
+        prenom VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        password VARCHAR(100) NOT NULL,
+        budget INTEGER, 
+        temps TIME, 
+        id_adresse INTEGER,
+        type_logement VARCHAR(50),
+        FOREIGN KEY (id_adresse) REFERENCES adresse (id_adresse),
+        FOREIGN KEY (type_logement) REFERENCES logement(type_logement)
+    )
+    """)
+
+c.execute("""INSERT INTO utilisateur (prenom, email, password, budget, temps, id_adresse, type_logement) VALUES ('Lola', 'lola@gmail.com', 'lola', 2700,'01:00', 19, 'appartement')""")
+c.execute("""INSERT INTO utilisateur (prenom, email, password, budget, temps, id_adresse, type_logement) VALUES ('Hocan', 'hocan@gmail.com', 'hocan', 1900, '00:30', 20, 'appartement') """)
+c.execute("""INSERT INTO utilisateur (prenom, email, password, budget, temps, id_adresse, type_logement) VALUES ('Sarah', 'sarah@gmail.com', 'sarah', 4000, '00:45', 21, 'maison')""")
 
 
 # TABLE favoris 
