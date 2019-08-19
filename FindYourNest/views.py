@@ -68,28 +68,43 @@ def moncompte():
             return redirect(url_for('main'))
 
     else :
-        
         prenom = request.form['prenom']
         email = request.form['email']
         password = request.form['password']
         confirmer = request.form['confirmer']
         secure_password = sha256_crypt.encrypt(password)
-        pro = request.form.getlist('pro')
+        pro = request.form.get('pro')
         nb = request.form['nb']
         rue = request.form['rue']
         ville = request.form['ville']
         code_postal = request.form['code_postal']
         temps = request.form.get('temps')
         budget = request.form.get('budget')
-        type_logement = request.form.getlist('type_logement')
-        
+        maison = request.form.get('maison')
+        appart = request.form.get('appart')
+
+        if pro == 'on':
+            pro = 'True'
+        else:
+            pro = 'False'
+
+        if maison == 'on':
+            maison = 'True'
+        else:
+            maison = 'False'
+    
+        if appart == 'on':
+            appart = 'True'
+        else:
+            appart = 'False'
+
 
         if not (email and password):
             flash("Il est nécessaire d'entrer un email et un mot de passe", "danger") 
             return render_template("moncompte.html")
         
         elif password == confirmer:
-            c.execute("INSERT INTO utilisateur (prenom, email, password, temps, budget) VALUES(?, ?, ?, ?, ?)", (prenom, email, secure_password, temps, budget,))
+            c.execute("INSERT INTO utilisateur (prenom, email, password, pro, temps, budget, maison, appartement) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", (prenom, email, secure_password, pro, temps, budget, maison, appart,))
             c.execute("INSERT INTO adresse (nb, rue, ville, code_postal) VALUES(?, ?, ?, ?)", (nb, rue, ville, code_postal,))
             conn.commit()
             return redirect(url_for('connexion'))
@@ -97,6 +112,7 @@ def moncompte():
         else:
             flash("les mots de passe ne correspondent pas", "danger")
             return render_template("moncompte.html")
+
 
 #se déconnecter 
 @app.route("/deconnexion")
