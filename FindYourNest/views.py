@@ -13,8 +13,13 @@ navitia_url = "http://api.navitia.io/v1/journeys"
 opencagedata_key = "3c853893fc37402eb2ef1473b6629218"
 opencage = OpenCageGeocode(opencagedata_key)
 
-conn = sqlite3.connect('/root/Git/FindYourNest/findyournest.db', check_same_thread=False)
+database_folder= Path('/root/Git/FindYourNest/')
+database_file = database_folder / 'findyournest.db'
+
+conn = sqlite3.connect('database_file', check_same_thread=False)
 c = conn.cursor()
+# conn = sqlite3.connect('/root/Git/FindYourNest/findyournest.db', check_same_thread=False)
+# c = conn.cursor()
 
 #loading the login manager
 @login_manager.user_loader
