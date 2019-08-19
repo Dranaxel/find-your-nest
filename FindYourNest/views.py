@@ -4,6 +4,7 @@ from flask_login import login_required
 from opencage.geocoder import OpenCageGeocode
 from urllib import parse
 import sqlite3, requests, json
+from pathlib import Path  
 
 #Import Navitia key
 navitia_key = app.config['NAVITIA']
