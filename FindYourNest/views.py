@@ -17,7 +17,7 @@ opencage = OpenCageGeocode(opencagedata_key)
 #database_folder= Path('./')
 #database_file = database_folder / 'findyournest.db'
 
-database_file = PurePath('database.db')
+database_file = PurePath('findyournest.db')
 conn = sqlite3.connect(str(database_file), check_same_thread=False)
 c = conn.cursor()
 
