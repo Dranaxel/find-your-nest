@@ -3,7 +3,7 @@ from flask import request, redirect, render_template, flash, url_for, redirect, 
 from flask_login import login_required, UserMixin, login_user, current_user, logout_user
 from opencage.geocoder import OpenCageGeocode
 from urllib import parse
-import sqlite3, requests
+import sqlite3, requests, json
 from pathlib import PurePath  
 from passlib.hash import sha256_crypt
 
@@ -153,10 +153,12 @@ def aptInfo(add,hours,minutes):
 
 	#get a list of all the apt in the database
 	apt_list = c.execute("select adresse.nb, adresse.rue, adresse.ville, logement.id_logement from adresse inner JOIN logement on logement.id_adresse=adresse.id_adresse").fetchall()
+	print(apt_list)
 	for ref in apt_list:
 		try:
 			dest_add = ",".join(map(str,ref[:3]))+",FRANCE"
 			opencage_resp = opencage.geocode(dest_add, language='fr', no_annotations=1, limit=1, bounds="1.19202,48.41462,3.36182,49.26780")
+			print(opencage_resp)
 			dest_coord = list(opencage_resp[0]['geometry'].values())
 			dest_coord = str(dest_coord[1])+";"+str(dest_coord[0])
 			navitia_param = {'from': origin_coord, "to": dest_coord} 
@@ -164,6 +166,7 @@ def aptInfo(add,hours,minutes):
 			navitia_call = json.loads(navitia_call.text)
 			duration = navitia_call['journeys'][0]["duration"]
 		except:
+			print("error")
 			continue
 		if duration <=  max_time:
 			saved_ref.append(ref[3])
@@ -181,5 +184,4 @@ def Fiche(id):
     PostalCode_sql = c.execute("select code_postal from adresse inner JOIN logement on logement.id_adresse=adresse.id_adresse where logement.id_logement= ?", (id,)).fetchone() 
     nb_pieces_sql = c.execute("SELECT nb_piece FROM logement WHERE id_logement=?", (id,)).fetchone()
     surface_sql =  c.execute("SELECT superficie FROM logement WHERE id_logement=?", (id,)).fetchone()
-
     return render_template("FicheAppart.html", Prix=prix_sql[0], PostalCode=PostalCode_sql[0], nb_pieces=nb_pieces_sql[0], surface=surface_sql[0])
