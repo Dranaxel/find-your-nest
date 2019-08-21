@@ -172,7 +172,7 @@ def aptInfo(add,hours,minutes):
 			saved_ref.append(ref[3])
 	for i in saved_ref:
 		print(i)
-		results.append(c.execute("select type_logement, prix from logement where id_logement=%s"%i).fetchone())
+		results.append(c.execute("select titre, prix, photo, description from logement where id_logement=%s"%i).fetchone())
 	print(results)
 	return render_template("results.html", result= results)
 
