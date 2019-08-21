@@ -189,3 +189,8 @@ def Fiche(id):
 @app.route("/infoscompte/")
 def infos():
 	return render_template("infoscompte.html", Name = current_user.prenom) 
+
+ @app.route("/infoscompte/", methods=["GET", "POST"])
+ @login_required
+ def infoscompte():
+     return render_template("infoscompte.html")
