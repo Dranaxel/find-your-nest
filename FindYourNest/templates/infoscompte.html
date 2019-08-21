@@ -35,7 +35,7 @@
         {% if current_user.is_anonymous %}   
             <div id="btn-login" class="p-2"><button type="button" class="btn btn-outline-light right mt-3 mr-3 pb-1"><a href="{{url_for('connexion')}}">Se connecter</a></button></div>
         {% else %}
-            <div id="btn-logout" class="deco p-2"><a href="{{url_for('deconnexion')}}" class="btn btn-outline-danger right mt-3 mr-3 pb-1">Se déconnecter</a></div>
+            <div id="btn-logout" class="deco p-2"><a href="{{url_for('moncompte')}}" class="btn btn-outline-danger right mt-3 mr-3 pb-1">Mon compte</a></div>
         {% endif %}    
        </div>          
   </header>
