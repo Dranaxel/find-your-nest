@@ -185,3 +185,7 @@ def Fiche(id):
     nb_pieces_sql = c.execute("SELECT nb_piece FROM logement WHERE id_logement=?", (id,)).fetchone()
     surface_sql =  c.execute("SELECT superficie FROM logement WHERE id_logement=?", (id,)).fetchone()
     return render_template("FicheAppart.html", Prix=prix_sql[0], PostalCode=PostalCode_sql[0], nb_pieces=nb_pieces_sql[0], surface=surface_sql[0])
+
+@app.route("/infoscompte/")
+def infos():
+	return render_template("infoscompte.html", Name = current_user.prenom) 
