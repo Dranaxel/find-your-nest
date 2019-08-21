@@ -2,3 +2,4 @@
 Flask
 Flask-login
 opencage
+passlib.hash

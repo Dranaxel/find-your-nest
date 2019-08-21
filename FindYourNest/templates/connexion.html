@@ -9,7 +9,6 @@
   <!-- Bootstrap -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <link rel="stylesheet" href="static/style.css">
    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
   <!--police -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans%7CRoboto&display=swap" rel="stylesheet">
@@ -41,7 +40,8 @@
     <div class="d-flex justify-content-center my-2">
       <div class="card w-75">
         <div class="card-body">
-          <form>
+          {%include "_message.html"%}
+          <form method="POST", action="/connexion/">
             <div class="form-group">
               <label for="exampleInputMail">Adresse e-mail</label>
               <input type="email" name="email" class="form-control" id="exampleInputMail" aria-describedby="emailHelp"
@@ -56,8 +56,9 @@
               <label class="form-check-label" for="checkboxremember">Me garder connecté(e)</label>
             </div>
             <button type="submit" class="btn btn-primary">Connexion</button>
-            <button id="btncreateaccount" type="button" class="btn btn-primary float-right"><a href="{{url_for('moncompte')}}" title="Pas encore inscrit(e)?">Pas encore inscrit(e)?</a></button>
+            <button type="button" class="btn btn-primary float-right"><a href="{{url_for('moncompte')}}" title="Pas encore inscrit(e)?">Pas encore inscrit(e)?</a></button>
           </form>
+          
         </div>
       </div>
     </div>

@@ -39,13 +39,13 @@
        </div>          
   </header>
 
-
 <div class="h2 mt-4">Le moyen le plus rapide pour trouver un logement adapté à vos déplacements</div>   
  <hr>
     <div class="d-flex justify-content-center my-2">
       <div class="card w-75">
         <div class="card-body">
-          <form method="POST", action="/moncompte/">
+        {%include "_message.html"%}
+          <form method="POST", action="/moncompte">
             <div class="form-group">
               <label for="exampleInputName">Prénom</label>
               <input type="text" name="prenom" class="form-control" id="exampleInputName" placeholder="Entrez votre prénom">
@@ -64,11 +64,11 @@
               <input type="password" name="confirmer" class="form-control" id="exampleInputPassword" placeholder="Confirmez votre mot de passe">
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" name="pro" id="checkboxPro" value="checkboxPro">
+              <input class="form-check-input" name="pro" type="checkbox" id="checkBoxPro">
               <label class="form-check-label" for="checkboxPro">Je suis un(e) professionnel(le)</label>
             </div>
           <hr>
-          <h4 class="Card-title">Ce que vous recherchez</h4>
+            <h4 class="Card-title">Ce que vous recherchez</h4>
               <div class="form-group">
                 <label for="exampleInputNumber">Numéro</label>
                 <input type="number" name="nb" class="form-control" id="exampleInputNumber" placeholder="Entrez le numéro de rue">
@@ -91,7 +91,7 @@
               </div>
               <div class="form-group">
                 <label for="formControlRange">Prix maximal</label>
-                <input onmousemove="sliderFunction()" type="range" name="budget" class="form-control-range" id="priceRange" min='0'
+                <input onmousemove="sliderFunction()" type="range" name="budget" class="form-control-range" id="priceRange" name="priceRange" min='0'
                   max='5000' step='50'>
                 <label id="formControlSlider" for="formControlRange">2500</label><label>€</label>
               </div>
@@ -100,11 +100,11 @@
                   <label for="formControlRange">Type de logement</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="checkbox" name="appart" id="checkboxFlat" value="checkboxFlat">
-                  <label class="form-check-label" for="checkboxFlat">Appartement</label>
+                  <input class="form-check-input" type="checkbox" name="appart" id="checkboxFlat">
+                  <label class="form-check-label" for="checkboxFlat"> Appartement</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="checkbox" name="maison" id="CheckboxHouse" value="checkboxlist">
+                  <input class="form-check-input" name="maison" type="checkbox" id="checkboxHouse" >
                   <label class="form-check-label" for="checkboxHouse">Maison</label>
                 </div>
               </div>
@@ -122,3 +122,4 @@
     $("#formControlSlider").html(val);
   }
 </script>
+</html>

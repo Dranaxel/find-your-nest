@@ -1,10 +1,11 @@
 from FindYourNest import app, login_manager 
-from flask import render_template, request, redirect
-from flask_login import login_required
+from flask import request, redirect, render_template, flash, url_for, redirect, flash
+from flask_login import login_required, UserMixin, login_user, current_user, logout_user
 from opencage.geocoder import OpenCageGeocode
 from urllib import parse
-import sqlite3, requests, json
+import sqlite3, requests
 from pathlib import PurePath  
+from passlib.hash import sha256_crypt
 
 #Import Navitia key
 navitia_key = app.config['NAVITIA']
@@ -14,23 +15,21 @@ navitia_url = "http://api.navitia.io/v1/journeys"
 opencagedata_key = "3c853893fc37402eb2ef1473b6629218"
 opencage = OpenCageGeocode(opencagedata_key)
 
-#database_folder= Path('./')
-#database_file = database_folder / 'findyournest.db'
-
 database_file = PurePath('findyournest.db')
 conn = sqlite3.connect(str(database_file), check_same_thread=False)
 c = conn.cursor()
 
-# conn = sqlite3.connect('/root/Git/FindYourNest/findyournest.db', check_same_thread=False)
-# c = conn.cursor()
-
 #loading the login manager
 @login_manager.user_loader
 def load_user(user_id):
-    return User.get(user_id)
+    userDansLaBase = c.execute("SELECT email, prenom FROM utilisateur WHERE email=?", (user_id,)).fetchone()
+    if userDansLaBase is None:
+        return None
+    user = UserMixin()
+    user.id = user_id
+    user.prenom = userDansLaBase[1]
+    return user
 
-# allows to redirect the user to the login page if not authentified
-login_manager.login_view ="/connexion"
 
 @app.route("/", methods=["GET", "POST"])
 def main():
@@ -44,14 +43,101 @@ def main():
 		#return the result page pasing the arguments
 		return redirect("/results/add="+address+"&h="+hours+"&m="+minutes)
 
-@app.route("/connexion/")
+#se connecter
+@app.route("/connexion/", methods=["GET", "POST"])
 def connexion():
-    return render_template("connexion.html")
+    if request.method =='GET' :
+        if current_user.is_anonymous:
+            return render_template("connexion.html")
+        else :
+            return redirect(url_for('main'))
+    
+    elif request.method =='POST':
+        email = request.form['email']
+        password = request.form['password']
 
-@app.route("/moncompte/")
+        results = c.execute("SELECT prenom, password FROM utilisateur WHERE email=?", (email,)).fetchone()
+        
+
+        if results :
+            passwordEnBase = results[1]
+            if sha256_crypt.verify(password, passwordEnBase):
+                user = UserMixin()
+                user.id = email
+                user.prenom = results[0]
+                login_user(user)
+                return redirect(url_for('main'))
+            else:
+                flash("Votre email et/ou votre mot de passe est incorrect. Veuillez les saisir à nouveau ", "danger")
+                return render_template("connexion.html")
+        
+        else :
+            flash("Votre email et/ou votre mot de passe est incorrect. Veuillez les saisir à nouveau ", "danger")
+            return render_template("connexion.html")
+
+#créer le compte
+@app.route("/moncompte/", methods=["GET", "POST"])
+def moncompte():
+    if request.method == 'GET' :
+        if current_user.is_anonymous:
+            return render_template("moncompte.html")
+        else:
+            return redirect(url_for('main'))
+
+    else :
+        prenom = request.form['prenom']
+        email = request.form['email']
+        password = request.form['password']
+        confirmer = request.form['confirmer']
+        secure_password = sha256_crypt.encrypt(password)
+        pro = request.form.get('pro')
+        nb = request.form['nb']
+        rue = request.form['rue']
+        ville = request.form['ville']
+        code_postal = request.form['code_postal']
+        temps = request.form.get('temps')
+        budget = request.form.get('budget')
+        maison = request.form.get('maison')
+        appart = request.form.get('appart')
+
+        if pro == 'on':
+            pro = 'True'
+        else:
+            pro = 'False'
+
+        if maison == 'on':
+            maison = 'True'
+        else:
+            maison = 'False'
+    
+        if appart == 'on':
+            appart = 'True'
+        else:
+            appart = 'False'
+
+
+        if not (email and password):
+            flash("Il est nécessaire d'entrer un email et un mot de passe", "danger") 
+            return render_template("moncompte.html")
+        
+        elif password == confirmer:
+            c.execute("INSERT INTO utilisateur (prenom, email, password, pro, temps, budget, maison, appartement) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", (prenom, email, secure_password, pro, temps, budget, maison, appart,))
+            c.execute("INSERT INTO adresse (nb, rue, ville, code_postal) VALUES(?, ?, ?, ?)", (nb, rue, ville, code_postal,))
+            conn.commit()
+            return redirect(url_for('connexion'))
+
+        else:
+            flash("les mots de passe ne correspondent pas", "danger")
+            return render_template("moncompte.html")
+
+
+#se déconnecter 
+@app.route("/deconnexion")
 @login_required
-def infocompte():
-    return render_template("infoscompte.html")
+def deconnexion():
+    logout_user()
+    return redirect(url_for('connexion'))
+
 
 @app.route("/results/add=<string:add>&h=<int:hours>&m=<int:minutes>")
 def aptInfo(add,hours,minutes):
@@ -97,15 +183,3 @@ def Fiche(id):
     surface_sql =  c.execute("SELECT superficie FROM logement WHERE id_logement=?", (id,)).fetchone()
 
     return render_template("FicheAppart.html", Prix=prix_sql[0], PostalCode=PostalCode_sql[0], nb_pieces=nb_pieces_sql[0], surface=surface_sql[0])
-
-@app.route("/upAppt/")
-def up_Appt():
-    return render_template("chargementappart.html")
-
-#Valeurs checkboxes moncompte
-@app.route("/moncompte", methods = ['GET', 'POST'])
-def valuescheckboxes(): 
-    if request.method == 'POST':
-        print (request.method.form.getlist('checkboxlist'))
-    return render_template("/moncompte")
-
