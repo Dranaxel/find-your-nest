@@ -187,10 +187,6 @@ def Fiche(id):
     return render_template("FicheAppart.html", Prix=prix_sql[0], PostalCode=PostalCode_sql[0], nb_pieces=nb_pieces_sql[0], surface=surface_sql[0])
 
 @app.route("/infoscompte/")
+@login_required
 def infos():
 	return render_template("infoscompte.html", Name = current_user.prenom) 
-
- @app.route("/infoscompte/", methods=["GET", "POST"])
- @login_required
- def infoscompte():
-     return render_template("infoscompte.html")
