@@ -39,7 +39,7 @@
 
     <div class="h2 mt-4">Le moyen le plus rapide pour trouver un logement adapté à vos déplacements</div>      
 	{% for item in result %}
-		{% with name=item[0], price=item[1] %}
+		{% with name=item[0], price=item[1], pic=item[2], describe=item[3] %}
 			{% include "_resultCards.html" %}
 		{% endwith %}
 	{% endfor %}
