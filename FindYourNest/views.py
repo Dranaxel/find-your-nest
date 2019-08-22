@@ -99,6 +99,9 @@ def moncompte():
         budget = request.form.get('budget')
         maison = request.form.get('maison')
         appart = request.form.get('appart')
+	
+       utilisateur = c.execute("SELECT * FROM utilisateur where email=?", (email,)).fetchone()
+
 
         if pro == 'on':
             pro = 'True'
@@ -121,11 +124,15 @@ def moncompte():
             return render_template("moncompte.html")
         
         elif password == confirmer:
-            c.execute("INSERT INTO utilisateur (prenom, email, password, pro, temps, budget, maison, appartement) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", (prenom, email, secure_password, pro, temps, budget, maison, appart,))
-            c.execute("INSERT INTO adresse (nb, rue, ville, code_postal) VALUES(?, ?, ?, ?)", (nb, rue, ville, code_postal,))
-            conn.commit()
-            return redirect(url_for('connexion'))
-
+		if utilisateur is not None:
+			flash("L'adresse email est déjà utilisée ! Veuiller en entrez une autre ! ", "danger")
+                	return render_template("moncompte.html")
+		else:
+			c.execute("INSERT INTO utilisateur (prenom, email, password, pro, temps, budget, maison, appartement) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", (prenom, email, secure_password, pro, temps, budget, maison, appart,))
+            		c.execute("INSERT INTO adresse (nb, rue, ville, code_postal) VALUES(?, ?, ?, ?)", (nb, rue, ville, code_postal,))
+            		conn.commit()
+            		return redirect(url_for('connexion'))
+		
         else:
             flash("les mots de passe ne correspondent pas", "danger")
             return render_template("moncompte.html")
