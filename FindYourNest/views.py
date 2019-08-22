@@ -134,7 +134,7 @@ def moncompte():
             		return redirect(url_for('connexion'))
 		
         else:
-            flash("les mots de passe ne correspondent pas", "danger")
+            flash("Les mots de passe ne correspondent pas", "danger")
             return render_template("moncompte.html")
 
 
