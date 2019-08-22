@@ -1,4 +1,5 @@
-from FindYourNest import app, login_manager 
+# vim: set ts=4 sw=4 et:
+from FYN import app, login_manager 
 from flask import request, redirect, render_template, flash, url_for, redirect, flash
 from flask_login import login_required, UserMixin, login_user, current_user, logout_user
 from opencage.geocoder import OpenCageGeocode
@@ -6,7 +7,7 @@ from urllib import parse
 import sqlite3, requests, json
 from pathlib import PurePath  
 from passlib.hash import sha256_crypt
-
+ 
 #Import Navitia key
 navitia_key = app.config['NAVITIA']
 navitia_url = "http://api.navitia.io/v1/journeys"
@@ -15,7 +16,7 @@ navitia_url = "http://api.navitia.io/v1/journeys"
 opencagedata_key = "3c853893fc37402eb2ef1473b6629218"
 opencage = OpenCageGeocode(opencagedata_key)
 
-database_file = PurePath('app/findyournest.db')
+database_file = PurePath('FYN/findyournest.db')
 conn = sqlite3.connect(str(database_file), check_same_thread=False)
 c = conn.cursor()
 
@@ -33,15 +34,15 @@ def load_user(user_id):
 
 @app.route("/", methods=["GET", "POST"])
 def main():
-	if request.method == "GET":
-		return render_template('index.html')
-	elif request.method =="POST":
-		#get response from the form
-		address = request.form['addresse']
-		hours = request.form['hours']
-		minutes = request.form['minutes']
-		#return the result page pasing the arguments
-		return redirect("/results/add="+address+"&h="+hours+"&m="+minutes)
+    if request.method == "GET":
+        return render_template('index.html')
+    elif request.method =="POST":
+        #get response from the form
+        address = request.form['addresse']
+        hours = request.form['hours']
+        minutes = request.form['minutes']
+        #return the result page pasing the arguments
+        return redirect("/results/add="+address+"&h="+hours+"&m="+minutes)
 
 #se connecter
 @app.route("/connexion/", methods=["GET", "POST"])
@@ -99,8 +100,8 @@ def moncompte():
         budget = request.form.get('budget')
         maison = request.form.get('maison')
         appart = request.form.get('appart')
-	
-       utilisateur = c.execute("SELECT * FROM utilisateur where email=?", (email,)).fetchone()
+    
+        utilisateur = c.execute("SELECT * FROM utilisateur where email=?", (email,)).fetchone()
 
 
         if pro == 'on':
@@ -124,15 +125,14 @@ def moncompte():
             return render_template("moncompte.html")
         
         elif password == confirmer:
-		if utilisateur is not None:
-			flash("L'adresse email est déjà utilisée ! Veuiller en entrez une autre ! ", "danger")
-                	return render_template("moncompte.html")
-		else:
-			c.execute("INSERT INTO utilisateur (prenom, email, password, pro, temps, budget, maison, appartement) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", (prenom, email, secure_password, pro, temps, budget, maison, appart,))
-            		c.execute("INSERT INTO adresse (nb, rue, ville, code_postal) VALUES(?, ?, ?, ?)", (nb, rue, ville, code_postal,))
-            		conn.commit()
-            		return redirect(url_for('connexion'))
-		
+            if utilisateur is not None:
+                flash("L'adresse email est déjà utilisée ! Veuiller en entrez une autre ! ", "danger")
+                return render_template("moncompte.html")
+            else:
+                c.execute("INSERT INTO utilisateur (prenom, email, password, pro, temps, budget, maison, appartement) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", (prenom, email, secure_password, pro, temps, budget, maison, appart,))
+                c.execute("INSERT INTO adresse (nb, rue, ville, code_postal) VALUES(?, ?, ?, ?)", (nb, rue, ville, code_postal,))
+                conn.commit()
+                return redirect(url_for('connexion'))
         else:
             flash("Les mots de passe ne correspondent pas", "danger")
             return render_template("moncompte.html")
@@ -148,40 +148,40 @@ def deconnexion():
 
 @app.route("/results/add=<string:add>&h=<int:hours>&m=<int:minutes>")
 def aptInfo(add,hours,minutes):
-	saved_ref =[]
-	results = []
-	#convert the main address in GPS position with opencau
-	opencage_resp = opencage.geocode(add)
-	origin_coord = list(opencage_resp[0]['geometry'].values())		
-	origin_coord = str(origin_coord[1]) +";"+ str(origin_coord[0])
-	
-	#convert time in seconds
-	max_time = hours*3600 + minutes*60
+    saved_ref =[]
+    results = []
+    #convert the main address in GPS position with opencau
+    opencage_resp = opencage.geocode(add)
+    origin_coord = list(opencage_resp[0]['geometry'].values())      
+    origin_coord = str(origin_coord[1]) +";"+ str(origin_coord[0])
+    
+    #convert time in seconds
+    max_time = hours*3600 + minutes*60
 
-	#get a list of all the apt in the database
-	apt_list = c.execute("select adresse.nb, adresse.rue, adresse.ville, logement.id_logement from adresse inner JOIN logement on logement.id_adresse=adresse.id_adresse").fetchall()
-	print(apt_list)
-	for ref in apt_list:
-		try:
-			dest_add = ",".join(map(str,ref[:3]))+",FRANCE"
-			opencage_resp = opencage.geocode(dest_add, language='fr', no_annotations=1, limit=1, bounds="1.19202,48.41462,3.36182,49.26780")
-			print(opencage_resp)
-			dest_coord = list(opencage_resp[0]['geometry'].values())
-			dest_coord = str(dest_coord[1])+";"+str(dest_coord[0])
-			navitia_param = {'from': origin_coord, "to": dest_coord} 
-			navitia_call = requests.get(navitia_url, navitia_param, auth=(navitia_key, ""))
-			navitia_call = json.loads(navitia_call.text)
-			duration = navitia_call['journeys'][0]["duration"]
-		except:
-			print("error")
-			continue
-		if duration <=  max_time:
-			saved_ref.append(ref[3])
-	for i in saved_ref:
-		print(i)
-		results.append(c.execute("select titre, prix, photo, description from logement where id_logement=%s"%i).fetchone())
-	print(results)
-	return render_template("results.html", result= results)
+    #get a list of all the apt in the database
+    apt_list = c.execute("select adresse.nb, adresse.rue, adresse.ville, logement.id_logement from adresse inner JOIN logement on logement.id_adresse=adresse.id_adresse").fetchall()
+    print(apt_list)
+    for ref in apt_list:
+        try:
+            dest_add = ",".join(map(str,ref[:3]))+",FRANCE"
+            opencage_resp = opencage.geocode(dest_add, language='fr', no_annotations=1, limit=1, bounds="1.19202,48.41462,3.36182,49.26780")
+            print(opencage_resp)
+            dest_coord = list(opencage_resp[0]['geometry'].values())
+            dest_coord = str(dest_coord[1])+";"+str(dest_coord[0])
+            navitia_param = {'from': origin_coord, "to": dest_coord} 
+            navitia_call = requests.get(navitia_url, navitia_param, auth=(navitia_key, ""))
+            navitia_call = json.loads(navitia_call.text)
+            duration = navitia_call['journeys'][0]["duration"]
+        except:
+            print("error")
+            continue
+        if duration <=  max_time:
+            saved_ref.append(ref[3])
+    for i in saved_ref:
+        print(i)
+        results.append(c.execute("select titre, prix, photo, description from logement where id_logement=%s"%i).fetchone())
+    print(results)
+    return render_template("results.html", result= results)
 
 
 
@@ -196,4 +196,4 @@ def Fiche(id):
 @app.route("/infoscompte/")
 @login_required
 def infos():
-	return render_template("infoscompte.html", Name = current_user.prenom) 
+    return render_template("infoscompte.html", Name = current_user.prenom) 
