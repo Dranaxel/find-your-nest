@@ -124,7 +124,10 @@ def moncompte():
             adress = c.execute("SELECT rue, nb, ville FROM adresse where nb=? and rue=? and ville=?", (nb, rue, ville,)).fetchone()
             if adress is None:
                 c.execute("INSERT INTO adresse (nb, rue, ville, code_postal) VALUES(?,?,?,?)", (nb, rue, ville, code_postal,))
-                conn.commit()  
+                conn.commit()
+                c.execute("DELETE FROM adresse WHERE nb IS NULL AND rue IS NULL AND ville IS NULL")
+                conn.commit()
+                
                 one_user = c.execute("SELECT * FROM utilisateur where email=?", (email,)).fetchone()
                 id_adres = c.execute("SELECT id_adresse FROM adresse WHERE nb=? AND rue=? AND ville=?", (nb, rue, ville,)).fetchone()
                 id_adresse = id_adres[0]
