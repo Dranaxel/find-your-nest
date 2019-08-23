@@ -218,5 +218,5 @@ def Fiche(id):
 
 @app.route("/infoscompte/")
 @login_required
-def infos():
+def infoscompte():
     return render_template("infoscompte.html", Name = current_user.prenom) 
