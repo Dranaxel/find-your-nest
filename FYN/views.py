@@ -100,9 +100,6 @@ def moncompte():
         budget = request.form.get('budget')
         maison = request.form.get('maison')
         appart = request.form.get('appart')
-    
-        utilisateur = c.execute("SELECT * FROM utilisateur where email=?", (email,)).fetchone()
-
 
         if pro == 'on':
             pro = 'True'
@@ -123,16 +120,39 @@ def moncompte():
         if not (email and password):
             flash("Il est nécessaire d'entrer un email et un mot de passe", "danger") 
             return render_template("moncompte.html")
-        
         elif password == confirmer:
-            if utilisateur is not None:
-                flash("L'adresse email est déjà utilisée ! Veuiller en entrez une autre ! ", "danger")
-                return render_template("moncompte.html")
+            adress = c.execute("SELECT rue, nb, ville FROM adresse where nb=? and rue=? and ville=?", (nb, rue, ville,)).fetchone()
+            if adress is None:
+                c.execute("INSERT INTO adresse (nb, rue, ville, code_postal) VALUES(?,?,?,?)", (nb, rue, ville, code_postal,))
+                conn.commit()  
+                one_user = c.execute("SELECT * FROM utilisateur where email=?", (email,)).fetchone()
+                id_adres = c.execute("SELECT id_adresse FROM adresse WHERE nb=? AND rue=? AND ville=?", (nb, rue, ville,)).fetchone()
+                id_adresse = id_adres[0]
+                
+                if one_user is not None:
+                    flash("L'adresse email est déjà utilisée ! Veuiller en entrez une autre ! ", "danger")
+                    return render_template("moncompte.html")
+                
+                elif one_user is None:
+                    c.execute("INSERT INTO utilisateur (prenom, email, password, pro, temps, budget, maison, appartement) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", (prenom, email, secure_password, pro, temps, budget, maison, appart,))
+                    conn.commit()
+                    c.execute("UPDATE utilisateur SET id_adresse=? WHERE email=?", (id_adresse, email,))
+                    conn.commit()
             else:
-                c.execute("INSERT INTO utilisateur (prenom, email, password, pro, temps, budget, maison, appartement) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", (prenom, email, secure_password, pro, temps, budget, maison, appart,))
-                c.execute("INSERT INTO adresse (nb, rue, ville, code_postal) VALUES(?, ?, ?, ?)", (nb, rue, ville, code_postal,))
-                conn.commit()
-                return redirect(url_for('connexion'))
+                one_user = c.execute("SELECT * FROM utilisateur where email=?", (email,)).fetchone()
+                id_adres = c.execute("SELECT id_adresse FROM adresse WHERE nb=? AND rue=? AND ville=?", (nb, rue, ville,)).fetchone()
+                id_adresse = id_adres[0]
+                if one_user is not None:
+                    flash("L'adresse email est déjà utilisée ! Veuiller en entrez une autre ! ", "danger")
+                    return render_template("moncompte.html")
+                
+                elif one_user is None:
+                    c.execute("INSERT INTO utilisateur (prenom, email, password, pro, temps, budget, maison, appartement) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", (prenom, email, secure_password, pro, temps, budget, maison, appart,))
+                    conn.commit()
+                    c.execute("UPDATE utilisateur SET id_adresse=? WHERE email=?", (id_adresse, email,))
+                    conn.commit()
+                    
+            return redirect(url_for('connexion'))
         else:
             flash("Les mots de passe ne correspondent pas", "danger")
             return render_template("moncompte.html")
