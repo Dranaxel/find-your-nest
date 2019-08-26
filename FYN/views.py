@@ -23,12 +23,13 @@ c = conn.cursor()
 #loading the login manager
 @login_manager.user_loader
 def load_user(user_id):
-    userDansLaBase = c.execute("SELECT email, prenom FROM utilisateur WHERE email=?", (user_id,)).fetchone()
+    userDansLaBase = c.execute("SELECT email, prenom, pro FROM utilisateur WHERE email=?", (user_id,)).fetchone()
     if userDansLaBase is None:
         return None
     user = UserMixin()
     user.id = user_id
     user.prenom = userDansLaBase[1]
+    user.pro = userDansLaBase[2]
     return user
 
 
@@ -100,22 +101,6 @@ def moncompte():
         budget = request.form.get('budget')
         maison = request.form.get('maison')
         appart = request.form.get('appart')
-
-        if pro == 'on':
-            pro = 'True'
-        else:
-            pro = 'False'
-
-        if maison == 'on':
-            maison = 'True'
-        else:
-            maison = 'False'
-    
-        if appart == 'on':
-            appart = 'True'
-        else:
-            appart = 'False'
-
 
         if not (email and password):
             flash("Il est nécessaire d'entrer un email et un mot de passe", "danger") 
@@ -206,8 +191,6 @@ def aptInfo(add,hours,minutes):
     print(results)
     return render_template("results.html", result= results)
 
-
-
 @app.route("/Fiche/<int:id>")
 def Fiche(id):
     prix_sql = c.execute("SELECT prix FROM logement WHERE id_logement=?", (id,)).fetchone()
@@ -216,7 +199,14 @@ def Fiche(id):
     surface_sql =  c.execute("SELECT superficie FROM logement WHERE id_logement=?", (id,)).fetchone()
     return render_template("FicheAppart.html", Prix=prix_sql[0], PostalCode=PostalCode_sql[0], nb_pieces=nb_pieces_sql[0], surface=surface_sql[0])
 
-@app.route("/infoscompte/")
+@app.route("/infoscompte/", methods=["GET","POST"])
 @login_required
 def infoscompte():
-    return render_template("infoscompte.html", Name = current_user.prenom) 
+    if request.method == "GET":
+        if current_user.is_authenticated:
+            print(current_user.pro)
+            if current_user.pro == 'on':
+                return render_template("infoscomptepro.html", Name = current_user.prenom)
+            else :
+                return render_template("infoscompte.html", Name = current_user.prenom)
+                print(current_user.id)
