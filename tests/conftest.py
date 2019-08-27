@@ -1,16 +1,15 @@
-import pytest
-import sys
+import pytest, sys
 
 sys.path.append('.')
 from FYN import app as FYNapp
 
 @pytest.fixture
 def app():
-    app = create_app()
+    app = FYNapp 
     return app
 
 @pytest.fixture
 def client():
-    app = create_app()
+    app = FYNapp
     client = app.test_client()
     yield client
