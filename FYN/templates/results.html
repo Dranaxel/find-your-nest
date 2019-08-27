@@ -1,6 +1,8 @@
-{% extends "MASTER_BODY.html %}
+{% extends "MASTER_BODY.html" %}
+{% block main_fct %}
 	{% for item in result %}
 		{% with name=item[0], price=item[1], pic=item[2], describe=item[3] %}
 			{% include "_resultCards.html" %}
 		{% endwith %}
 	{% endfor %}
+{%endblock%}
