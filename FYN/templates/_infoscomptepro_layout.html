@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>FindYourNest</title>
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
+    integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+  <link rel="stylesheet" href="static/style.css">
+  <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+  <!--police -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans%7CRoboto&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+    integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+    integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+    crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+    integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+    crossorigin=""></script>
+  <!-- Jquery -->
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  <!-- Ajax -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"
+    integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb"
+    crossorigin="anonymous"></script>
+</head>
+
+<body class="bg">
+  <header>
+    <div class="d-flex justify-content-between">
+      <div class="p-2 flex-fill "></div>
+      <div id="boxh1" class="p-2 flex-fill h1"> <a href="{{url_for('main')}}"> Find Your Nest </a></div>
+      {% if current_user.is_anonymous %}
+      <div id="btn-login" class="p-2"><button type="button" class="btn btn-outline-light right mt-3 mr-3 pb-1"><a
+            href="{{url_for('connexion')}}">Se connecter</a></button></div>
+      {% else %}
+      <div id="btn-logout" class="deco p-2"><a href="{{url_for('moncompte')}}"
+          class="btn btn-outline-danger right mt-3 mr-3 pb-1">Mon compte</a></div>
+      {% endif %}
+    </div>
+  </header>
+
+
+  <div class="h2 mt-4">Le moyen le plus rapide pour trouver un logement adapté à vos déplacements</div>
+  <hr>
+  <div class="d-flex justify-content-center my-2">
+    <div class="card w-75">
+      <div class="card-body">
+        <h4 class="card-title">Bonjour {{Name}} </h4>
+        <h6 class="card-subtitle mb-2 text-muted">Vous pouvez ici modifier vos informations personnelles, consulter
+          vos favoris et vos biens mis sur le marché</h6>
+          <div class="form-group">
+            <label for="exampleInputName">Prénom</label>
+            <input type="text" class="form-control" id="exampleInputName" placeholder="Entrez votre prénom">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputMail">Adresse e-mail</label>
+            <input type="text" class="form-control" aria-describedby="emailHelp" id="exampleInputMail"
+              placeholder="Entrez votre adresse e-mail">
+          </div>
+          <hr>
+          <h4 class="Card-title">Ce que vous recherchez</h4>
+          <div class="form-group">
+            <label for="exampleInputNumber">Numéro</label>
+            <input type="number" class="form-control" id="exampleInputNumber" placeholder="Entrez le numéro de rue">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputStreet">Rue, allée, ...</label>
+            <input type="text" class="form-control" id="exampleInputStreet" placeholder="Entrez la rue">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputCity">Ville</label>
+            <input type="text" class="form-control" id="exampleInputCity" placeholder="Entrez une ville">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputZip">Code postal</label>
+            <input type="text" class="form-control" id="exampleInputZip" placeholder="Entrez un code postal"
+              maxlength="5">
+          </div>
+          <div class="form-group">
+            <label for="Time">Temps de trajet</label>
+            <input type="time" class="form-control" id="Time">
+          </div>
+          <div class="form-group">
+            <label for="formControlRange">Prix maximal</label>
+            <input onmousemove="sliderFunction()" type="range" class="form-control-range" id="priceRange"
+              name="priceRange" min='0' max='5000' step='50'>
+            <label id="formControlSlider" for="formControlRange">2500</label><label>€</label>
+          </div>
+          <div class=form-group>
+            <div>
+              <label for="formControlRange">Type de logement</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" id="checkboxFlat" value="checkboxFlat"
+                name="checkboxlist">
+              <label class="form-check-label" for="checkboxFlat">Appartement</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" id="checkboxHouse" value="checkboxHouse"
+                name="checkboxlist">
+              <label class="form-check-label" for="checkboxHouse">Maison</label>
+            </div>
+          </div>
+
+          <div class="float-left"><button type="submit" class="btn btn-primary">Enregistrer</button></div>
+          <div class="float-right"><button type="button" class="btn btn-danger"><a href="{{url_for('deconnexion')}}">Se
+                déconnecter</a></button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Partie pro-->
+  <div class="d-flex justify-content-center my-5">
+    <div class="card w-75">
+      <div class="card-body">
+        {% for categorie in ['error', 'succes'] %}
+        {% with msgs = get_flashed_messages(category_filter=[categorie]) %}
+        {% if msgs %}
+        <ul class="flashed {{ categorie }}">
+          {% for m in msgs %}
+          <li>{{ m|safe }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+        {% endfor %}
+       
+        <div id="main">
+            {% block main %}{% endblock %}
+        </div>
+        
+        <!-- Partie mes favoris -->
+  <div class="d-flex justify-content-center my-5">
+    <div class="card w-75">
+      <div class="card-body">
+        <h3 class="h3 my-2 card-title">Mes favoris</h3>
+        <h5 class="card-title mt-4">Card title</h5>
+        <h6 class="card-subtitle mb-2 text-muted">500€</h6>
+        <div class="row">
+          <div class="col-md-4">
+            <img src="static/bg.jpg" class="rounded" style="width:300px">
+          </div>
+          <div class="col-md-8">
+            <p class="card-text mb-5">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec consequat ipsum
+              vitae metus molestie vestibulum. Vivamus id quam nunc. Sed at eleifend libero. Suspendisse vel sapien id
+              sem laoreet molestie hefzoeizjfpzehfiezhfihzhfpizhfpopoej ezfjj fpezfpjzejp efpz zefp epjfpjzefj pef
+              jpoe zjfpze fp ezpfjpzefje fzeojfzejfp zpfozejpj
+              zpjfez</br>jsfekheifhzp</br>ehfzeifh</br>eklfefjjfle</br>zfehzkehezjozeo veozjojezo oezkzelzekpfzejo je
+              fejozekezk
+            </p>
+            <div class="d-flex justify-content-end"><button type="button" class="btn btn-outline-danger">Retirer des
+                favoris</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+ $('.custom-file input').change(function (e) {
+        $(this).next('.custom-file-label').text(e.target.files[0].name);
+    });
+
+  </script>
+</body>
+
+</html>
