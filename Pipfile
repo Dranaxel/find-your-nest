@@ -12,6 +12,7 @@ Flask = "*"
 Flask-Login = "*"
 pytest = "*"
 pytest-flask = "*"
+pylint = "*"
 
 [requires]
 python_version = "3.5"
