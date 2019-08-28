@@ -34,7 +34,7 @@
         {% if current_user.is_anonymous %}   
             <div id="btn-login" class="p-2"><button type="button" class="btn btn-outline-light right mt-3 mr-3 pb-1"><a href="{{url_for('connexion')}}">Se connecter</a></button></div>
         {% else %}
-            <div id="btn-logout" class="deco p-2"><a href="{{url_for('moncompte')}}" class="btn btn-outline-danger right mt-3 mr-3 pb-1">Mon compte</a></div>
+            <div id="btn-logout" class="deco p-2"><a href="{{url_for('moncompte')}}" class="btn btn-outline-light right mt-3 mr-3 pb-1">Mon compte</a></div>
         {% endif %}    
        </div>          
   </header>
@@ -88,7 +88,7 @@
                       <p class="card-text "> {{type_logement}} </p>
                     </div>
               <div class="float-left"><button type="submit" class="btn btn-primary">Enregistrer</button></div>
-              <div class="float-right"><button type="button" class="btn btn-danger"><a href="{{url_for('deconnexion')}}">Se déconnecter</button></div>
+              <div class="float-right"><button type="button" class="btn btn-danger"><a href="{{url_for('deconnexion')}}">Se déconnecter</a></button></div>
             </form>
           </div>
         </div>
