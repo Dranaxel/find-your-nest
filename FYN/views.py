@@ -226,12 +226,14 @@ def infoscompte():
    infos_adresse = c.execute("select nb, rue, ville, code_postal from adresse inner join utilisateur on adresse.id_adresse=utilisateur.id_adresse where email=?", (email,)).fetchone()
    id_user=infos_pro[6]
    infos_favoris = c.execute("SELECT titre, prix, photo, description from logement inner join favoris on logement.id_logement=favoris.id_logement where favoris.id_utilisateur=?", (id_user,)).fetchone()
-   if maison == 'on':
-    type_logement = 'maison'
-   elif appartement == 'on':
-    type_logement = 'appartement'
+   if maison == 'on' and appartement != 'on' :
+       type_logement = 'maison'
+   elif appartement == 'on' and maison != 'on':
+       type_logement = 'appartement'
+   elif appartement =='on' and maison=='on':
+       type_logement = 'Maison et appartement'
    else:
-    type_logement = 'Non précisé'
+        type_logement = 'Non précisé'
    return render_template("infoscompte.html", prenom=infos_pro[0], email=infos_pro[1], temps=infos_pro[2], budget=infos_pro[3], type_logement=type_logement, nb=infos_adresse[0], rue=infos_adresse[1], ville=infos_adresse[2], code_postal=infos_adresse[3], titre=infos_favoris[0], prix=infos_favoris[1], photo=infos_favoris[2], description=infos_favoris[3])
 
  else:
