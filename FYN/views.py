@@ -199,14 +199,40 @@ def Fiche(id):
     surface_sql =  c.execute("SELECT superficie FROM logement WHERE id_logement=?", (id,)).fetchone()
     return render_template("FicheAppart.html", Prix=prix_sql[0], PostalCode=PostalCode_sql[0], nb_pieces=nb_pieces_sql[0], surface=surface_sql[0])
 
-@app.route("/infoscompte/", methods=["GET","POST"])
+@app.route("/infoscompte/")
 @login_required
 def infoscompte():
-    if request.method == "GET":
-        if current_user.is_authenticated:
-            print(current_user.pro)
-            if current_user.pro == 'on':
-                return render_template("infoscomptepro.html", Name = current_user.prenom)
-            else :
-                return render_template("infoscompte.html", Name = current_user.prenom)
-                print(current_user.id)
+ if current_user.is_authenticated:
+  print(current_user.pro)
+  if current_user.pro == 'on':
+   email = current_user.id
+   infos_pro = c.execute("select prenom, email, temps, budget, maison, appartement, id FROM utilisateur where email=?", (email,)).fetchone() 
+   maison = infos_pro[4]
+   appartement = infos_pro[5]
+   infos_adresse = c.execute("select nb, rue, ville, code_postal from adresse inner join utilisateur on adresse.id_adresse=utilisateur.id_adresse where email=?", (email,)).fetchone()
+   if maison == 'on':
+    type_logement = 'maison'
+   elif appartement == 'on':
+    type_logement = 'appartement'
+   else:
+    type_logement = 'Non précisé'
+   return render_template("infoscomptepro.html", prenom=infos_pro[0], email=infos_pro[1], temps=infos_pro[2], budget=infos_pro[3], type_logement=type_logement, nb=infos_adresse[0], rue=infos_adresse[1], ville=infos_adresse[2], code_postal=infos_adresse[3])
+
+  else :
+   email = current_user.id
+   infos_pro = c.execute("select prenom, email, temps, budget, maison, appartement, id_utilisateur FROM utilisateur where email=?", (email,)).fetchone() 
+   maison = infos_pro[4]
+   appartement = infos_pro[5]
+   infos_adresse = c.execute("select nb, rue, ville, code_postal from adresse inner join utilisateur on adresse.id_adresse=utilisateur.id_adresse where email=?", (email,)).fetchone()
+   id_user=infos_pro[6]
+   infos_favoris = c.execute("SELECT titre, prix, photo, description from logement inner join favoris on logement.id_logement=favoris.id_logement where favoris.id_utilisateur=?", (id_user,)).fetchone()
+   if maison == 'on':
+    type_logement = 'maison'
+   elif appartement == 'on':
+    type_logement = 'appartement'
+   else:
+    type_logement = 'Non précisé'
+   return render_template("infoscompte.html", prenom=infos_pro[0], email=infos_pro[1], temps=infos_pro[2], budget=infos_pro[3], type_logement=type_logement, nb=infos_adresse[0], rue=infos_adresse[1], ville=infos_adresse[2], code_postal=infos_adresse[3], titre=infos_favoris[0], prix=infos_favoris[1], photo=infos_favoris[2], description=infos_favoris[3])
+
+ else:
+  redirect(url_for('main'))
