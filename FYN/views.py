@@ -243,40 +243,5 @@ def infoscompte():
     else:
         return redirect(url_for('main'))
 
-def checkextension(namefile):
-    """ Renvoie True si le fichier possède une extension d'image valide. """
-    print(namefile.rsplit('.', 1)[1])
-    return '.' in namefile and namefile.rsplit('.', 1)[1] in ('png', 'jpg', 'jpeg')
 
-@app.route('/infoscompte/', methods=['GET','POST'])
-def upload():
-    if request.method == 'POST':
-            f = request.files['picture']
-            if f: # on vérifie qu'un fichier a bien été envoyé
-                if checkextension(f.filename): # on vérifie que son extension est valide
-                    name = secure_filename(f.filename)
-                    f.save(str(upload_pro) + name)
-                    flash('Image envoyée !', 'success')
-                else:
-                    flash('Ce fichier n\'\est pas dans une extension autorisée!', 'error')
-            else:
-                flash('Vous avez oublié de joindre une image !', 'error')
-    else:        
-        return render_template('_infoscomptepro_up.html')
-
-
-@app.route('/views/')
-def liste_upped():
-    images = [img for img in os.listdir(upload_pro) if checkextension(img)] # la liste des images dans le dossier
-    return render_template('_infoscomptepro_liste.html', images=images)
-
-
-@app.route('/views/<name>')
-def upped(name):
-    name = secure_filename(name)
-    if os.path.isfile(str(upload_pro) + name): # si le fichier existe
-        return send_file(str(upload_pro) + name, as_attachment=True) # on l'envoie
-    else:
-        flash('Fichier {name} inexistant.'.format(name=name), 'error')
-        return render_template('liste_upped') # sinon on redirige vers la liste des images, avec un message d'erreur
         
