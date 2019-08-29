@@ -1,0 +1,47 @@
+{% extends 'infoscomptepro_layout' %}
+
+
+
+{% block main %}
+<form action="/infoscompte/" method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+      <label for="exampleInputNumber">Numéro</label>
+      <input type="text" class="form-control" id="exampleInputNumber"
+        placeholder="Entrez le numéro de rue de votre bien">
+    </div>
+    <div class="form-group">
+      <label for="exampleInputStreet">Rue, allée, avenue, ...</label>
+      <input type="text" class="form-control" id="exampleInputStreet"
+        placeholder="Entrez la rue, allée, avenue, ... de votre bien">
+    </div>
+    <div class="form-group">
+      <label for="exampleInputCity">Ville</label>
+      <input type="text" class="form-control" id="exampleInputCity" placeholder="Entrez la ville de votre bien">
+    </div>
+    <div class="form-group">
+      <label for="exampleInputZip">Code postal</label>
+      <input type="text" class="form-control" id="exampleInputZip"
+        placeholder="Entrez le code postal de votre bien" maxlength="5">
+    </div>
+    <div class="form-group">
+      <label for="exampleInputDesc">Description</label>
+      <textarea class="form-control" id="exampleInputDesc" rows="5" placeholder="Décrivez votre bien"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="exampleInputPrice">Prix</label>
+      <input type="number" class="form-control" id="exampleInputPrice" placeholder="Entrez le prix de votre bien">
+    </div>
+    <div class="form-group">
+      <label for="picture">Joindre une image</label> <br />
+      <div class="custom-file">
+        <input type="file" class="custom-file-input" id="picture" name="picture" />
+        <label class="custom-file-label" for="picture">Joindre une image de votre bien</label>
+      </div>              
+    <div class="form-group">
+      <button value="Uploader" type="submit" class="btn btn-primary float-right">Enregistrer votre
+        bien</button>
+    </div>
+    </div>
+  </form>
+
+{% endblock %}
