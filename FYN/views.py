@@ -8,6 +8,7 @@ import sqlite3, requests, json
 from pathlib import PurePath  
 from passlib.hash import sha256_crypt
 from werkzeug import secure_filename
+from werkzeug.utils import secure_filename
 
 #Import Navitia key
 navitia_key = app.config['NAVITIA']
@@ -22,7 +23,7 @@ conn = sqlite3.connect(str(database_file), check_same_thread=False)
 c = conn.cursor()
 
 #Chargement images dans le dossier
-upload_pro = PurePath ('FYN/ups/')
+upload_pro = PurePath ('./FYN/ups/')
 
 #loading the login manager
 @login_manager.user_loader
