@@ -1,17 +1,16 @@
-FROM debian:10
+FROM python:3.7-buster
 
-RUN apt-get update
+RUN apt-get update \
+    && apt-get install -y libpq-dev
+    
+RUN pip3 install pipenv
 
-RUN apt-get install -y python3 libpq-dev python3-pip
+COPY . /app
 
-RUN pip3 install flask flask-login opencage passlib
-
-COPY . /app  
-
+WORKDIR /app
+RUN pipenv install
 
 EXPOSE 5000
 
-#CMD  main.py
-WORKDIR /app
 
-CMD python3 main.py
+CMD pipenv run python3 main.py
