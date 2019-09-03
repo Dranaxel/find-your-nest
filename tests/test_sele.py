@@ -20,8 +20,8 @@ class TestSearch():
     'build': "Onboarding Sample App - Python",
     'name': "2-user-site",
     }
-    username = os.environ["SAUCE_USERNAME"]
-    access_key = os.environ["SAUCE_ACCESS_KEY"]
+    username = "Dranaxel"
+    access_key = "4fac5a89-1765-4932-adca-312953239bdc"
     self.driver = webdriver.Remote(command_executor='https://{}:{}@ondemand.eu-central-1.saucelabs.com/wd/hub'.format(username, access_key), desired_capabilities=desired_cap)
   
   def teardown_method(self, method):
