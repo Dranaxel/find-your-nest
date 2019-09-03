@@ -11,8 +11,17 @@ from selenium.webdriver.common.keys import Keys
 
 class TestSearch():
   def setup_method(self, method):
-    self.driver = webdriver.Firefox()
     self.vars = {}
+    desired_cap = {
+    'platform': "Mac OS X 10.13",
+    'browserName': "safari",
+    'version': "11.1",
+    'build': "Onboarding Sample App - Python",
+    'name': "2-user-site",
+    }
+    username = os.environ["SAUCE_USERNAME"]
+    access_key = os.environ["SAUCE_ACCESS_KEY"]
+    self.driver = webdriver.Remote(command_executor='https://{}:{}@ondemand.eu-central-1.saucelabs.com/wd/hub'.format(username, access_key), desired_capabilities=desired_cap)
   
   def teardown_method(self, method):
     self.driver.quit()
