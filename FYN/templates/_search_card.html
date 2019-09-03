@@ -1,0 +1,105 @@
+{% block main_fct %}
+
+        <!-- MAP-->
+        <div row class="mapBlock mt-4 mb-3  d-flex justify-content-center">
+            <div row id="map"></div>
+        </div>
+
+        <!-- BARRE DE RECHERCHE -->
+    <form method="POST">
+        <div action="" method="POST" class="row d-flex justify-content-center">
+            <div class="row m-0">
+                <div class="back col-12 col-lg-6 pt-3 px-2">
+                    <input name="addresse" type="text" class="case form-control" id="exampleInputAddress" placeholder="Entrez une adresse" autocomplete="off" >
+                </div>
+                <div class="back col-12 col-lg-6 d-flex row m-0 px-2">
+                    <div class="col-5 pt-3 px-2">
+                        <input name="hours" type="number" class="case form-control" id="exampleInputHour" placeholder="Heure"  autocomplete="off" >
+                    </div>
+                    <div class="col-5 pt-3 px-2">
+                        <input name="minutes" type="number" class="case form-control" id="exampleInputMin" placeholder="Minutes" autocomplete="off">
+                    </div>
+                    <div class="col-2 pt-3 px-2">
+                        <button id="btn-1" type="button submit" disabled="disabled" class="btn btn-primary align-top" formmethod="POST">GO</button>
+                    </div>                  
+                </div>
+            </div>
+        </div>
+     </form>
+    </div>
+
+    <script>
+        // API
+        window.onload = function () {
+            // Adding map function 
+            var map = L.map('map').setView([48.871620, 2.345940], 18);
+            var layer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
+            });
+            map.addLayer(layer);
+            // Creating a layer to add marker in it
+            var markerLayer = L.layerGroup().addTo(map)
+            // Autocomplete function 
+            $("#exampleInputAddress").autocomplete({
+                minLength: 3,
+                source: function(requete, reponse){
+                    // API call 
+                $.get({
+                    url: "https://api-adresse.data.gouv.fr/search/",
+                    data: {
+                        limit: 3,
+                        q: $("#exampleInputAddress").val()
+                    },
+                    // function in case of success autocomplete
+                    success: function(data){
+                        list = {}
+                        reponse($.map(data.features, function(obj){
+                            address = obj.properties.label
+                            coordinates = obj.geometry.coordinates
+                            list[address] = coordinates
+                            return address
+                        }))
+                    }
+                });
+                
+                },
+                // When an address is selected delete all the marker and add a marker to the map
+                select: function(event, ui){
+                    markerLayer.clearLayers();
+                    map.setView(list[ui.item.label].reverse())
+                    L.marker(list[ui.item.label]).addTo(markerLayer)
+                }
+            })	
+        }; 
+    </script>
+    
+    <script>
+        // Enables button GO when all inputs filled 
+function check() {
+    var inputs = document.getElementsByTagName("input");
+    var filled = true;
+    
+    for (var i = 0; i < inputs.length; i++) {
+        if (inputs[i].type === "text" && !inputs[i].value) {
+            filled = false;
+        }
+    }
+
+    for (var i = 0; i < inputs.length; i++) {
+        if (inputs[i].type === "number" && !inputs[i].value) {
+            filled = false;
+        }
+    }
+
+    if (filled) {
+        document.getElementById("btn-1").disabled = false;
+    } else {
+        document.getElementById("btn-1").disabled = true;
+    }
+}
+
+window.addEventListener("keyup", check);
+window.addEventListener("click", check);
+    </script>
+
+{% endblock %}
