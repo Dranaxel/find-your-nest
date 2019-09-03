@@ -51,14 +51,12 @@
               <form method="post" action="/infoscompte">
           <div class="form-group">
             <label for="exampleInputName">Prénom</label>
-            <input type="text" class="form-control" id="exampleInputName" 
-						    placeholder={{prenom}}>
+            <input type="text" class="form-control" id="exampleInputName" placeholder={{prenom}}>
           </div>
       
           <div class="form-group">
             <label for="exampleInputMail">Adresse e-mail</label>
-            <input type="text" class="form-control" aria-describedby="emailHelp" id="exampleInputMail"
-										 placeholder={{email}}>
+            <input type="text" class="form-control" aria-describedby="emailHelp" id="exampleInputMail" placeholder={{email}}>
           </div>
         <hr>
         <h4 class="Card-title">Ce que vous recherchez</h4>          
@@ -69,7 +67,7 @@
           <div class="form-group">
               <label for="exampleInputStreet">Rue, allée, ...</label>
 	      <input type="text" class="form-control" id="exampleInputStreet" placeholder={{rue}}>
-            </div>
+          </div>
           <div class="form-group">
             <label for="exampleInputCity">Ville</label>
 	    <input type="text" class="form-control" id="exampleInputCity" placeholder={{ville}}>
@@ -80,11 +78,10 @@
           </div>
           <div class="form-group">
 		  <h6><label for="exampleInputMail">Temps de trajet maximal:</label></h6>
-                  	<div class="col-md-8">
-                      		<p class="card-text "> {{temps}} </p>
-                    	</div>
+		  <div class="col-md-8">
+			  <p class="card-text "> {{temps}} </p>
+		  </div>
 	  </div>
-
           <div class="form-group">
             <label for="formControlRange">Prix maximal</label>
             <input onmousemove="sliderFunction()" type="range" class="form-control-range" id="priceRange" name="priceRange" min='0'
@@ -96,7 +93,7 @@
 		    <h6><label for="formControlRange">Type de logement : </label></h6>
 		    <div class="col-md-8">
 			    <p class="card-text">{{type_logement}}</p>
-			    </div>
+		    </div>
             </div>
               <div class="float-left"><button type="submit" class="btn btn-primary">Enregistrer</button></div>
               <div class="float-right"><button type="button" class="btn btn-danger"><a href="{{url_for('deconnexion')}}">Se déconnecter</a></button></div>
@@ -104,35 +101,7 @@
           </div>
         </div>
       </div>
-           
-     <!-- Partie mes favoris -->
-    <div class="d-flex justify-content-center my-5">
-      <div class="card w-75">
-        <div class="card-body">
-          <h3 class="h3 my-2 card-title">Mes favoris</h3>
-          <h5 class="card-title mt-4">Card title</h5>
-          <h6 class="card-subtitle mb-2 text-muted">500€</h6>
-          <div class="row">
-            <div class="col-md-4">
-              <img src="static/bg.jpg" class="rounded" style="width:300px">
-            </div>
-            <div class="col-md-8">
-              <p class="card-text mb-5">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec consequat ipsum
-                vitae metus molestie vestibulum. Vivamus id quam nunc. Sed at eleifend libero. Suspendisse vel sapien id
-                sem laoreet molestie hefzoeizjfpzehfiezhfihzhfpizhfpopoej ezfjj fpezfpjzejp efpz zefp epjfpjzefj pef
-                jpoe zjfpze fp ezpfjpzefje fzeojfzejfp zpfozejpj
-                zpjfez</br>jsfekheifhzp</br>ehfzeifh</br>eklfefjjfle</br>zfehzkehezjozeo veozjojezo oezkzelzekpfzejo je
-                fejozekezk
-              </p>
-              <div class="d-flex justify-content-end"><button type="button" class="btn btn-outline-light">Retirer des
-                  favoris</button></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
+          
      <!-- Partie pro-->
      <div class="d-flex justify-content-center my-5">
         <div class="card w-75">
@@ -175,7 +144,6 @@
           </div>
         </div>
       </div>
-    </div>
       
     
     <!-- <script>
