@@ -205,9 +205,9 @@ def Fiche(id):
 @app.route("/infoscompte/", methods=["GET", "POST"])
 @login_required
 def infoscompte():
-    if current_user.is_authenticated:
-        if request.method == 'GET':
+    if request.method == 'GET':
             #infospro
+        if current_user.is_authenticated:
             if current_user.pro == 'on':
                 email = current_user.id
                 infos_pro = c.execute("select prenom, email, temps, budget, maison, appartement, id_utilisateur FROM utilisateur where email=?", (email,)).fetchone()    
@@ -243,30 +243,41 @@ def infoscompte():
                     return render_template("infoscompte.html", prenom=infos[0], email=infos[1], temps=infos[2], budget=infos[3], type_logement=type_logement, nb=infos_adresse[0], rue=infos_adresse[1], ville=infos_adresse[2], code_postal=infos_adresse[3], titre=infos_favoris[0], prix=infos_favoris[1], photo=infos_favoris[2], description=infos_favoris[3])
         
         #partie pour update les informations
-        else:
-            new_prenom = request.form['prenom']
-            new_email = request.form['email']
-            new_nb = request.form['nb']
-            new_rue = request.form['rue']
-            new_ville = request.form['ville']
-            new_code_postal = request.form['code_postal']
-            new_budget = request.form.get('budget')
+    elif request.form == 'POST':
+        new_prenom = request.form['prenom']
+        new_email = request.form['email']
+        new_nb = request.form['nb']
+        new_rue = request.form['rue']
+        new_ville = request.form['ville']
+        new_code_postal = request.form['code_postal']
+        new_budget = request.form.get('budget')
             
-            infos_user = c.execute("SELECT prenom, email, budget FROM utilisateur where email=?", (current_user.id,)).fetchone()
-            prenom = infos_user[0]
-            email = infos_user[1]
-            budget = infos_user[2]
+        infos_user = c.execute("SELECT email FROM utilisateur where email=?", (new_email,)).fetchone()
+        infos_adresse = c.execute("SELECT nb, rue, ville, code_postal FROM adresse where nb=? and rue=? and ville=? and code_postal=?", (new_nb, new_rue, new_ville, new_code_postal,)).fetchone()
 
-            infos_adresse = c.execute("SELECT nb, rue, ville, code_postal FROM adresse where nb=? and rue=? and ville=? and code_postal=?", (nb, rue, ville, code_postal,)).fetchone()
+        #Eviter que lors de l'update l'utilisateur entre un utilisateur déjà existant                
+        if infos_user is not None :
+            flash("Cette email est déjà utilisé !", "danger")
 
+        else:
+            #adresse non existant     
             if infos_adresse is None:
-                c.execute("INSERT INTO adresse (nb, rue, ville, code_postal) VALUES(%s,%s,%s,%s)", (nb, rue, ville, code_postal,))
+                c.execute("INSERT INTO adresse (nb, rue, ville, code_postal) VALUES(%s,%s,%s,%s)", (new_nb, new_rue, new_ville, new_code_postal,))
                 conn.commit()
                 c.execute("DELETE FROM adresse WHERE nb IS NULL AND rue IS NULL AND ville IS NULL")
-                conn.commit()                             
-                
-                id_adres= c.execute("SELECT id_adresse FROM adresse WHERE nb=%s AND rue=%s AND ville=%s", (nb, rue, ville,)).fetchone()
+                conn.commit()
+                #récupérer l'id_adresse
+                id_adres= c.execute("SELECT id_adresse FROM adresse WHERE nb=%s AND rue=%s AND ville=%s", (new_nb, new_rue, new_ville,)).fetchone()
                 id_adresse = id_adres[0]
 
+                c.execute("UPDATE utilisateur SET email=? and budget=? and prenom=? and id_adresse=? where email=?", (new_email, new_budget, new_prenom, new_id_adresse, current_user.id,))
+                conn.commit()
+                return redirect(url_for('infoscompte'))
+
+            else:
+                c.execute("UPDATE utilisateur SET email=? and budget=? and prenom=? and id_adresse=? where email=?",(new_email, new_budget, new_prenom , id_adresse, current_user.id,))
+                conn.commit()
+                return redirect(url_for('infoscompte'))
+                    
     else:
         return redirect(url_for('main'))
