@@ -1,0 +1,33 @@
+version: '3.1'
+
+services:
+   db:
+     image: postgres:10
+     volumes:
+       - db_data:/var/lib/postres
+     restart: always
+     environment:
+       POSTGRES_USER: findyournest
+       POSTGRES_PASSWORD: findyournest
+       POSTGRES_DB: fyn
+     networks:
+       - reseau_fyn
+       
+   app:
+     build: .
+     ports:
+       - "5000:5000"
+     deploy:
+       replicas: 1       
+     volumes:
+       - app_data:/var/www/html/data/app_data 
+     networks:
+       - reseau_fyn
+
+networks:
+  reseau_fyn:
+
+volumes:
+  app_data:
+  db_data :
+    
