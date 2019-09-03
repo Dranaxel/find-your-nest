@@ -13,6 +13,7 @@ from selenium.webdriver.common.keys import Keys
 class TestSearch():
   def setup_method(self, method):
     self.vars = {}
+    print(os.environ('TRAVIS_JOB_NUMBER')
     desired_cap = {
     'platform': "Mac OS X 10.13",
     'browserName': "safari",
