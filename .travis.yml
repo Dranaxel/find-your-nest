@@ -4,6 +4,14 @@ python:
         - "3.7"
 install:
         - pip install -r requirements.txt
+before_script:
+        - sleep 3
+        - ./main.py
+        - sleep 3
 script:
         - bash ./sc.sh
         - pytest
+addons:
+        sauce_connect:
+                username: "Dranaxel"
+                access_key: "4fac5a89-1765-4932-adca-312953239bdc"
