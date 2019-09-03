@@ -22,9 +22,11 @@ class TestSearch():
     'name': "2-user-site",
     'tunnel-identifier': os.environ('TRAVIS_JOB_NUMBER')
     }
-    username = "Dranaxel"
-    access_key = "4fac5a89-1765-4932-adca-312953239bdc"
-    self.driver = webdriver.Remote(command_executor='https://{}:{}@ondemand.eu-central-1.saucelabs.com/wd/hub'.format(username, access_key), desired_capabilities=desired_cap)
+    username = os.environ['SAUCE_USERNAME']
+    access_key = os.environ['SAUCE_ACCESS_KEY']
+    hub_url = "%s:%s@localhost:5000" % (username, access_key)
+    self.driver = webdriver.Remote(command_executor="http://%s/wd/hub" % hub_url, desired_capabilities=desired_cap)
+
   
   def teardown_method(self, method):
     self.driver.quit()
