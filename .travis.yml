@@ -5,5 +5,5 @@ python:
 install:
         - pip install -r requirements.txt
 script:
-        - bash . sc.sh
+        - bash ./sc.sh
         - pytest
