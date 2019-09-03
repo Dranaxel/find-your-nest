@@ -9,7 +9,6 @@ before_script:
         - ./main.py
         - sleep 3
 script:
-        - bash ./sc.sh
         - pytest
 addons:
         sauce_connect:

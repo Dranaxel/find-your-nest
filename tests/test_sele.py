@@ -19,6 +19,7 @@ class TestSearch():
     'version': "11.1",
     'build': "Onboarding Sample App - Python",
     'name': "2-user-site",
+    'tunnel-identifier': os.environ('TRAVIS_JOB_NUMBER')
     }
     username = "Dranaxel"
     access_key = "4fac5a89-1765-4932-adca-312953239bdc"
