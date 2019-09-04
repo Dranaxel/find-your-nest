@@ -208,14 +208,12 @@ def infoscompte():
     if request.method == 'GET':
         if current_user.is_authenticated:
             #utilisateur normal
-            if current_user.pro is None: 
-                email =  current_user.id
-                infos = c.execute("select prenom, email, temps, budget, maison, appartement, id_utilisateur FROM  utilisateur where email=?", (email,)).fetchone()    
+            if current_user.pro is None:
+                #utilisateur                 
+                infos = c.execute("select prenom, email, temps, budget, maison, appartement, id_utilisateur FROM  utilisateur where email=?", (current_user.id,)).fetchone()    
+                
                 maison = infos[4]
                 appartement = infos[5]
-                infos_adresse = c.execute("select nb, rue, ville, code_postal from adresse inner join utilisateur on adresse.id_adresse=utilisateur.id_adresse where email=?", (email,)).fetchone()
-                id_user=infos[6]
-                infos_favoris = c.execute("SELECT titre, prix, photo, description from logement inner join favoris on logement.id_logement=favoris.id_logement where favoris.id_utilisateur=?", (id_user,)).fetchone()
                 if maison == 'on':
                     type_logement = 'maison'
                 elif appartement == 'on':
@@ -223,36 +221,39 @@ def infoscompte():
                 else:
                     type_logement = 'Non précisé'
 
+                #adresse
+                infos_adresse = c.execute("select nb, rue, ville, code_postal from adresse inner join utilisateur on adresse.id_adresse=utilisateur.id_adresse where email=?", (current_user.id,)).fetchone()
+                id_user=infos[6]
+                infos_favoris = c.execute("SELECT titre, prix, photo, description from logement inner join favoris on logement.id_logement=favoris.id_logement where favoris.id_utilisateur=?", (id_user,)).fetchone()
+   
                 if infos_favoris is None : 
                     return render_template("infoscompte.html", prenom=infos[0], email=infos[1], temps=infos[2], budget=infos[3], type_logement=type_logement, nb=infos_adresse[0], rue=infos_adresse[1], ville=infos_adresse[2], code_postal=infos_adresse[3])
                 else:
                     return render_template("infoscompte.html", prenom=infos[0], email=infos[1], temps=infos[2], budget=infos[3], type_logement=type_logement, nb=infos_adresse[0], rue=infos_adresse[1], ville=infos_adresse[2], code_postal=infos_adresse[3], titre=infos_favoris[0], prix=infos_favoris[1], photo=infos_favoris[2], description=infos_favoris[3])
-
             #partie pro
-            else:
-                email = current_user.id
-                infos_pro = c.execute("select prenom, email, temps, budget, maison, appartement, id_utilisateur FROM utilisateur where email=?", (email,)).fetchone()    
-                maison = infos_pro[4]
-                appartement = infos_pro[5]
-                infos_adresse = c.execute("select nb, rue, ville, code_postal from adresse inner join utilisateur on adresse.id_adresse=utilisateur.id_adresse where email=?", (email,)).fetchone()
-                if maison == 'on':
-                    type_logement = 'maison'
-                elif appartement == 'on':
-                    type_logement = 'appartement'
-                else:
-                    type_logement = 'Non précisé'
-                return render_template("infoscomptepro.html", prenom=infos_pro[0], email=infos_pro[1], temps=infos_pro[2], budget=infos_pro[3], type_logement=type_logement, nb=infos_adresse[0], rue=infos_adresse[1], ville=infos_adresse[2], code_postal=infos_adresse[3])
-
+            # else:
+            #     email = current_user.id
+            #     infos_pro = c.execute("select prenom, email, temps, budget, maison, appartement, id_utilisateur FROM utilisateur where email=?", (email,)).fetchone()    
+            #     maison = infos_pro[4]
+            #     appartement = infos_pro[5]
+            #     infos_adresse = c.execute("select nb, rue, ville, code_postal from adresse inner join utilisateur on adresse.id_adresse=utilisateur.id_adresse where email=?", (email,)).fetchone()
+            #     if maison == 'on':
+            #         type_logement = 'maison'
+            #     elif appartement == 'on':
+            #         type_logement = 'appartement'
+            #     else:
+            #         type_logement = 'Non précisé'
+            #     return render_template("infoscomptepro.html", prenom=infos_pro[0], email=infos_pro[1], temps=infos_pro[2], budget=infos_pro[3], type_logement=type_logement, nb=infos_adresse[0], rue=infos_adresse[1], ville=infos_adresse[2], code_postal=infos_adresse[3])
 
         #partie pour update les informations
     elif request.form == 'POST':
-        new_prenom = request.form['prenom']
-        new_email = request.form['email']
-        new_nb = request.form['nb']
-        new_rue = request.form['rue']
-        new_ville = request.form['ville']
-        new_code_postal = request.form['code_postal']
-        new_budget = request.form.get('budget')
+        new_prenom = request.form['pre']
+        new_email = request.form['em']
+        new_nb = request.form['nombre']
+        new_rue = request.form['street']
+        new_ville = request.form['vil']
+        new_code_postal = request.form['cp']
+        new_budget = request.form.get('prix')
         
         cur_user = c.execute("SELECT id_utilisateur from utilisateur where email=?", (current_user.id,)).fetchone()
         id_current = cur_user[0]
@@ -275,12 +276,12 @@ def infoscompte():
                 id_adres= c.execute("SELECT id_adresse FROM adresse WHERE nb=%s AND rue=%s AND ville=%s", (new_nb, new_rue, new_ville,)).fetchone()
                 id_adresse = id_adres[0]
 
-                c.execute("UPDATE utilisateur SET email=replace(?,?) and budget=? and prenom=? and id_adresse=? where id_utilisateur=?", (current_user.id, new_email, new_budget, new_prenom, id_adresse, id_current,))
+                c.execute("UPDATE utilisateur SET email=? and budget=? and prenom=? and id_adresse=? where id_utilisateur=?", (new_email, new_budget, new_prenom, id_adresse, id_current,))
                 conn.commit()
                 return redirect(url_for('infoscompte'))
 
             else:
-                c.execute("UPDATE utilisateur SET email=replace(?,?) and budget=? and prenom=? and id_adresse=? where id_utilisateur=?",(current_user.id, new_email, new_budget, new_prenom , id_adresse, id_current,))
+                c.execute("UPDATE utilisateur SET email=? and budget=? and prenom=? and id_adresse=? where id_utilisateur=?", (new_email, new_budget, new_prenom , id_adresse, id_current,))
                 conn.commit()
                 return redirect(url_for('infoscompte'))
                     
