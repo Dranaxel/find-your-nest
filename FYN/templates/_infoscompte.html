@@ -1,0 +1,88 @@
+<div class="d-flex justify-content-center my-2">
+    <div class="card w-75">
+      <div class="card-body">
+        <h4 class="card-title">Bonjour {{Name}} </h4>
+        <h6 class="card-subtitle mb-2 text-muted">Vous pouvez ici modifier vos informations personnelles et consulter
+          vos favoris</h6>
+    <form method="POST" action="/infoscompte/">
+          <div class="form-group">
+            <label for="exampleInputName">Prénom</label>
+            <input type="text" name="prenom" class="form-control" id="exampleInputName" 
+                            value={{prenom}}>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputMail">Adresse e-mail</label>
+            <input type="text" name="email" class="form-control" aria-describedby="emailHelp" id="exampleInputMail"
+                                         value={{email}}>
+          </div>
+        <hr>
+        <h4 class="Card-title">Ce que vous recherchez</h4>          
+          <div class="form-group">
+            <label for="exampleInputNumber">Numéro</label>
+        <input type="number" name="nb" class="form-control" id="exampleInputNumber" value={{nb}}>
+          </div>
+          <div class="form-group">
+              <label for="exampleInputStreet">Rue, allée, ...</label>
+                  <input type="text" name="rue" class="form-control" id="exampleInputStreet" placeholder={{rue}}>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputCity">Ville</label>
+        <input type="text" name="ville" class="form-control" id="exampleInputCity" value={{ville}}>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputZip">Code postal</label>
+        <input type="text" name="code_postal" class="form-control" id="exampleInputZip" maxlength="5" value={{code_postal}}>
+          </div>
+        <div class="form-group">
+        <h6><label for="exampleInputMail">Temps de trajet maximum :</label></h6>
+        <div class="col-md-8">
+            <p class="card-text "> {{temps}} </p>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="formControlRange">Prix maximal</label>
+        <input onmousemove="sliderFunction()" type="range" class="form-control-range" id="priceRange" name="budget" min='0'
+              max='5000' step='50'>
+        <label id="formControlSlider" for="formControlRange">{{budget}}</label><label>€</label>
+          </div>
+          <div class=form-group>
+          <h6><label for="formControlRange">Type de logement</label></h6>
+          <div class="col-md-8">
+              <p class="card-text">{{type_logement}}
+              </p>
+          </div>
+      </div>
+       
+          <div class="float-left"><button type="submit" class="btn btn-primary">Enregistrer</button></div>
+          <div class="float-right"><button type="button" class="btn btn-danger"><a href="{{url_for('deconnexion')}}">Se déconnecter</button></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+<div class="d-flex justify-content-center mt-5 mb-3">
+  <h4 class="card-title">Mes favoris</h4>
+</div>
+
+
+  <!-- <script>
+    window.onload = function () {
+      var map = L.map('map').setView([48.871620, 2.345940], 18);
+
+      var layer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
+      });
+
+      map.addLayer(layer);
+    }; 
+  </script> -->
+<!-- slider script -->
+<script>
+  function sliderFunction() {
+    var val = $('#priceRange')[0].value
+    $("#formControlSlider").html(val);
+  }
+</script>
+</body>
+
+</html>

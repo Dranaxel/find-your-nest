@@ -1,111 +1,17 @@
 {% extends "MASTER_BODY.html" %}
+
 {% block main_fct %}
-    <div class="d-flex justify-content-center my-2">
-      <div class="card w-75">
-        <div class="card-body">
-          {%include "_message.html"%}
-          <h4 class="card-title">Bonjour {{Name}} </h4>
-          <h6 class="card-subtitle mb-2 text-muted">Vous pouvez ici modifier vos informations personnelles et consulter
-            vos favoris</h6>
-	        <form method="POST", action="/infoscompte/">
-            <div class="form-group">
-              <label for="exampleInputName">Prénom</label>
-              <input type="text" name="pre" class="form-control" id="exampleInputName" 
-						      value={{prenom}}>
-            </div>
-            <div class="form-group">
-              <label for="exampleInputMail">Adresse e-mail</label>
-              <input type="text" name="em" class="form-control" aria-describedby="emailHelp" id="exampleInputMail"
-										   value={{email}}>
-            </div>
-          <hr>
-          <h4 class="Card-title">Ce que vous recherchez</h4>          
-            <div class="form-group">
-              <label for="exampleInputNumber">Numéro</label>
-	      <input type="number" name="nombre" class="form-control" id="exampleInputNumber" value={{nb}}>
-            </div>
-            <div class="form-group">
-                <label for="exampleInputStreet">Rue, allée, ...</label>
-		<input type="text" name="street" class="form-control" id="exampleInputStreet" value={{rue}}>
-              </div>
-            <div class="form-group">
-              <label for="exampleInputCity">Ville</label>
-	      <input type="text" name="vil" class="form-control" id="exampleInputCity" value={{ville}}>
-            </div>
-            <div class="form-group">
-              <label for="exampleInputZip">Code postal</label>
-	      <input type="text" name="cp" class="form-control" id="exampleInputZip" maxlength="5" value={{code_postal}}>
-            </div>
-          <div class="form-group">
-		  <h6><label for="exampleInputMail">Temps de trajet maximum :</label></h6>
-		  <div class="col-md-8">
-			  <p class="card-text "> {{temps}} </p>
-		  </div>
-	  </div>
-	  <div class="form-group">
-		  <label for="formControlRange">Prix maximal</label>
-		  <input onmousemove="sliderFunction()" type="range" class="form-control-range" id="priceRange" name="prix" min='0'
-                max='5000' step='50'>
-		  <label id="formControlSlider" for="formControlRange">{{budget}}</label><label>€</label>
-            </div>
-            <div class=form-group>
-		    <h6><label for="formControlRange">Type de logement</label></h6>
-		    <div class="col-md-8">
-			    <p class="card-text">{{type_logement}}
-			    </p>
-		    </div>
-	    </div>
-         
-            <div class="float-left"><button type="submit" class="btn btn-primary">Enregistrer</button></div>
-            <div class="float-right"><button type="button" class="btn btn-danger"><a href="{{url_for('deconnexion')}}">Se déconnecter</button></div>
-          </form>
-        </div>
-      </div>
-    </div>
+	{% for item in infos %}
+		{% with prenom=item[0], email=item[1], temps=item[2], budget=item[3], nb=item[4], ville=item[5], code_postal=item[6] %}
+			{% include "_infoscompte.html" %}
+		{% endwith %}
+	{% endfor %}
+{%endblock%}
 
-    <!-- Partie mes favoris -->
-    <div class="d-flex justify-content-center my-5">
-      <div class="card w-75">
-        <div class="card-body">
-          <h3 class="h3 my-2 card-title">Mes favoris</h3>
-	  <h5 class="card-title mt-4">{{titre}}</h5>
-	  <h6 class="card-subtitle mb-2 text-muted">{{prix}}</h6>
-          <div class="row">
-            <div class="col-md-4">
-	    <img src="{{url_for('static', filename=photo)}}" class="rounded" style="width:300px">
-            </div>
-            <div class="col-md-8">
-              <p class="card-text mb-5">
-	      {{description}}
-              </p>
-              <div class="d-flex justify-content-end"><button type="button" class="btn btn-outline-danger">Retirer des
-                  favoris</button></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- <script>
-      window.onload = function () {
-        var map = L.map('map').setView([48.871620, 2.345940], 18);
-
-        var layer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
-        });
-
-        map.addLayer(layer);
-      }; 
-    </script> -->
-<!-- slider script -->
-<script>
-    function sliderFunction() {
-      var val = $('#priceRange')[0].value
-      $("#formControlSlider").html(val);
-    }
-  </script>
-</body>
-
-</html>
-
+{% block scnd_fct %}
+    {% for item in infos_favoris %}
+		{% with titre=item[0], prix=item[1], photo=item[2], description=item[3] %}
+			{% include "_favorisCards.html" %}
+		{% endwith %}
+	{% endfor %}
 {%endblock%}
