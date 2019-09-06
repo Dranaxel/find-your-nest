@@ -208,48 +208,40 @@ def infoscompte():
     if request.method == 'GET':
         if current_user.is_authenticated:
             #utilisateur normal
-            if current_user.pro is None: 
-                infos_user = c.execute("SELECT maison, appartement, id_adresse FROM  utilisateur where email=?", (current_user.id,)).fetchone()
-                maison = infos_user[0]
-                appartement = infos_user[1]
-
+            if current_user.pro == 'on':
+                email = current_user.id
+                infos_pro = c.execute("select prenom, email, temps, budget, maison, appartement, id_utilisateur FROM utilisateur where email=?", (email,)).fetchone()    
+                maison = infos_pro[4]
+                appartement = infos_pro[5]
+                infos_adresse = c.execute("select nb, rue, ville, code_postal from adresse inner join utilisateur on adresse.id_adresse=utilisateur.id_adresse where email=?", (email,)).fetchone()
                 if maison == 'on':
                     type_logement = 'maison'
                 elif appartement == 'on':
                     type_logement = 'appartement'
                 else:
                     type_logement = 'Non précisé'
+                return render_template("infoscomptepro.html", prenom=infos_pro[0], email=infos_pro[1], temps=infos_pro[2], budget=infos_pro[3], type_logement=type_logement, nb=infos_adresse[0], rue=infos_adresse[1], ville=infos_adresse[2], code_postal=infos_adresse[3])
 
+            else:
+                infos_user = c.execute("SELECT maison, appartement, id_adresse FROM  utilisateur where email=?", (current_user.id,)).fetchone()
+                maison = infos_user[0]
+                appartement = infos_user[1]
+                if maison == 'on':
+                    type_logement = 'maison'
+                elif appartement == 'on':
+                    type_logement = 'appartement'
+                else:
+                    type_logement = 'Non précisé'
                 infos = []
                 info_favoris = []
-
                 #infos utilisateur
                 infos = c.execute("select prenom, email, temps, budget, nb, ville, code_postal, rue FROM  utilisateur JOIN adresse on utilisateur.id_adresse=adresse.id_adresse where email=?", (current_user.id,)).fetchall()
-
                 # info_favoris = c.execute("SELECT titre, prix, photo, description from logement join favoris on logement.id_logement=favoris.id_logement where favoris.id_utilisateur=?", (apt_ref,)).fetchone()
                 info_favoris = c.execute("select titre, prix, photo, description from logement as l join favoris as f on f.id_logement = l.id_logement join utilisateur as u on u.id_utilisateur = f.id_utilisateur where u.email=?", (current_user.id,)).fetchall()
-
                 if info_favoris is None: 
-                    return render_template("infoscompte.html", Name=current_user.id, infos=infos, type_logement=type_logement)
-                    
+                    return render_template("infoscompte.html", infos=infos, type_logement=type_logement)
                 else:
-                    
-                    return render_template("infoscompte.html", Name=current_user.id, infos=infos, infos_favoris=info_favoris, type_logement=type_logement)
-            # #partie pro
-            # else:
-            #     email = current_user.id
-            #     infos_pro = c.execute("select prenom, email, temps, budget, maison, appartement, id_utilisateur FROM utilisateur where email=?", (email,)).fetchone()    
-            #     maison = infos_pro[4]
-            #     appartement = infos_pro[5]
-            #     infos_adresse = c.execute("select nb, rue, ville, code_postal from adresse inner join utilisateur on adresse.id_adresse=utilisateur.id_adresse where email=?", (email,)).fetchone()
-            #     if maison == 'on':
-            #         type_logement = 'maison'
-            #     elif appartement == 'on':
-            #         type_logement = 'appartement'
-            #     else:
-            #         type_logement = 'Non précisé'
-            #     return render_template("infoscomptepro.html", prenom=infos_pro[0], email=infos_pro[1], temps=infos_pro[2], budget=infos_pro[3], type_logement=type_logement, nb=infos_adresse[0], rue=infos_adresse[1], ville=infos_adresse[2], code_postal=infos_adresse[3])
-
+                    return render_template("infoscompte.html", infos=infos, infos_favoris=info_favoris, type_logement=type_logement)
 
         #partie pour update les informations
     # elif request.form == 'POST':

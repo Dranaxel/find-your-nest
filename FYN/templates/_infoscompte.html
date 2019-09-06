@@ -1,19 +1,16 @@
 <div class="d-flex justify-content-center my-2">
     <div class="card w-75">
       <div class="card-body">
-        <h4 class="card-title">Bonjour {{name}} </h4>
-        <h6 class="card-subtitle mb-2 text-muted">Vous pouvez ici modifier vos informations personnelles et consulter
-          vos favoris</h6>
+        <h4 class="card-title">Bonjour {{current_user.prenom}} </h4>
+        <h6 class="card-subtitle mb-2 text-muted">Vous pouvez ici modifier vos informations personnelles et consulter vos favoris</h6>
     <form method="POST" action="/infoscompte/">
           <div class="form-group">
             <label for="exampleInputName">Prénom : </label>
-            <input type="text" name="prenom" class="form-control" id="exampleInputName" 
-                            value="{{prenom}}">
+            <input type="text" name="prenom" class="form-control" id="exampleInputName" value="{{prenom}}">
           </div>
           <div class="form-group">
             <label for="exampleInputMail">Adresse e-mail</label>
-            <input type="text" name="email" class="form-control" aria-describedby="emailHelp" id="exampleInputMail"
-                                         value="{{email}}">
+            <input type="text" name="email" class="form-control" aria-describedby="emailHelp" id="exampleInputMail" value="{{email}}">
           </div>
         <hr>
         <h4 class="Card-title">Ce que vous recherchez</h4>          
@@ -63,7 +60,6 @@
 <div class="d-flex justify-content-center mt-5 mb-3">
   <h4 class="card-title">Mes favoris</h4>
 </div>
-
 
   <!-- <script>
     window.onload = function () {

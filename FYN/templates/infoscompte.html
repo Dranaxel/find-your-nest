@@ -3,10 +3,10 @@
 {% block main_fct %}
 	{% for item in infos %}
 		{% with prenom=item[0], email=item[1], temps=item[2], budget=item[3], nb=item[4], ville=item[5], code_postal=item[6], rue=item[7] %}
-			{% include "_infoscompte.html" %}
+      {% include "_infoscompte.html" %}
 		{% endwith %}
 	{% endfor %}
-{%endblock%}
+{% endblock %}
 
 {% block scnd_fct %}
     {% for item in infos_favoris %}
@@ -14,4 +14,4 @@
 			{% include "_favorisCards.html" %}
 		{% endwith %}
 	{% endfor %}
-{%endblock%}
+{% endblock %}
