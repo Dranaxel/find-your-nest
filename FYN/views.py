@@ -220,8 +220,8 @@ def infoscompte():
                     type_logement = 'appartement'
                 else:
                     type_logement = 'Non précisé'
+                    upload()
                 return render_template("infoscomptepro.html", prenom=infos_pro[0], email=infos_pro[1], temps=infos_pro[2], budget=infos_pro[3], type_logement=type_logement, nb=infos_adresse[0], rue=infos_adresse[1], ville=infos_adresse[2], code_postal=infos_adresse[3])
-                upload()
             else:
                 infos_user = c.execute("SELECT maison, appartement, id_adresse FROM  utilisateur where email=?", (current_user.id,)).fetchone()
                 maison = infos_user[0]
