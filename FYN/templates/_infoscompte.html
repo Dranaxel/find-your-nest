@@ -1,19 +1,19 @@
 <div class="d-flex justify-content-center my-2">
     <div class="card w-75">
       <div class="card-body">
-        <h4 class="card-title">Bonjour {{Name}} </h4>
+        <h4 class="card-title">Bonjour {{name}} </h4>
         <h6 class="card-subtitle mb-2 text-muted">Vous pouvez ici modifier vos informations personnelles et consulter
           vos favoris</h6>
     <form method="POST" action="/infoscompte/">
           <div class="form-group">
-            <label for="exampleInputName">Prénom</label>
+            <label for="exampleInputName">Prénom : </label>
             <input type="text" name="prenom" class="form-control" id="exampleInputName" 
-                            value={{prenom}}>
+                            value="{{prenom}}">
           </div>
           <div class="form-group">
             <label for="exampleInputMail">Adresse e-mail</label>
             <input type="text" name="email" class="form-control" aria-describedby="emailHelp" id="exampleInputMail"
-                                         value={{email}}>
+                                         value="{{email}}">
           </div>
         <hr>
         <h4 class="Card-title">Ce que vous recherchez</h4>          
@@ -23,11 +23,11 @@
           </div>
           <div class="form-group">
               <label for="exampleInputStreet">Rue, allée, ...</label>
-                  <input type="text" name="rue" class="form-control" id="exampleInputStreet" placeholder={{rue}}>
+                  <input type="text" name="rue" class="form-control" id="exampleInputStreet" value="{{rue}}">
           </div>
           <div class="form-group">
             <label for="exampleInputCity">Ville</label>
-        <input type="text" name="ville" class="form-control" id="exampleInputCity" value={{ville}}>
+        <input type="text" name="ville" class="form-control" id="exampleInputCity" value="{{ville}}">
           </div>
           <div class="form-group">
             <label for="exampleInputZip">Code postal</label>
