@@ -221,7 +221,7 @@ def infoscompte():
                 else:
                     type_logement = 'Non précisé'
                 return render_template("infoscomptepro.html", prenom=infos_pro[0], email=infos_pro[1], temps=infos_pro[2], budget=infos_pro[3], type_logement=type_logement, nb=infos_adresse[0], rue=infos_adresse[1], ville=infos_adresse[2], code_postal=infos_adresse[3])
-
+                upload()
             else:
                 infos_user = c.execute("SELECT maison, appartement, id_adresse FROM  utilisateur where email=?", (current_user.id,)).fetchone()
                 maison = infos_user[0]
@@ -286,7 +286,6 @@ def infoscompte():
     # else:
     #     return redirect(url_for('main'))
     
-@app.route('/infoscompte/', methods=['GET','POST'])
 def checkextension(namefile):
     """ Renvoie True si le fichier possède une extension d'image valide. """
     print(namefile.rsplit('.', 1)[1])
@@ -300,9 +299,11 @@ def upload():
                     name = secure_filename(f.filename)
                     f.save(os.path.join('./FYN/static/ups', name))
                     flash ('Image enregistrée', 'success')
+                    return render_template('infoscomptepro.html')
                 else:
-                    flash('Ce fichier n\'est pas dans une extension autorisée!', 'error')
+                    flash('Ce fichier n\'est pas dans une extension autorisée!', 'danger')
             else:
-                flash('Vous avez oublié de joindre une image !', 'error')
+                flash('Vous avez oublié de joindre une image !', 'danger')
+                return render_template('infoscomptepro.html')
     else:               
-        return render_template('infoscomptepro.html', name=name)
+        return render_template('infoscomptepro.html')
