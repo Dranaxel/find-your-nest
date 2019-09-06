@@ -287,3 +287,24 @@ def infoscompte():
                     
     else:
         return redirect(url_for('main'))
+    
+@app.route('/infoscompte/', methods=['GET','POST'])
+def checkextension(namefile):
+    """ Renvoie True si le fichier possède une extension d'image valide. """
+    print(namefile.rsplit('.', 1)[1])
+    return '.' in namefile and namefile.rsplit('.', 1)[1] in ('png', 'jpg', 'jpeg')
+
+def upload():
+    if request.method == 'POST':
+            f = request.files['picture']
+            if f: # on vérifie qu'un fichier a bien été envoyé
+                if checkextension(f.filename): # on vérifie que son extension est valide
+                    name = secure_filename(f.filename)
+                    f.save(os.path.join('./FYN/static/ups', name))
+                    flash ('Image enregistrée', 'success')
+                else:
+                    flash('Ce fichier n\'est pas dans une extension autorisée!', 'error')
+            else:
+                flash('Vous avez oublié de joindre une image !', 'error')
+    else:               
+        return render_template('infoscomptepro.html', name=name)
