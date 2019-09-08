@@ -4,4 +4,4 @@ python:
 script:
   - pipenv run pytest
 after_success:
- - .travis/script.sh
+ - ./.travis/script.sh
