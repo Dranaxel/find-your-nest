@@ -1,0 +1,25 @@
+
+   <!-- Partie mes favoris -->
+   <div class="d-flex justify-content-center my-3">
+    <div class="card w-75">
+      <div class="card-body">
+        <h5 class="card-title mt-4">{{titre}}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">{{prix}}</h6>
+            <div class="row">
+              <div class="col-md-4">
+                <img src="{{url_for('static', filename=photo)}}" class="rounded" style="width:300px">
+              </div>
+              
+              <div class="col-md-8">
+                <p class="card-text mb-5">
+                  {{description}}
+                </p>
+                <div class="d-flex justify-content-end">
+                  <button type="button" class="btn btn-outline-danger">Retirer des favoris</button>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  

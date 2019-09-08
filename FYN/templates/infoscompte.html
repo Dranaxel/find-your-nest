@@ -1,118 +1,28 @@
 {% extends "MASTER_BODY.html" %}
-{% block main_fct %}
-    <div class="d-flex justify-content-center my-2">
-      <div class="card w-75">
-        <div class="card-body">
-          <h4 class="card-title">Bonjour {{Name}} </h4>
-          <h6 class="card-subtitle mb-2 text-muted">Vous pouvez ici modifier vos informations personnelles et consulter
-            vos favoris</h6>
-          <form method="post" action="/infoscompte">
-            <div class="form-group">
-              <label for="exampleInputName">Prénom</label>
-              <input type="text" class="form-control" id="exampleInputName" 
-                placeholder="Entrez votre prénom">
-            </div>
-            <div class="form-group">
-              <label for="exampleInputMail">Adresse e-mail</label>
-              <input type="text" class="form-control" aria-describedby="emailHelp" id="exampleInputMail"
-                placeholder="Entrez votre adresse e-mail">
-            </div>
-          <hr>
-          <h4 class="Card-title">Ce que vous recherchez</h4>          
-            <div class="form-group">
-              <label for="exampleInputNumber">Numéro</label>
-              <input type="number" class="form-control" id="exampleInputNumber" placeholder="Entrez le numéro de rue">
-            </div>
-            <div class="form-group">
-                <label for="exampleInputStreet">Rue, allée, ...</label>
-                <input type="text" class="form-control" id="exampleInputStreet" placeholder="Entrez la rue">
-              </div>
-            <div class="form-group">
-              <label for="exampleInputCity">Ville</label>
-              <input type="text" class="form-control" id="exampleInputCity" placeholder="Entrez une ville">
-            </div>
-            <div class="form-group">
-              <label for="exampleInputZip">Code postal</label>
-              <input type="text" class="form-control" id="exampleInputZip" placeholder="Entrez un code postal" maxlength="5">
-            </div>
-            <div class="form-group">
-              <label for="Time">Temps de trajet</label>
-              <input type="time" class="form-control" id="Time">
-            </div>
-            <div class="form-group">
-              <label for="formControlRange">Prix maximal</label>
-              <input onmousemove="sliderFunction()" type="range" class="form-control-range" id="priceRange" name="priceRange" min='0'
-                max='5000' step='50'>
-              <label id="formControlSlider" for="formControlRange">2500</label><label>€</label>
-            </div>
-            <div class=form-group>
-              <div>
-                <label for="formControlRange">Type de logement</label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" id="checkboxFlat" value="checkboxFlat" name="checkboxlist">
-                <label class="form-check-label" for="checkboxFlat">Appartement</label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" id="checkboxHouse" value="checkboxHouse" name="checkboxlist">
-                <label class="form-check-label" for="checkboxHouse">Maison</label>
-              </div>
-            </div>
 
-            <div class="float-left"><button type="submit" class="btn btn-primary">Enregistrer</button></div>
-            <div class="float-right"><button type="button" class="btn btn-danger"><a href="{{url_for('deconnexion')}}">Se déconnecter</button></div>
-          </form>
-        </div>
-      </div>
-    </div>
+{% if current_user.pro == 'on' %}
+  {% block mainpro_fct %}
+    {% for item in infos %}
+      {% include "_infoscomptepro.html" %}
+    {% endfor %}
+  {% endblock %}
 
-    <!-- Partie mes favoris -->
-    <div class="d-flex justify-content-center my-5">
-      <div class="card w-75">
-        <div class="card-body">
-          <h3 class="h3 my-2 card-title">Mes favoris</h3>
-          <h5 class="card-title mt-4">Card title</h5>
-          <h6 class="card-subtitle mb-2 text-muted">500€</h6>
-          <div class="row">
-            <div class="col-md-4">
-              <img src="static/bg.jpg" class="rounded" style="width:300px">
-            </div>
-            <div class="col-md-8">
-              <p class="card-text mb-5">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec consequat ipsum
-                vitae metus molestie vestibulum. Vivamus id quam nunc. Sed at eleifend libero. Suspendisse vel sapien id
-                sem laoreet molestie hefzoeizjfpzehfiezhfihzhfpizhfpopoej ezfjj fpezfpjzejp efpz zefp epjfpjzefj pef
-                jpoe zjfpze fp ezpfjpzefje fzeojfzejfp zpfozejpj
-                zpjfez</br>jsfekheifhzp</br>ehfzeifh</br>eklfefjjfle</br>zfehzkehezjozeo veozjojezo oezkzelzekpfzejo je
-                fejozekezk
-              </p>
-              <div class="d-flex justify-content-end"><button type="button" class="btn btn-outline-danger">Retirer des
-                  favoris</button></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+{% else %}
+  {% block main_fct %}
+    {% for item in infos %}
+      {% with prenom=item[0], email=item[1], temps=item[2], budget=item[3], nb=item[4], ville=item[5], code_postal=item[6], rue=item[7] %}
+        {% include "_infoscompte.html" %}
+      {% endwith %}
+    {% endfor %}
+  {% endblock %}
 
-    <!-- <script>
-      window.onload = function () {
-        var map = L.map('map').setView([48.871620, 2.345940], 18);
+  {% block scnd_fct %}
+    {% for item in infos_favoris %}
+      {% with titre=item[0], prix=item[1], photo=item[2], description=item[3] %}
+        {% include "_favorisCards.html" %}
+      {% endwith %}
+    {% endfor %}
+  {% endblock %}
 
-        var layer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
-        });
+{% endif %}
 
-        map.addLayer(layer);
-      }; 
-    </script> -->
-<!-- slider script -->
-<script>
-    function sliderFunction() {
-      var val = $('#priceRange')[0].value
-      $("#formControlSlider").html(val);
-    }
-  </script>
-</body>
-
-</html>
-
-{%endblock%}
