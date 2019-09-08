@@ -5,9 +5,9 @@ script:
   - pipenv run pytest
 deploy:
   provider: pages
-  skip-cleanup: true
-  target-branch: master
-  github-token: $GH_TOKEN
+  skip_cleanup: true
+  target_branch: master
+  github_token: $GH_TOKEN
   keep-history: true
   verbose: true
   on:
