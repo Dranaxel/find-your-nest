@@ -3,5 +3,14 @@ python:
   - "3.5"
 script:
   - pipenv run pytest
-after_success:
- - sh .push.sh
+deploy:
+  provider: pages
+  skip-cleanup: true
+  target-branch: master
+  github-token: GH_TOKEN
+  keep-history: true
+  verbose: true
+  on:
+    branch: depot
+#after_success:
+# - sh .push.sh
