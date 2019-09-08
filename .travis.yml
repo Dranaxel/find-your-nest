@@ -3,5 +3,3 @@ python:
   - "3.5"
 script:
   - pipenv run pytest
-after_success:
-  - .travis/push.sh
