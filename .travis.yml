@@ -4,4 +4,4 @@ python:
 script:
   - pipenv run pytest
 after_success:
- - sh .script.sh
+ - sh .push.sh
