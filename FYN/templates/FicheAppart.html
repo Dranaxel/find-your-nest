@@ -7,10 +7,10 @@
                               <h2 class="card-title">Appartement</h2>
 			      <h3 class="card-subtitle mb-2 text-muted">{{Prix}} €</h3>
                               <div class="row d-flex justify-content-center my-2">
-                                      <img src="images/bg.jpg" style="width: 500px">
+				      <img src="{{url_for('static', filename=pic)}}" class="rounded" style="width: 500px">
                               </div>
                               <div class="row my-3">
-                                    <p class="card-text ">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec consequat ipsum vitae metus molestie vestibulum. Vivamus id quam nunc. Sed at eleifend libero. Suspendisse vel sapien id sem laoreet molestie. Nulla in felis eu sapien volutpat fringilla. Vivamus pharetra imperdiet est, et tincidunt sapien viverra sit amet. </p>
+				      <p class="card-text ">{{describe}}</p>
                                 </div>
                                 <div class="row">
 					<div class="col-md-3">{{PostalCode}}</div>
