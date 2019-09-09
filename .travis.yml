@@ -7,11 +7,14 @@ after_success:
   - cat .travis_sample > .travis.yml
   - cat tests/.test_sele.py > tests/test_selenium.py
 deploy:
-  provider: pages
-  skip_cleanup: true
-  target_branch: master-1
-  github_token: $GH_TOKEN
-  keep-history: true
-  verbose: true
-  on:
-    branch: depot
+  - provider: pages
+    skip_cleanup: true
+    target_branch: master-1
+    github_token: $GH_TOKEN
+    keep-history: true
+    verbose: true
+    on:
+      branch: depot
+  - provider: gae
+    keyfile: Flask-e5a0a1966210.json.enc
+    project: find-your-nest
