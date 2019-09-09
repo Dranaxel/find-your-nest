@@ -2,7 +2,7 @@ language: python
 python:
   - "3.5"
 script:
-  - pipenv run pytest
+  - pytest
 deploy:
   provider: pages
   skip_cleanup: true
@@ -12,5 +12,3 @@ deploy:
   verbose: true
   on:
     branch: depot
-#after_success:
-# - sh .push.sh
