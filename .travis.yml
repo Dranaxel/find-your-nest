@@ -3,3 +3,7 @@ python:
   - "3.5"
 script:
   - pytest
+env:
+  global:
+    SAUCE_USERNAME: "Dranaxel"
+    SAUCE_ACCESS_KEY: "4fac5a89-1765-4932-adca-312953239bdc"
