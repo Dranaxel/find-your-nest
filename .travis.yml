@@ -2,15 +2,6 @@ language: python
 python:
   - "3.5"
 script:
-  - pipenv run pytest
-deploy:
-  provider: pages
-  skip_cleanup: true
-  target_branch: master-1
-  github_token: $GH_TOKEN
-  keep-history: true
-  verbose: true
-  on:
-    branch: depot
-#after_success:
-# - sh .push.sh
+  - pytest
+after_sucess:
+  - sh .push.sh
