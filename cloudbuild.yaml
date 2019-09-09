@@ -7,7 +7,7 @@ steps:
   args: ['push', 'gcr.io/$PROJECT_ID/find-your-nest']
   # Deploy container image to Cloud Run
 - name: 'gcr.io/cloud-builders/gcloud'
-  args: ['beta', 'run', 'deploy', 'find-your-nest', '--image', 'gcr.io/$PROJECT_ID/find-your-nest', '--region', 'europe-west','--platform', 'managed', '--quiet']
+  args: ['beta', 'run', 'deploy', 'find-your-nest', '--image', 'gcr.io/$PROJECT_ID/find-your-nest', '--region', 'europe-west1','--platform', 'managed', '--quiet']
 images:
 - gcr.io/$PROJECT_ID/find-your-nest
 
