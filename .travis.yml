@@ -4,7 +4,6 @@ python:
 script:
   - pytest
 after_success:
-  - gcloud beta run deploy find-your-nest --image gcr.io/flask-252013/github.com/dranaxel/find-your-nest --region europe-west --platform managed --quiet
   - cat .travis_sample > .travis.yml
   - cat tests/.test_sele.py > tests/test_selenium.py
 deploy:
