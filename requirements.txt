@@ -3,4 +3,4 @@ flask
 Flask-login
 opencage
 passlib
-selenium
+pytest

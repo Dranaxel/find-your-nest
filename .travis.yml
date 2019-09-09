@@ -2,10 +2,15 @@ language: python
 python:
   - "3.5"
 script:
-  - pytest
-env:
-  global:
-    SAUCE_USERNAME: "Dranaxel"
-    SAUCE_ACCESS_KEY: "4fac5a89-1765-4932-adca-312953239bdc"
+  - pipenv run pytest
+deploy:
+  provider: pages
+  skip_cleanup: true
+  target_branch: master-1
+  github_token: $GH_TOKEN
+  keep-history: true
+  verbose: true
+  on:
+    branch: depot
 #after_success:
 # - sh .push.sh
