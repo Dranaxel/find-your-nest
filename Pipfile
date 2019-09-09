@@ -11,6 +11,7 @@ passlib = "*"
 Flask = "*"
 Flask-Login = "*"
 pytest = "*"
+selenium = "*"
 
 [requires]
 python_version = "3.5"
