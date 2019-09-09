@@ -1,7 +1,7 @@
 {% extends "MASTER_BODY.html" %}
 {% block main_fct %}
 	{% for item in result %}
-		{% with name=item[0], price=item[1], pic=item[2], describe=item[3] %}
+		{% with name=item[0], price=item[1], pic=item[2], describe=item[3], id_log=item[4] %}
 			{% include "_resultCards.html" %}
 		{% endwith %}
 	{% endfor %}
