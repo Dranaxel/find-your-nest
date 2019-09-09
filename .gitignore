@@ -15,3 +15,5 @@ build/
 
 tests/*
 .travis.yml
+.gitignore
+.push.sh
