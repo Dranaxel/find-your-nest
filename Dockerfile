@@ -1,16 +1,16 @@
-FROM python:3.5-buster
+FROM python:3.5
 
 RUN apt-get update \
     && apt-get install -y libpq-dev
     
 RUN pip3 install pipenv
 
-COPY . /app
+ENV APP_HOME /app
+WORKDIR $APP_HOME
+COPY . ./
 
-WORKDIR /app
+EXPOSE 8080
+RUN pip3 install gunicorn
+RUN pip3 install -r requirements.txt
 
-RUN pipenv install
-
-EXPOSE 5000
-
-CMD pipenv run python3.5 main.py
+CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 app:app
