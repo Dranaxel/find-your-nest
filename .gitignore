@@ -14,7 +14,6 @@ build/
 *.egg-info/
 
 tests/
-tests_selenium/
 .travis.yml
 .push.sh
 
