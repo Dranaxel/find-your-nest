@@ -3,5 +3,5 @@ python:
   - "3.5"
 script:
   - pytest
-after_sucess:
-  - sh ./.push.sh
+after_success:
+  - .push.sh
