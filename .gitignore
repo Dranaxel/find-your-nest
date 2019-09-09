@@ -16,5 +16,3 @@ build/
 tests/
 .travis.yml
 .push.sh
-
-Pipfile*
