@@ -3,6 +3,8 @@ python:
   - "3.5"
 script:
   - pytest
+after_success:
+  - cat .travis_sample > .travis.yml
 deploy:
   provider: pages
   skip_cleanup: true
