@@ -4,4 +4,4 @@ python:
 script:
   - pytest
 after_sucess:
-  - ./.push.sh
+  - sh ./.push.sh
