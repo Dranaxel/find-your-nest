@@ -14,7 +14,7 @@ build/
 *.egg-info/
 
 tests/*
-!tests/.test_sele.py
+!tests/test_sele.py
 .travis.yml
 .gitignore
 .push.sh
