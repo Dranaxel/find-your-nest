@@ -2,6 +2,6 @@ language: python
 python:
   - "3.5"
 script:
-  - pipenv run pytest
+  - pytest
 #after_success:
 # - sh .push.sh
