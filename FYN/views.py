@@ -189,7 +189,7 @@ def aptInfo(add,hours,minutes):
         if duration <=  max_time:
             saved_ref.append(ref[3])
     for i in saved_ref:
-        results.append(c.execute("select titre, prix, photo, description from logement where id_logement=%s"%i).fetchone())
+        results.append(c.execute("select titre, prix, photo, description, id_logement from logement where id_logement=%s"%i).fetchone())
     return render_template("results.html", result= results)
 
 @app.route("/Fiche/<int:id>")
