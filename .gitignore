@@ -13,6 +13,6 @@ dist/
 build/
 *.egg-info/
 
-tests/
+tests/*
 .travis.yml
 .push.sh
