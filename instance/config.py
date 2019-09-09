@@ -6,5 +6,5 @@ class Config(object):
 	navitia_key = "6451613e-bdfe-4194-a3b5-91164c6ae89f"
 
 class DevelopmentConfig(object):
-    Debug =  False
+    Debug = True
     SECRET_KEY = b'This is a huge secret'

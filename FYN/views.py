@@ -7,7 +7,6 @@ from urllib import parse
 import sqlite3, requests, json
 from pathlib import PurePath  
 from passlib.hash import sha256_crypt
-from werkzeug import secure_filename
 from werkzeug.utils import secure_filename
 
 #Import Navitia key
@@ -202,79 +201,51 @@ def Fiche(id):
 
 #Partie pro
 
-@app.route("/infoscompte/", methods=["GET", "POST"])
+@app.route("/infoscompte/")
 @login_required
-def infoscompte(): 
-    if request.method == 'GET':
-        infos_user = c.execute("SELECT maison, appartement, id_adresse FROM  utilisateur where email=?", (current_user.id,)).fetchone()
-        maison = infos_user[0]
-        appartement = infos_user[1]
-        if maison == 'on':
-            type_logement = 'maison'
-        elif appartement == 'on':
-            type_logement = 'appartement'
-        else:
-            type_logement = 'Non précisé'
-        infos = []
-        info_favoris = []
-        #infos utilisateur
-        infos = c.execute("select prenom, email, temps, budget, nb, ville, code_postal, rue FROM  utilisateur JOIN adresse on utilisateur.id_adresse=adresse.id_adresse where email=?", (current_user.id,)).fetchall()
-        # info_favoris = c.execute("SELECT titre, prix, photo, description from logement join favoris on logement.id_logement=favoris.id_logement where favoris.id_utilisateur=?", (apt_ref,)).fetchone()
-        info_favoris = c.execute("select titre, prix, photo, description from logement as l join favoris as f on f.id_logement = l.id_logement join utilisateur as u on u.id_utilisateur = f.id_utilisateur where u.email=?", (current_user.id,)).fetchall()
-        if info_favoris is None: 
-            return render_template("infoscompte.html", infos=infos, type_logement=type_logement)
-        else:
-            return render_template("infoscompte.html", infos=infos, infos_favoris=info_favoris, type_logement=type_logement)
-
-#partie pour update les informations
-    else:
-        new_prenom = request.form['prenom']
-        new_nb = request.form['nb']
-        new_rue = request.form['rue']
-        new_ville = request.form['ville']
-        new_code_postal = request.form['code_postal']
-        new_budget = request.form.get('budget')
-        infos_user = c.execute("SELECT email FROM utilisateur where email=?", (current_user.id,)).fetchone()
-        infos_adresse = c.execute("SELECT nb, rue, ville, code_postal FROM adresse where nb=? and rue=? and ville=? and code_postal=?", (new_nb, new_rue, new_ville, new_code_postal,)).fetchone()
-
-        #adresse non existant     
-        if infos_adresse is None:
-            c.execute("INSERT INTO adresse (nb, rue, ville, code_postal) VALUES(?, ?, ?, ?)", (new_nb, new_rue, new_ville, new_code_postal,))
-            conn.commit()
-            c.execute("DELETE FROM adresse WHERE nb IS NULL AND rue IS NULL AND ville IS NULL")
-            conn.commit()
-            #récupérer l'id_adresse
-            id_adres= c.execute("SELECT id_adresse FROM adresse WHERE nb=? AND rue=? AND ville=?", (new_nb, new_rue, new_ville,)).fetchone()
-            id_adresse = id_adres[0]
-            c.execute("UPDATE utilisateur SET prenom=?, budget=?, id_adresse=? where email=?", (new_budget, new_prenom, id_adresse, current_user.id,))
-            conn.commit()
-            return redirect(url_for('infoscompte'))
-        else : 
-            id_adres= c.execute("SELECT id_adresse FROM adresse WHERE nb=? AND rue=? AND ville=?", (new_nb, new_rue, new_ville,)).fetchone()
-            id_adresse = id_adres[0]
-            c.execute("UPDATE utilisateur SET prenom=?, budget=?, id_adresse=? where email=?",(new_prenom, new_budget, id_adresse, current_user.id,))
-            conn.commit()
-            print(id_adres)
-            return redirect(url_for('infoscompte'))
-    
-def checkextension(namefile):
-    """ Renvoie True si le fichier possède une extension d'image valide. """
-    print(namefile.rsplit('.', 1)[1])
-    return '.' in namefile and namefile.rsplit('.', 1)[1] in ('png', 'jpg', 'jpeg')
-
-def upload():
-    if request.method == 'POST':
-            f = request.files['picture']
-            if f: # on vérifie qu'un fichier a bien été envoyé
-                if checkextension(f.filename): # on vérifie que son extension est valide
-                    name = secure_filename(f.filename)
-                    f.save(os.path.join('./FYN/static/ups', name))
-                    flash ('Image enregistrée', 'success')
-                    return render_template('infoscomptepro.html')
-                else:
-                    flash('Ce fichier n\'est pas dans une extension autorisée!', 'danger')
+def infoscompte():
+    if current_user.is_authenticated:
+        #infoscompte.pro
+        if current_user.pro == 'on':
+            email = current_user.id
+            infos_pro = c.execute("select prenom, email, temps, budget, maison, appartement, id_utilisateur FROM utilisateur where email=?", (email,)).fetchone()    
+            maison = infos_pro[4]
+            appartement = infos_pro[5]
+            infos_adresse = c.execute("select nb, rue, ville, code_postal from adresse inner join utilisateur on adresse.id_adresse=utilisateur.id_adresse where email=?", (email,)).fetchone()
+            if maison == 'on':
+                type_logement = 'maison'
+            elif appartement == 'on':
+                type_logement = 'appartement'
             else:
-                flash('Vous avez oublié de joindre une image !', 'danger')
-                return render_template('infoscomptepro.html')
-    else:               
-        return render_template('infoscomptepro.html')
+                type_logement = 'Non précisé'
+            return render_template("infoscomptepro.html", prenom=infos_pro[0], email=infos_pro[1], temps=infos_pro[2], budget=infos_pro[3], type_logement=type_logement, nb=infos_adresse[0], rue=infos_adresse[1], ville=infos_adresse[2], code_postal=infos_adresse[3])
+        #infoscompte
+
+        else:
+            email =  current_user.id
+            infos = c.execute("select prenom, email, temps, budget, maison, appartement, id_utilisateur FROM  utilisateur where email=?", (email,)).fetchone()    
+            
+            maison = infos[4]
+            appartement = infos[5]
+            
+            if maison == 'on':
+                type_logement = 'maison'
+            elif appartement == 'on':
+                type_logement = 'appartement'
+            else:
+                type_logement = 'Non précisé'
+
+            infos_adresse = c.execute("select nb, rue, ville, code_postal from adresse inner join utilisateur on adresse.id_adresse=utilisateur.id_adresse where email=?", (email,)).fetchone()
+            id_user=infos[6]
+            infos_favoris = c.execute("SELECT titre, prix, photo, description from logement inner join favoris on logement.id_logement=favoris.id_logement where favoris.id_utilisateur=?", (id_user,)).fetchone()
+            
+            if infos_favoris is None :
+                return render_template("infoscompte.html", prenom=infos[0], email=infos[1], temps=infos[2], budget=infos[3], type_logement=type_logement, nb=infos_adresse[0], rue=infos_adresse[1], ville=infos_adresse[2], code_postal=infos_adresse[3])
+            else:
+                return render_template("infoscompte.html", prenom=infos[0], email=infos[1], temps=infos[2], budget=infos[3], type_logement=type_logement, nb=infos_adresse[0], rue=infos_adresse[1], ville=infos_adresse[2], code_postal=infos_adresse[3], titre=infos_favoris[0], prix=infos_favoris[1], photo=infos_favoris[2], description=infos_favoris[3])
+
+    else:
+        return redirect(url_for('main'))
+
+
+        

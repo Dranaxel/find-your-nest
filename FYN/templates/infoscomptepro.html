@@ -1,4 +1,3 @@
- 
 <!DOCTYPE html>
 <html lang="en">
 
@@ -48,36 +47,36 @@
         <div class="card-body">
           <h4 class="card-title">Bonjour {{current_user.prenom}} </h4>
             <h5 class="card-subtitle mb-2 text-muted">Vous pouvez trouver vos informations personnelles et consulter
-              vos biens mis sur le marché</h5> 
+              vos favoris</h6> 
               <form method="post" action="/infoscompte">
           <div class="form-group">
             <label for="exampleInputName">Prénom</label>
             <input type="text" class="form-control" id="exampleInputName" 
-						    value="{{prenom}}">
+						    placeholder={{prenom}}>
           </div>
       
           <div class="form-group">
             <label for="exampleInputMail">Adresse e-mail</label>
             <input type="text" class="form-control" aria-describedby="emailHelp" id="exampleInputMail"
-										 value="{{email}}">
+										 placeholder={{email}}>
           </div>
         <hr>
         <h4 class="Card-title">Ce que vous recherchez</h4>          
           <div class="form-group">
             <label for="exampleInputNumber">Numéro</label>
-	    <input type="number" class="form-control" id="exampleInputNumber" value={{nb}}>
+	    <input type="number" class="form-control" id="exampleInputNumber" placeholder={{nb}}>
           </div>
           <div class="form-group">
               <label for="exampleInputStreet">Rue, allée, ...</label>
-	      <input type="text" class="form-control" id="exampleInputStreet" value="{{rue}}">
+	      <input type="text" class="form-control" id="exampleInputStreet" placeholder={{rue}}>
             </div>
           <div class="form-group">
             <label for="exampleInputCity">Ville</label>
-	    <input type="text" class="form-control" id="exampleInputCity" value="{{ville}}">
+	    <input type="text" class="form-control" id="exampleInputCity" placeholder={{ville}}>
           </div>
           <div class="form-group">
             <label for="exampleInputZip">Code postal</label>
-	    <input type="text" class="form-control" id="exampleInputZip" value={{code_postal}} maxlength="5">
+	    <input type="text" class="form-control" id="exampleInputZip" placeholder={{code_postal}} maxlength="5">
           </div>
           <div class="form-group">
 		  <h6><label for="exampleInputMail">Temps de trajet maximal:</label></h6>
@@ -105,7 +104,6 @@
         </div>
       </div>
            
-      
      <div class="d-flex justify-content-center my-5">
         <div class="card w-75">
           <div class="card-body">
@@ -114,29 +112,29 @@
               <div class="form-group">
                 <label for="exampleInputNumber">Numéro</label>
                 <input type="text" class="form-control" id="exampleInputNumber"
-                  value="Entrez le numéro de rue de votre bien">
+                  placeholder="Entrez le numéro de rue de votre bien">
               </div>
               <div class="form-group">
                 <label for="exampleInputStreet">Rue, allée, avenue, ...</label>
                 <input type="text" class="form-control" id="exampleInputStreet"
-                  value="Entrez la rue, allée, avenue, ... de votre bien">
+                  placeholder="Entrez la rue, allée, avenue, ... de votre bien">
               </div>
               <div class="form-group">
                 <label for="exampleInputCity">Ville</label>
-                <input type="text" class="form-control" id="exampleInputCity" value="Entrez la ville de votre bien">
+                <input type="text" class="form-control" id="exampleInputCity" placeholder="Entrez la ville de votre bien">
               </div>
               <div class="form-group">
                 <label for="exampleInputZip">Code postal</label>
                 <input type="text" class="form-control" id="exampleInputZip"
-                  value="Entrez le code postal de votre bien" maxlength="5">
+                  placeholder="Entrez le code postal de votre bien" maxlength="5">
               </div>
               <div class="form-group">
                 <label for="exampleInputDesc">Description</label>
-                <textarea class="form-control" id="exampleInputDesc" rows="5" value="Décrivez votre bien"></textarea>
+                <textarea class="form-control" id="exampleInputDesc" rows="5" placeholder="Décrivez votre bien"></textarea>
               </div>
               <div class="form-group">
                 <label for="exampleInputPrice">Prix</label>
-                <input type="number" class="form-control" id="exampleInputPrice" value="Entrez le prix de votre bien">
+                <input type="number" class="form-control" id="exampleInputPrice" placeholder="Entrez le prix de votre bien">
               </div>
               <label for="exampleInputImage">Joindre une image</label> <br />
               <label for="fich" class="custom-file-upload">
@@ -149,6 +147,18 @@
       </div>
     </div>
       
+    
+    <!-- <script>
+      window.onload = function () {
+        var map = L.map('map').setView([48.871620, 2.345940], 18);
+
+        var layer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
+        });
+
+        map.addLayer(layer);
+      }; 
+    </script> -->
 <!-- slider script -->
 <script>
     function sliderFunction() {
