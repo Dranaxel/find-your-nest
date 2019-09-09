@@ -1,5 +1,11 @@
 language: python
 python:
   - "3.5"
+install:
+  - pip install -r requirements.txt
 script:
-  - pipenv run pytest
+  - pytest
+env:
+  global:
+    SAUCE_USERNAME: "Dranaxel"
+    SAUCE_ACCESS_KEY: "4fac5a89-1765-4932-adca-312953239bdc"
