@@ -213,15 +213,34 @@ def aptInfo(add,hours,minutes):
                 conn.commit()
                 return redirect(url_for('infoscompte'))
 
-@app.route("/Fiche/<int:id>")
+@app.route("/Fiche/<int:id>", methods=["GET","POST"])
 def Fiche(id):
-    prix_sql = c.execute("SELECT prix FROM logement WHERE id_logement=?", (id,)).fetchone()
-    PostalCode_sql = c.execute("select code_postal from adresse inner JOIN logement on logement.id_adresse=adresse.id_adresse where logement.id_logement= ?", (id,)).fetchone() 
-    nb_pieces_sql = c.execute("SELECT nb_piece FROM logement WHERE id_logement=?", (id,)).fetchone()
-    surface_sql =  c.execute("SELECT superficie FROM logement WHERE id_logement=?", (id,)).fetchone()
-    describe_sql = c.execute("SELECT description FROM logement where id_logement=?", (id,)).fetchone()
-    pic_sql = c.execute("SELECT photo FROM logement where id_logement=?", (id,)).fetchone()
-    return render_template("FicheAppart.html", Prix=prix_sql[0], PostalCode=PostalCode_sql[0], nb_pieces=nb_pieces_sql[0], surface=surface_sql[0], describe= describe_sql[0], pic=pic_sql[0])
+    if request.method == 'GET':
+        prix_sql = c.execute("SELECT prix FROM logement WHERE id_logement=?", (id,)).fetchone()
+        PostalCode_sql = c.execute("select code_postal from adresse inner JOIN logement on logement.id_adresse=adresse.id_adresse where logement.id_logement= ?", (id,)).fetchone() 
+        nb_pieces_sql = c.execute("SELECT nb_piece FROM logement WHERE id_logement=?", (id,)).fetchone()
+        surface_sql =  c.execute("SELECT superficie FROM logement WHERE id_logement=?", (id,)).fetchone()
+        describe_sql = c.execute("SELECT description FROM logement where id_logement=?", (id,)).fetchone()
+        pic_sql = c.execute("SELECT photo FROM logement where id_logement=?", (id,)).fetchone()
+        return render_template("FicheAppart.html", Prix=prix_sql[0], PostalCode=PostalCode_sql[0], nb_pieces=nb_pieces_sql[0], surface=surface_sql[0], describe= describe_sql[0], pic=pic_sql[0])
+
+    else : 
+            logement_sql = c.execute("SELECT id_logement FROM logement WHERE id_logement=?", (id,)).fetchone()
+            id_log=logement_sql[0]
+            # favoris_log = request.form.get('log_fav')
+            id_user = c.execute("SELECT id_utilisateur FROM utilisateur where email=?", (current_user.id,)).fetchone()
+            id_utilisateur = id_user[0]
+            id_fav = c.execute("SELECT * FROM favoris where id_utilisateur=? and id_logement=?", (id_utilisateur, id,)).fetchone()
+            print(id)
+            # if favoris_log == 'on':
+            if id_fav is not None : 
+                flash("Le logement est déjà dans vos favoris !", "danger")
+                return redirect(url_for('Fiche', id=id_log))
+
+            else:
+                c.execute("INSERT INTO favoris(id_logement, id_utilisateur) VALUES(? , ?)", (id, id_utilisateur))
+                conn.commit()
+                return redirect(url_for('main'))
 
 #Partie pro
 
