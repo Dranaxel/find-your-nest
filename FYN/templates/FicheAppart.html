@@ -4,20 +4,24 @@
             <div class="d-flex justify-content-center my-2">
                     <div class="card w-75">
                             <div class="card-body">
-                              <h2 class="card-title">Appartement</h2>
-			      <h3 class="card-subtitle mb-2 text-muted">{{Prix}} €</h3>
-                              <div class="row d-flex justify-content-center my-2">
-				      <img src="{{url_for('static', filename=pic)}}" class="rounded" style="width: 500px">
-                              </div>
-                              <div class="row my-3">
-				      <p class="card-text ">{{describe}}</p>
-                                </div>
-                                <div class="row">
-					<div class="col-md-3">{{PostalCode}}</div>
-					<div class="col-md-3">{{nb_pieces}}  Pièces</div>
-                                    <div class="col-md-3">1 Chambre</div>
-				    <div class="col-md-3">{{surface}} m²</div>
-                                </div>
+			       {%include "_message.html"%}
+                    		<form method="POST">
+                              		<h2 class="card-title">Appartement</h2>
+			      		<h3 class="card-subtitle mb-2 text-muted">{{Prix}} €</h3>
+                              		<div class="row d-flex justify-content-center my-2">
+				      		<img src="{{url_for('static', filename=pic)}}" class="rounded" style="width: 500px">
+                              		</div>
+                              		<div class="row my-3">
+				      		<p class="card-text ">{{describe}}</p>
+                                	</div>
+					<div class="row">
+						<div class="col-md-3">{{PostalCode}}</div>
+						<div class="col-md-3">{{nb_pieces}}  Pièces</div>
+					    <div class="col-md-3">1 Chambre</div>
+					    <div class="col-md-3">{{surface}} m²</div>
+					</div>
+					<div><button type="submit" class="btn btn-primary float-right">Ajouter aux favoris</button></div>
+				</form>
                             </div>
                     </div>
             </div>
