@@ -159,38 +159,59 @@ def deconnexion():
     return redirect(url_for('connexion'))
 
 
-@app.route("/results/add=<string:add>&h=<int:hours>&m=<int:minutes>")
+@app.route("/results/add=<string:add>&h=<int:hours>&m=<int:minutes>", methods=["GET", "POST"])
 def aptInfo(add,hours,minutes):
-    saved_ref =[]
-    results = []
-    #convert the main address in GPS position with opencau
-    opencage_resp = opencage.geocode(add)
-    origin_coord = list(opencage_resp[0]['geometry'].values())      
-    origin_coord = str(origin_coord[1]) +";"+ str(origin_coord[0])
-    
-    #convert time in seconds
-    max_time = hours*3600 + minutes*60
+    if request.method == 'GET':
+        saved_ref =[]
+        results = []
+        #convert the main address in GPS position with opencau
+        opencage_resp = opencage.geocode(add)
+        origin_coord = list(opencage_resp[0]['geometry'].values())      
+        origin_coord = str(origin_coord[1]) +";"+ str(origin_coord[0])
 
-    #get a list of all the apt in the database
-    apt_list = c.execute("select adresse.nb, adresse.rue, adresse.ville, logement.id_logement from adresse inner JOIN logement on logement.id_adresse=adresse.id_adresse").fetchall()
-    for ref in apt_list:
-        try:
-            dest_add = ",".join(map(str,ref[:3]))+",FRANCE"
-            opencage_resp = opencage.geocode(dest_add, language='fr', no_annotations=1, limit=1, bounds="1.19202,48.41462,3.36182,49.26780")
-            dest_coord = list(opencage_resp[0]['geometry'].values())
-            dest_coord = str(dest_coord[1])+";"+str(dest_coord[0])
-            navitia_param = {'from': origin_coord, "to": dest_coord} 
-            navitia_call = requests.get(navitia_url, navitia_param, auth=(navitia_key, ""))
-            navitia_call = json.loads(navitia_call.text)
-            duration = navitia_call['journeys'][0]["duration"]
-        except:
-            print("error")
-            continue
-        if duration <=  max_time:
-            saved_ref.append(ref[3])
-    for i in saved_ref:
-        results.append(c.execute("select titre, prix, photo, description, id_logement from logement where id_logement=%s"%i).fetchone())
-    return render_template("results.html", result= results)
+        #convert time in seconds
+        max_time = hours*3600 + minutes*60
+
+        #get a list of all the apt in the database
+        apt_list = c.execute("select adresse.nb, adresse.rue, adresse.ville, logement.id_logement from adresse inner JOIN logement on logement.id_adresse=adresse.id_adresse").fetchall()
+        for ref in apt_list:
+            try:
+                dest_add = ",".join(map(str,ref[:3]))+",FRANCE"
+                opencage_resp = opencage.geocode(dest_add, language='fr', no_annotations=1, limit=1, bounds="1.19202,48.41462,3.36182,49.26780")
+                dest_coord = list(opencage_resp[0]['geometry'].values())
+                dest_coord = str(dest_coord[1])+";"+str(dest_coord[0])
+                navitia_param = {'from': origin_coord, "to": dest_coord} 
+                navitia_call = requests.get(navitia_url, navitia_param, auth=(navitia_key, ""))
+                navitia_call = json.loads(navitia_call.text)
+                duration = navitia_call['journeys'][0]["duration"]
+            except:
+                print("error")
+                continue
+            if duration <=  max_time:
+                saved_ref.append(ref[3])
+        for i in saved_ref:
+            results.append(c.execute("select titre, prix, photo, description, id_logement from logement where id_logement=%s"%i).fetchone())
+        return render_template("results.html", result= results)
+
+    else : 
+        if 'ad_fav' in request.form:
+            id_logement = request.form.get('ad_fav')
+            # logement_sql = c.execute("SELECT id_logement FROM logement WHERE id_logement=?", (id_logement,)).fetchone()
+            # id_log=logement_sql[0]
+            # favoris_log = request.form.get('log_fav')
+            id_user = c.execute("SELECT id_utilisateur FROM utilisateur where email=?", (current_user.id,)).fetchone()
+            id_utilisateur = id_user[0]
+            id_fav = c.execute("SELECT * FROM favoris where id_utilisateur=? and id_logement=?", (id_utilisateur, id_logement,)).fetchone()
+            print(id_fav)
+            # if favoris_log == 'on':
+            if id_fav is not None : 
+                flash("Le logement est déjà dans vos favoris !", "danger")
+                return redirect(url_for('main'))
+
+            else:
+                c.execute("INSERT INTO favoris(id_logement, id_utilisateur) VALUES(? , ?)", (id_logement, id_utilisateur,))
+                conn.commit()
+                return redirect(url_for('infoscompte'))
 
 @app.route("/Fiche/<int:id>")
 def Fiche(id):
