@@ -1,18 +1,26 @@
         <div class="d-flex justify-content-center my-2">
-
             <div class="card w-75">
-                <div class="card card-body h-100 justify-content-center">
-                    <h5 class="card-title">{{name}}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">{{price}}€</h6>
-                    <div class="row">
-                        <div class="col-md-4 ">
-                            <img src="{{url_for('static', filename=pic)}}" style="width: 100%">
+                <form method="POST">
+                    <div class="form-group">
+                        <div class="card card-body h-100 justify-content-center">
+                            <h5 class="card-title">{{name}}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{price}}€</h6>
+                            <div class="row">
+                                <div class="col-md-4 ">
+                                    <img src="{{url_for('static', filename=pic)}}" style="width: 100%">
+                                </div>
+                                <div class="col-md-8">
+                                    <p class="card-text "> {{describe}} </p>
+                                    <div class="d-flex justify-content-end"><button type="button" class="btn btn-primary"><a href="{{url_for('Fiche', id=id_log)}}">+ d'infos</a></button></div>
+                                </div>
+                                <div>
+                                    <button type="submit" class="btn btn-primary float-right" name=ad_fav value={{id_log}}>Ajouter aux favoris</button></div>
+                                    <!-- <input type="submit" name=ad_fav value={{id_log}}> -->
+                                    <!-- <label>Ajout aux favoris</label> -->
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-8">
-                            <p class="card-text "> {{describe}} </p>
-			    <div class="d-flex justify-content-end"><button type="button" class="btn btn-primary"><a href="{{url_for('Fiche', id=id_log)}}">+ d'infos</a></button></div>
-			</div>                        
                     </div>
-                </div>
+                </form>
             </div>
         </div>
