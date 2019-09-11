@@ -2,7 +2,7 @@ language: python
 python:
   - "3.5"
 script:
-  - sleep 5m
+  - sleep 10s
   - pytest
 env:
   global:
