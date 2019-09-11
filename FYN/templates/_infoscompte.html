@@ -50,14 +50,14 @@
               </p>
           </div>
       </div>
-        {% else %} 
+        {% else %}
+	{% endif %}
           <div class="float-left"><button type="submit" class="btn btn-primary" name="infos_user">Enregistrer</button></div>
           <div class="float-right"><button type="button" class="btn btn-danger"><a href="{{url_for('deconnexion')}}">Se déconnecter</a></button></div>
         </form>
       </div>
     </div>
   </div>
-{% endif %} 
 {% if current_user.pro == 'on' %}
 {% else %} 
 
@@ -65,7 +65,8 @@
   <h4 class="card-title">Mes favoris</h4>
 </div>
 
-{% endif %} 
+{% endif %}
+ 
 
   <!-- <script>
     window.onload = function () {
