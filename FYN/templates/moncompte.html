@@ -63,11 +63,13 @@
               <input type="password" name="confirmer" class="form-control" id="exampleInputPassword" placeholder="Confirmez votre mot de passe">
             </div>
             <div class="form-check">
-              <input class="form-check-input" name="pro" type="checkbox" id="checkBoxPro">
+              <input class="form-check-input" name="pro" type="checkbox" id="checkBoxPro" onclick="DoCheckUncheckDisplay(this,'checkbox-checked','checkbox-unchecked')">
               <label class="form-check-label" for="checkboxPro">Je suis un(e) professionnel(le)</label>
             </div>
           <hr>
+          <div id="checkbox-unchecked" style="display:block">
             <h4 class="Card-title">Ce que vous recherchez</h4>
+            <div id="checkbox-unchecked" style="display:block">
               <div class="form-group">
                 <label for="exampleInputNumber">Numéro</label>
                 <input type="number" name="nb" class="form-control" id="exampleInputNumber" placeholder="Entrez le numéro de rue">
@@ -107,6 +109,8 @@
                   <label class="form-check-label" for="checkboxHouse">Maison</label>
                 </div>
               </div>
+            </div>
+          </div>
           <div><button type="submit" class="btn btn-primary float-right">S'inscrire</button></div>
         </form>
       </div>
@@ -121,4 +125,22 @@
     $("#formControlSlider").html(val);
   }
 </script>
+
+<!-- Fonction pour retirer la partir vous recherchez lorsqu'on coche une case   -->
+<script>
+  function DoCheckUncheckDisplay(d,dchecked,dunchecked)
+  {
+     if( d.checked == true )
+     {
+        document.getElementById(dunchecked).style.display = "none";
+     }
+     else
+     {
+        document.getElementById(dunchecked).style.display = "block";
+     }
+  }
+  </script>
+ 
+ 
 </html>
+
