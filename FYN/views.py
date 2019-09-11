@@ -269,7 +269,7 @@ def infoscompte():
 
 #partie pour update les informations
     else:
-        if request.form == 'infos_user':
+        if 'infos_user' in request.form:
             new_prenom = request.form['prenom']
             new_nb = request.form['nb']
             new_rue = request.form['rue']
