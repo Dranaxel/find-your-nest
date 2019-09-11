@@ -13,6 +13,7 @@
             <input type="text" name="email" class="form-control" aria-describedby="emailHelp" id="exampleInputMail" value="{{email}}" disabled>
           </div>
         <hr>
+        {% if current_user.pro == 'None' %}
         <h4 class="Card-title">Ce que vous recherchez</h4>          
           <div class="form-group">
             <label for="exampleInputNumber">Numéro</label>
@@ -49,17 +50,23 @@
               </p>
           </div>
       </div>
-       
+      {% else %} 
           <div class="float-left"><button type="submit" class="btn btn-primary" name="infos_user">Enregistrer</button></div>
           <div class="float-right"><button type="button" class="btn btn-danger"><a href="{{url_for('deconnexion')}}">Se déconnecter</a></button></div>
         </form>
       </div>
     </div>
   </div>
+ {% endif %} 
+
+{% if current_user.pro == 'on' %}
+{% else %} 
 
 <div class="d-flex justify-content-center mt-5 mb-3">
   <h4 class="card-title">Mes favoris</h4>
 </div>
+
+{% endif %} 
 
   <!-- <script>
     window.onload = function () {
