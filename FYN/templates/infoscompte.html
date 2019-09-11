@@ -18,7 +18,7 @@
 
   {% block scnd_fct %}
     {% for item in infos_favoris %}
-      {% with titre=item[0], prix=item[1], photo=item[2], description=item[3] %}
+      {% with titre=item[0], prix=item[1], photo=item[2], description=item[3], id_log=item[4] %}
         {% include "_favorisCards.html" %}
       {% endwith %}
     {% endfor %}

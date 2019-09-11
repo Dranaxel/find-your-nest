@@ -205,7 +205,6 @@ def aptInfo(add,hours,minutes):
             print(id_fav)
             # if favoris_log == 'on':
             if id_fav is not None : 
-                flash("Le logement est déjà dans vos favoris !", "danger")
                 return redirect(url_for('main'))
 
             else:
@@ -262,7 +261,7 @@ def infoscompte():
         #infos utilisateur
         infos = c.execute("select prenom, email, temps, budget, nb, ville, code_postal, rue FROM  utilisateur JOIN adresse on utilisateur.id_adresse=adresse.id_adresse where email=?", (current_user.id,)).fetchall()
         # info_favoris = c.execute("SELECT titre, prix, photo, description from logement join favoris on logement.id_logement=favoris.id_logement where favoris.id_utilisateur=?", (apt_ref,)).fetchone()
-        info_favoris = c.execute("select titre, prix, photo, description from logement as l join favoris as f on f.id_logement = l.id_logement join utilisateur as u on u.id_utilisateur = f.id_utilisateur where u.email=?", (current_user.id,)).fetchall()
+        info_favoris = c.execute("select titre, prix, photo, description, l.id_logement from logement as l join favoris as f on f.id_logement = l.id_logement join utilisateur as u on u.id_utilisateur = f.id_utilisateur where u.email=?", (current_user.id,)).fetchall()
         if info_favoris is None: 
             return render_template("infoscompte.html", infos=infos, type_logement=type_logement)
         else:
@@ -270,35 +269,45 @@ def infoscompte():
 
 #partie pour update les informations
     else:
-        new_prenom = request.form['prenom']
-        new_nb = request.form['nb']
-        new_rue = request.form['rue']
-        new_ville = request.form['ville']
-        new_code_postal = request.form['code_postal']
-        new_budget = request.form.get('budget')
-        infos_user = c.execute("SELECT email FROM utilisateur where email=?", (current_user.id,)).fetchone()
-        infos_adresse = c.execute("SELECT nb, rue, ville, code_postal FROM adresse where nb=? and rue=? and ville=? and code_postal=?", (new_nb, new_rue, new_ville, new_code_postal,)).fetchone()
+        if request.form == 'infos_user':
+            new_prenom = request.form['prenom']
+            new_nb = request.form['nb']
+            new_rue = request.form['rue']
+            new_ville = request.form['ville']
+            new_code_postal = request.form['code_postal']
+            new_budget = request.form.get('budget')
+            infos_user = c.execute("SELECT email FROM utilisateur where email=?", (current_user.id,)).fetchone()
+            infos_adresse = c.execute("SELECT nb, rue, ville, code_postal FROM adresse where nb=? and rue=? and ville=? and code_postal=?", (new_nb, new_rue, new_ville, new_code_postal,)).fetchone()
 
-        #adresse non existant     
-        if infos_adresse is None:
-            c.execute("INSERT INTO adresse (nb, rue, ville, code_postal) VALUES(?, ?, ?, ?)", (new_nb, new_rue, new_ville, new_code_postal,))
-            conn.commit()
-            c.execute("DELETE FROM adresse WHERE nb IS NULL AND rue IS NULL AND ville IS NULL")
-            conn.commit()
-            #récupérer l'id_adresse
-            id_adres= c.execute("SELECT id_adresse FROM adresse WHERE nb=? AND rue=? AND ville=?", (new_nb, new_rue, new_ville,)).fetchone()
-            id_adresse = id_adres[0]
-            c.execute("UPDATE utilisateur SET prenom=?, budget=?, id_adresse=? where email=?", (new_budget, new_prenom, id_adresse, current_user.id,))
+            #adresse non existant     
+            if infos_adresse is None:
+                c.execute("INSERT INTO adresse (nb, rue, ville, code_postal) VALUES(?, ?, ?, ?)", (new_nb, new_rue, new_ville, new_code_postal,))
+                conn.commit()
+                c.execute("DELETE FROM adresse WHERE nb IS NULL AND rue IS NULL AND ville IS NULL")
+                conn.commit()
+                #récupérer l'id_adresse
+                id_adres= c.execute("SELECT id_adresse FROM adresse WHERE nb=? AND rue=? AND ville=?", (new_nb, new_rue, new_ville,)).fetchone()
+                id_adresse = id_adres[0]
+                c.execute("UPDATE utilisateur SET prenom=?, budget=?, id_adresse=? where email=?", (new_budget, new_prenom, id_adresse, current_user.id,))
+                conn.commit()
+                return redirect(url_for('infoscompte'))
+            else : 
+                id_adres= c.execute("SELECT id_adresse FROM adresse WHERE nb=? AND rue=? AND ville=?", (new_nb, new_rue, new_ville,)).fetchone()
+                id_adresse = id_adres[0]
+                c.execute("UPDATE utilisateur SET prenom=?, budget=?, id_adresse=? where email=?",(new_prenom, new_budget, id_adresse, current_user.id,))
+                conn.commit()
+                print(id_adres)
+                return redirect(url_for('infoscompte'))
+        
+        elif 'del_fav' in request.form: 
+            id_logement = request.form.get('del_fav')
+            id_user = c.execute("SELECT id_utilisateur FROM utilisateur where email=?", (current_user.id,)).fetchone()
+            id_utilisateur = id_user[0]
+            c.execute("DELETE FROM favoris where id_logement=? and id_utilisateur=?", (id_logement, id_utilisateur,))    
             conn.commit()
             return redirect(url_for('infoscompte'))
-        else : 
-            id_adres= c.execute("SELECT id_adresse FROM adresse WHERE nb=? AND rue=? AND ville=?", (new_nb, new_rue, new_ville,)).fetchone()
-            id_adresse = id_adres[0]
-            c.execute("UPDATE utilisateur SET prenom=?, budget=?, id_adresse=? where email=?",(new_prenom, new_budget, id_adresse, current_user.id,))
-            conn.commit()
-            print(id_adres)
-            return redirect(url_for('infoscompte'))
-    
+
+
 def checkextension(namefile):
     """ Renvoie True si le fichier possède une extension d'image valide. """
     print(namefile.rsplit('.', 1)[1])
