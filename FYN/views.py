@@ -218,13 +218,15 @@ def aptInfo(add,hours,minutes):
 @app.route("/Fiche/<int:id>", methods=["GET","POST"])
 def Fiche(id):
     if request.method == 'GET':
+        titre_sql = c.execute("SELECT titre FROM logement where id_logement=?", (id,)).fetchone()
+        nb_chambre_sql = c.execute("SELECT nb_chambre FROM logement where id_logement=?", (id,)).fetchone()
         prix_sql = c.execute("SELECT prix FROM logement WHERE id_logement=?", (id,)).fetchone()
         PostalCode_sql = c.execute("select code_postal from adresse inner JOIN logement on logement.id_adresse=adresse.id_adresse where logement.id_logement= ?", (id,)).fetchone() 
         nb_pieces_sql = c.execute("SELECT nb_piece FROM logement WHERE id_logement=?", (id,)).fetchone()
         surface_sql =  c.execute("SELECT superficie FROM logement WHERE id_logement=?", (id,)).fetchone()
         describe_sql = c.execute("SELECT description FROM logement where id_logement=?", (id,)).fetchone()
         pic_sql = c.execute("SELECT photo FROM logement where id_logement=?", (id,)).fetchone()
-        return render_template("FicheAppart.html", Prix=prix_sql[0], PostalCode=PostalCode_sql[0], nb_pieces=nb_pieces_sql[0], surface=surface_sql[0], describe= describe_sql[0], pic=pic_sql[0])
+        return render_template("FicheAppart.html", titre=titre_sql[0], nb_chambre=nb_chambre_sql[0], Prix=prix_sql[0], PostalCode=PostalCode_sql[0], nb_pieces=nb_pieces_sql[0], surface=surface_sql[0], describe= describe_sql[0], pic=pic_sql[0])
 
     else : 
             logement_sql = c.execute("SELECT id_logement FROM logement WHERE id_logement=?", (id,)).fetchone()
