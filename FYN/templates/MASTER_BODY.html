@@ -49,17 +49,17 @@
 	{% endblock %}
 
 	{% block scnd_fct %}
-    	{% endblock %}
-    
-    	{% if current_user.pro == 'on' %}
-        	{% block listepro_fct %}
-        	{% endblock %}
-    	{% endif %}
+    {% endblock %}
+
+    {% if current_user.pro == 'on' %}
+        {% block listepro_fct %}
+        {% endblock %}
+    {% endif %}
     
 	{% if current_user.pro == 'on' %}
-        	{% block mainpro_fct %}
-        	{% endblock %}
-    	{% endif %}
+        {% block mainpro_fct %}
+        {% endblock %}
+    {% endif %}
 
 </body>
 
