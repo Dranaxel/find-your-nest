@@ -6,40 +6,64 @@
       {%include "_message.html"%} 
       <form action="/infoscompte/" method="POST" enctype="multipart/form-data">
         <div class="form-group">
+          <label for="InputTitle">Titre</label>
+          <input name="titre" type="text" class="form-control" id="InputTile"
+            placeholder="Entrez le titre de votre bien">
+        </div>
+        <div class="form-group">
           <label for="InputNumber">Numéro</label>
-          <input type="text" class="form-control" id="InputNumber"
+          <input name="nb" type="text" class="form-control" id="InputNumber"
             placeholder="Entrez le numéro de rue de votre bien">
         </div>
         <div class="form-group">
           <label for="InputStreet">Rue, allée, avenue, ...</label>
-          <input type="text" class="form-control" id=InputStreet"
+          <input name="rue" type="text" class="form-control" id="InputStreet"
             placeholder="Entrez la rue, allée, avenue, ... de votre bien">
         </div>
         <div class="form-group">
           <label for="InputCity">Ville</label>
-          <input type="text" class="form-control" id="InputCity" placeholder="Entrez la ville de votre bien">
+          <input name="ville" type="text" class="form-control" id="InputCity" placeholder="Entrez la ville de votre bien">
         </div>
         <div class="form-group">
           <label for="InputZip">Code postal</label>
-          <input type="text" class="form-control" id="InputZip"
+          <input name="code_postal" type="text" class="form-control" id="InputZip"
             placeholder="Entrez le code postal de votre bien" maxlength="5">
         </div>
         <div class="form-group">
           <label for="InputDesc">Description</label>
-          <textarea class="form-control" id="InputDesc" rows="5" placeholder="Décrivez votre bien"></textarea>
+          <textarea name="description" class="form-control" id="InputDesc" rows="5" placeholder="Décrivez votre bien"></textarea>
         </div>
         <div class="form-group">
-          <label for="InputPrice">Prix</label>
-          <input type="number" class="form-control" id="InputPrice" placeholder="Entrez le prix de votre bien">
+          <label for="InputSurface">Superficie m²</label>
+          <input name="superficie" type="text" class="form-control" id="InputSurface" placeholder="Entrez la superficie de votre bien">
+        </div>
+        <div class="form-group">
+          <label for="InputSurface">Nombre de chambres : </label>
+          <input name="nb_chambre" type="text" class="form-control" id="InputSurface" placeholder="Entrez le nombre de chambres">
+        </div>
+        <div class="form-group">
+          <label for="InputPrice">Prix €</label>
+          <input name="prix" type="number" class="form-control" id="InputPrice" placeholder="Entrez le prix de votre bien">
+        </div>
+        <div>
+          <label for="formControlRange">Type de logement</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="checkbox" name="appart" id="checkboxFlat">
+          <label class="form-check-label" for="checkboxFlat"> Appartement</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" name="maison" type="checkbox" id="checkboxHouse" >
+          <label class="form-check-label" for="checkboxHouse">Maison</label>
         </div>
         <div class="form-group">
           <label for="picture">Joindre une image</label> <br />
           <div class="custom-file">
-            <input type="file" class="custom-file-input" id="picture" name="picture" />
+            <input type="file" class="custom-file-input" id="picture" name="photo" />
             <label class="custom-file-label" for="picture">Joindre une image de votre bien</label>
           </div>              
         <div class="form-group">
-          <button name="uploadbien" value="uploadbienvalue" type="submit" class="btn btn-primary float-right">Enregistrer votre
+          <button name="uploadbien" value="uploadbien" type="submit" class="btn btn-primary float-right">Enregistrer votre
             bien</button>
         </div>
         </div>
