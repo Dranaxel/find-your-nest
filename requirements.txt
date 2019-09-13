@@ -3,5 +3,6 @@ flask
 Flask-login
 opencage
 passlib
+mailjet_rest
 pytest
 selenium

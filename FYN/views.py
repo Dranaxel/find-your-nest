@@ -7,8 +7,10 @@ from urllib import parse
 import sqlite3, requests, json
 from pathlib import PurePath  
 from passlib.hash import sha256_crypt
-from werkzeug import secure_filename
+# from werkzeug import secure_filename
 from werkzeug.utils import secure_filename
+from FYN.mail import envoyer_mail
+import os
 
 #Import Navitia key
 navitia_key = app.config['NAVITIA']
@@ -144,7 +146,8 @@ def moncompte():
                     conn.commit()
                     c.execute("UPDATE utilisateur SET id_adresse=? WHERE email=?", (id_adresse, email,))
                     conn.commit()
-                    
+
+            envoyer_mail(email,prenom)    
             return redirect(url_for('connexion'))
         else:
             flash("Les mots de passe ne correspondent pas", "danger")
@@ -215,13 +218,15 @@ def aptInfo(add,hours,minutes):
 @app.route("/Fiche/<int:id>", methods=["GET","POST"])
 def Fiche(id):
     if request.method == 'GET':
+        titre_sql = c.execute("SELECT titre FROM logement where id_logement=?", (id,)).fetchone()
+        nb_chambre_sql = c.execute("SELECT nb_chambre FROM logement where id_logement=?", (id,)).fetchone()
         prix_sql = c.execute("SELECT prix FROM logement WHERE id_logement=?", (id,)).fetchone()
         PostalCode_sql = c.execute("select code_postal from adresse inner JOIN logement on logement.id_adresse=adresse.id_adresse where logement.id_logement= ?", (id,)).fetchone() 
         nb_pieces_sql = c.execute("SELECT nb_piece FROM logement WHERE id_logement=?", (id,)).fetchone()
         surface_sql =  c.execute("SELECT superficie FROM logement WHERE id_logement=?", (id,)).fetchone()
         describe_sql = c.execute("SELECT description FROM logement where id_logement=?", (id,)).fetchone()
         pic_sql = c.execute("SELECT photo FROM logement where id_logement=?", (id,)).fetchone()
-        return render_template("FicheAppart.html", Prix=prix_sql[0], PostalCode=PostalCode_sql[0], nb_pieces=nb_pieces_sql[0], surface=surface_sql[0], describe= describe_sql[0], pic=pic_sql[0])
+        return render_template("FicheAppart.html", titre=titre_sql[0], nb_chambre=nb_chambre_sql[0], Prix=prix_sql[0], PostalCode=PostalCode_sql[0], nb_pieces=nb_pieces_sql[0], surface=surface_sql[0], describe= describe_sql[0], pic=pic_sql[0])
 
     else : 
             logement_sql = c.execute("SELECT id_logement FROM logement WHERE id_logement=?", (id,)).fetchone()
@@ -247,25 +252,29 @@ def Fiche(id):
 @login_required
 def infoscompte(): 
     if request.method == 'GET':
-        infos_user = c.execute("SELECT maison, appartement, id_adresse FROM  utilisateur where email=?", (current_user.id,)).fetchone()
-        maison = infos_user[0]
-        appartement = infos_user[1]
-        if maison == 'on':
-            type_logement = 'maison'
-        elif appartement == 'on':
-            type_logement = 'appartement'
+        if current_user.pro == 'on':
+            infos = c.execute("select prenom, email, temps, budget, nb, ville, code_postal, rue FROM  utilisateur JOIN adresse on utilisateur.id_adresse=adresse.id_adresse where email=?", (current_user.id,)).fetchall()
+            return render_template("infoscompte.html", infos=infos)
         else:
-            type_logement = 'Non précisé'
-        infos = []
-        info_favoris = []
-        #infos utilisateur
-        infos = c.execute("select prenom, email, temps, budget, nb, ville, code_postal, rue FROM  utilisateur JOIN adresse on utilisateur.id_adresse=adresse.id_adresse where email=?", (current_user.id,)).fetchall()
-        # info_favoris = c.execute("SELECT titre, prix, photo, description from logement join favoris on logement.id_logement=favoris.id_logement where favoris.id_utilisateur=?", (apt_ref,)).fetchone()
-        info_favoris = c.execute("select titre, prix, photo, description, l.id_logement from logement as l join favoris as f on f.id_logement = l.id_logement join utilisateur as u on u.id_utilisateur = f.id_utilisateur where u.email=?", (current_user.id,)).fetchall()
-        if info_favoris is None: 
-            return render_template("infoscompte.html", infos=infos, type_logement=type_logement)
-        else:
-            return render_template("infoscompte.html", infos=infos, infos_favoris=info_favoris, type_logement=type_logement)
+            infos_user = c.execute("SELECT maison, appartement, id_adresse FROM  utilisateur where email=?", (current_user.id,)).fetchone()
+            maison = infos_user[0]
+            appartement = infos_user[1]
+            if maison == 'on':
+                type_logement = 'maison'
+            elif appartement == 'on':
+                type_logement = 'appartement'
+            else:
+                type_logement = 'Non précisé'
+            infos = []
+            info_favoris = []
+            #infos utilisateur
+            infos = c.execute("select prenom, email, temps, budget, nb, ville, code_postal, rue FROM  utilisateur JOIN adresse on utilisateur.id_adresse=adresse.id_adresse where email=?", (current_user.id,)).fetchall()
+            # info_favoris = c.execute("SELECT titre, prix, photo, description from logement join favoris on logement.id_logement=favoris.id_logement where favoris.id_utilisateur=?", (apt_ref,)).fetchone()
+            info_favoris = c.execute("select titre, prix, photo, description, l.id_logement from logement as l join favoris as f on f.id_logement = l.id_logement join utilisateur as u on u.id_utilisateur = f.id_utilisateur where u.email=?", (current_user.id,)).fetchall()
+            if info_favoris is None: 
+                return render_template("infoscompte.html", infos=infos, type_logement=type_logement)
+            else:
+                return render_template("infoscompte.html", infos=infos, infos_favoris=info_favoris, type_logement=type_logement)
 
 #partie pour update les informations
     else:
@@ -280,18 +289,17 @@ def infoscompte():
             infos_user = c.execute("SELECT email FROM utilisateur where email=?", (current_user.id,)).fetchone()
             infos_adresse = c.execute("SELECT nb, rue, ville, code_postal FROM adresse where nb=? and rue=? and ville=? and code_postal=?", (new_nb, new_rue, new_ville, new_code_postal,)).fetchone()
 
-            #adresse non existant     
             if infos_adresse is None:
                 c.execute("INSERT INTO adresse (nb, rue, ville, code_postal) VALUES(?, ?, ?, ?)", (new_nb, new_rue, new_ville, new_code_postal,))
                 conn.commit()
                 c.execute("DELETE FROM adresse WHERE nb IS NULL AND rue IS NULL AND ville IS NULL")
                 conn.commit()
-                #récupérer l'id_adresse
                 id_adres= c.execute("SELECT id_adresse FROM adresse WHERE nb=? AND rue=? AND ville=?", (new_nb, new_rue, new_ville,)).fetchone()
                 id_adresse = id_adres[0]
                 c.execute("UPDATE utilisateur SET prenom=?, budget=?, id_adresse=? where email=?", (new_budget, new_prenom, id_adresse, current_user.id,))
-                conn.commit()
+                conn.commit()     
                 return redirect(url_for('infoscompte'))
+
             else : 
                 id_adres= c.execute("SELECT id_adresse FROM adresse WHERE nb=? AND rue=? AND ville=?", (new_nb, new_rue, new_ville,)).fetchone()
                 id_adresse = id_adres[0]
@@ -339,17 +347,16 @@ def registerbien():
         if checkextension(f.filename): # on vérifie que son extension est valide
             name=secure_filename(f.filename)
             f.save(os.path.join('./FYN/static/image', name))
-
-            photo = 'image/'+name
+            photo = 'image/'+ name
             print(photo)
-            c.execute("INSERT INTO logement(titre, description, nb_chambre, prix, superficie, maison, appartement) VALUES(?, ?, ?, ?, ?, ?, ?)", (titre, description, nb_chambre, prix, superficie, maison, appart,))
-            conn.commit()
 
             if logement_ex is not None :
                 flash('Cet adresse est déjà attribué à un logement', 'danger')
                 return render_template('infoscompte.html')
             else:
                 # insertion de l'adresse
+                c.execute("INSERT INTO logement(titre, description, nb_chambre, prix, superficie, maison, appartement) VALUES(?, ?, ?, ?, ?, ?, ?)", (titre, description, nb_chambre, prix, superficie, maison, appart,))
+                conn.commit()
                 c.execute("INSERT INTO adresse(nb, rue, code_postal, ville) VALUES(?,?,?,?)", (nb, rue, code_postal, ville,))
                 conn.commit()
                 id_ad=c.execute("SELECT * FROM adresse where nb=? and rue=? and code_postal=? and ville=?", (nb, rue, code_postal, ville,)).fetchone()
@@ -358,11 +365,23 @@ def registerbien():
                 conn.commit()
                 c.execute("UPDATE logement SET photo=? where titre=? and description=? and prix=? and nb_chambre=?", (photo, titre, description, prix, nb_chambre,))
                 conn.commit()
+                
                 id_log=c.execute("SELECT * FROM logement WHERE titre=? AND description=? AND nb_chambre=? AND prix=? AND superficie=?", (titre, description, nb_chambre, prix, superficie,)).fetchone()
                 id_loge=id_log[0]
-
                 c.execute("INSERT INTO bien(id_logement, id_utilisateur) VALUES(?, ?)", (id_loge, id_utilisateur,))
                 conn.commit()
+
+                type_loge=c.execute("select maison, appartement from logement where id_logement=?", (id_loge,)).fetchone()
+                maison = type_loge[0]
+                appartement = type_loge[1]
+                if maison == 'on':
+                    c.execute("UPDATE logement SET type_logement=? where id_logement=?", ('maison', id_loge,))
+                    conn.commit()
+                elif appartement == 'on':
+                    c.execute("UPDATE logement SET type_logement=? where id_logement=?", ('appartement', id_loge,))
+                    conn.commit()
+                else:
+                    pass
                 flash ('Votre bien a été enregistré' , 'success')
                 return redirect(url_for('infoscompte'))
         else:
