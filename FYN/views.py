@@ -241,8 +241,8 @@ def Fiche(id):
                 conn.commit()
                 return redirect(url_for('main'))
 
+            
 #Partie pro
-
 @app.route("/infoscompte/", methods=["GET", "POST"])
 @login_required
 def infoscompte(): 
@@ -269,6 +269,7 @@ def infoscompte():
 
 #partie pour update les informations
     else:
+        #modification des informations utilisateur
         if 'infos_user' in request.form:
             new_prenom = request.form['prenom']
             new_nb = request.form['nb']
@@ -299,6 +300,7 @@ def infoscompte():
                 print(id_adres)
                 return redirect(url_for('infoscompte'))
         
+        # suppresion des favoris
         elif 'del_fav' in request.form: 
             id_logement = request.form.get('del_fav')
             id_user = c.execute("SELECT id_utilisateur FROM utilisateur where email=?", (current_user.id,)).fetchone()
@@ -307,25 +309,71 @@ def infoscompte():
             conn.commit()
             return redirect(url_for('infoscompte'))
 
+        #upload d'image 
+        elif 'uploadbien' in request.form:
+            registerbien()
+            return redirect(url_for('infoscompte'))
+
+
+#Enregistrement données du bien pro
+def registerbien():
+    titre = request.form['titre']
+    nb = request.form['nb']
+    rue = request.form['rue']
+    ville = request.form['ville']
+    code_postal = request.form['code_postal']
+    description = request.form['description']
+    superficie = request.form['superficie']
+    nb_chambre = request.form['nb_chambre']
+    maison = request.form.get('maison')
+    appart = request.form.get('appart')
+    prix = request.form['prix']
+    f = request.files['photo']
+
+    id_user=c.execute("SELECT id_utilisateur FROM utilisateur WHERE email=?", (current_user.id,)).fetchone()
+    id_utilisateur=id_user[0]
+
+    logement_ex=c.execute("SELECT * from logement l join adresse a on l.id_adresse=a.id_adresse where nb=? and rue=? and ville=? and code_postal=?", (nb, rue, ville, code_postal,)).fetchone()
+    
+    if f: # on vérifie qu'un fichier a bien été envoyé
+        if checkextension(f.filename): # on vérifie que son extension est valide
+            name=secure_filename(f.filename)
+            f.save(os.path.join('./FYN/static/image', name))
+
+            photo = 'image/'+name
+            print(photo)
+            c.execute("INSERT INTO logement(titre, description, nb_chambre, prix, superficie, maison, appartement) VALUES(?, ?, ?, ?, ?, ?, ?)", (titre, description, nb_chambre, prix, superficie, maison, appart,))
+            conn.commit()
+
+            if logement_ex is not None :
+                flash('Cet adresse est déjà attribué à un logement', 'danger')
+                return render_template('infoscompte.html')
+            else:
+                # insertion de l'adresse
+                c.execute("INSERT INTO adresse(nb, rue, code_postal, ville) VALUES(?,?,?,?)", (nb, rue, code_postal, ville,))
+                conn.commit()
+                id_ad=c.execute("SELECT * FROM adresse where nb=? and rue=? and code_postal=? and ville=?", (nb, rue, code_postal, ville,)).fetchone()
+                id_adresse=id_ad[0]
+                c.execute("UPDATE logement SET id_adresse=? where titre=? and description=? and prix=? and nb_chambre=?", (id_adresse, titre, description, prix, nb_chambre,))
+                conn.commit()
+                c.execute("UPDATE logement SET photo=? where titre=? and description=? and prix=? and nb_chambre=?", (photo, titre, description, prix, nb_chambre,))
+                conn.commit()
+                id_log=c.execute("SELECT * FROM logement WHERE titre=? AND description=? AND nb_chambre=? AND prix=? AND superficie=?", (titre, description, nb_chambre, prix, superficie,)).fetchone()
+                id_loge=id_log[0]
+
+                c.execute("INSERT INTO bien(id_logement, id_utilisateur) VALUES(?, ?)", (id_loge, id_utilisateur,))
+                conn.commit()
+                flash ('Votre bien a été enregistré' , 'success')
+                return redirect(url_for('infoscompte'))
+        else:
+            flash('Ce fichier n\'est pas dans une extension autorisée!', 'danger')
+            return render_template("infoscompte.html")
+    else:
+        flash('Vous avez oublié de joindre une image !', 'danger')
+        return render_template('infoscompte.html')
 
 def checkextension(namefile):
-    """ Renvoie True si le fichier possède une extension d'image valide. """
     print(namefile.rsplit('.', 1)[1])
     return '.' in namefile and namefile.rsplit('.', 1)[1] in ('png', 'jpg', 'jpeg')
 
-def upload():
-    if request.method == 'POST':
-            f = request.files['picture']
-            if f: # on vérifie qu'un fichier a bien été envoyé
-                if checkextension(f.filename): # on vérifie que son extension est valide
-                    name = secure_filename(f.filename)
-                    f.save(os.path.join('./FYN/static/ups', name))
-                    flash ('Image enregistrée', 'success')
-                    return render_template('infoscomptepro.html')
-                else:
-                    flash('Ce fichier n\'est pas dans une extension autorisée!', 'danger')
-            else:
-                flash('Vous avez oublié de joindre une image !', 'danger')
-                return render_template('infoscomptepro.html')
-    else:               
-        return render_template('infoscomptepro.html')
+
