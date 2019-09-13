@@ -51,7 +51,7 @@
           </div>
       </div>
         {% else %}
-	{% endif %}
+	      {% endif %}
           <div class="float-left"><button type="submit" class="btn btn-primary" name="infos_user">Enregistrer</button></div>
           <div class="float-right"><button type="button" class="btn btn-danger"><a href="{{url_for('deconnexion')}}">Se déconnecter</a></button></div>
         </form>
@@ -67,19 +67,6 @@
 
 {% endif %}
  
-
-  <!-- <script>
-    window.onload = function () {
-      var map = L.map('map').setView([48.871620, 2.345940], 18);
-
-      var layer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
-      });
-
-      map.addLayer(layer);
-    }; 
-  </script> -->
-<!-- slider script -->
 <script>
   function sliderFunction() {
     var val = $('#priceRange')[0].value
