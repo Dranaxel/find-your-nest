@@ -7,7 +7,6 @@ from urllib import parse
 import sqlite3, requests, json
 from pathlib import PurePath  
 from passlib.hash import sha256_crypt
-# from werkzeug import secure_filename
 from werkzeug.utils import secure_filename
 from FYN.mail import envoyer_mail
 import os
