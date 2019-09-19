@@ -1,0 +1,27 @@
+{% extends "MASTER_BODY.html" %}
+{% block main_fct %}
+    <div class="d-flex justify-content-center my-2">
+      <div class="card w-75">
+        <div class="card-body">
+            <h4 class="card-title">Réinitialisation du mot de passe</h4>
+            <form method="POST", action="/reinitialisation_pwd/">
+                <div class="form-group">
+                    <label for="exampleInputMail">Adresse e-mail</label>
+                    <input type="email" name="email" class="form-control" id="exampleInputMail" aria-describedby="emailHelp" placeholder="Entrez votre adresse e-mail">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword">Mot de passe : </label>
+                <input type="password" name="password" class="form-control" id="exampleInputPassword" placeholder="Entrez votre nouvau mot de passe">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword">Confirmation du mot de passe</label>
+                    <input type="password" name="confirmer" class="form-control" id="exampleInputPassword" placeholder="Confirmez votre mot de passe">
+                </div>
+                <button type="submit" class="btn btn-primary float-right">Enregistrer le mot de passe</button>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {%endblock%}
