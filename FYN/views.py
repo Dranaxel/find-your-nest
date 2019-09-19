@@ -14,8 +14,6 @@ import os
 
 #Import Navitia key
 navitia_key = app.config['NAVITIA_KEY']
-logging.exception(app.config['NAVITIA_KEY'])
-logging.exception(app.config['NAVITIA_URL'])
 navitia_url = app.config['NAVITIA_URL']
 
 #initializing geocoder wrapper
@@ -233,7 +231,7 @@ def aptInfo(add,hours,minutes):
                 dest_coord = list(opencage_resp[0]['geometry'].values())
                 dest_coord = str(dest_coord[1])+";"+str(dest_coord[0])
                 navitia_param = {'from': origin_coord, 'to': dest_coord}
-                logging.exception(navitia_url, navitia_param)
+                logging.exception(navitia_param)
                 navitia_call = requests.get(navitia_url, data = navitia_param, auth=(navitia_key, ""))
                 navitia_call = json.loads(navitia_call.text)
                 duration = navitia_call['journeys'][0]["duration"]
