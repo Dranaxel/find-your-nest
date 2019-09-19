@@ -2,10 +2,10 @@ language: python
 python:
   - "3.5"
 script:
-  - pytest
+  - pytest --ignore=test/selenium/
 after_success:
   - cat .travis_sample > .travis.yml
-  - cat tests/.test_sele.py > tests/test_selenium.py
+  - cat tests/.test_sele.py > tests/selenium/test_selenium.py
 deploy:
   provider: pages
   skip_cleanup: true
