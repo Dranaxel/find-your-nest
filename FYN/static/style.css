@@ -98,3 +98,18 @@ img{
 a[title="Pas encore inscrit(e)?"]{
     color: white;
 }
+
+#btn_fav, #btn_infos{
+    margin-top: 20px;
+}
+
+#cardresult{
+    border: transparent;
+}
+
+#first_hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 1px solid transparent;
+}
