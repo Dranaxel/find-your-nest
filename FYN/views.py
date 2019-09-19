@@ -14,6 +14,8 @@ import os
 
 #Import Navitia key
 navitia_key = app.config['NAVITIA_KEY']
+logging.exception(app.config['NAVITIA_KEY']
+logging.exception(app.config['NAVITIA_URL']
 navitia_url = app.config['NAVITIA_URL']
 
 #initializing geocoder wrapper
