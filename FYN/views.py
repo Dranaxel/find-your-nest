@@ -1,5 +1,4 @@
 # vim: set ts=4 sw=4 et:
-import logging
 from FYN import app, login_manager 
 from flask import send_file, request, redirect, render_template, flash, url_for, redirect, flash
 from flask_login import login_required, UserMixin, login_user, current_user, logout_user
@@ -14,12 +13,10 @@ import os
 
 #Import Navitia key
 navitia_key = app.config['NAVITIA_KEY']
-logging.exception(app.config['NAVITIA_KEY'])
-logging.exception(app.config['NAVITIA_URL'])
-navitia_url = app.config['NAVITIA_URL']
+navitia_url = "http://api.navitia.io/v1/journeys"
 
 #initializing geocoder wrapper
-opencagedata_key = app.config['OPENCAGE_KEY']
+opencagedata_key = "3c853893fc37402eb2ef1473b6629218"
 opencage = OpenCageGeocode(opencagedata_key)
 
 database_file = PurePath('./FYN/findyournest.db')
@@ -108,7 +105,7 @@ def mail_reinitiate_pwd():
             return render_template("mail_pwd.html")
 
 #reinitialisation du mot de passe 
-@app.route("/reinialisation_pwd/", methods=["GET", "POST"])
+@app.route("/reinitialisation_pwd/", methods=["GET", "POST"])
 def reinialisation_pwd():
     if request.method == 'GET':
         if current_user.is_anonymous:
@@ -121,18 +118,20 @@ def reinialisation_pwd():
         confirmer = request.form['confirmer']
         secure_password = sha256_crypt.encrypt(password)
 
-        # user = c.execute("SELECT * FROM utilisateur where email=?", (email,)).fetchone()
-        # if user is None:
-        #     flash("Cet email n'est pas attribué ! Veuillez en entrer une nouvelle !", "danger")
-        #     return render_template("reinitialisation.html")
-        # else:
-
-        #     password == confirmer :
-        
-
-
-
-
+        user = c.execute("SELECT * FROM utilisateur where email=?", (email,)).fetchone()
+        if user is None:
+            flash("Cet email n'est pas attribué ! Veuillez en entrer une nouvelle !", "danger")
+            return render_template("reinitialisation.html")
+        else:
+            if password == confirmer :
+                c.execute("UPDATE utilisateur SET password=? WHERE email=?", (secure_password, email,))
+                conn.commit()
+                flash("Le mot de passe a bien été enregistré", "success")
+                return redirect(url_for('connexion'))
+            else:
+                flash("Les mots de passes ne correspondent pas ! Veuillez resaisir les mots de passe ! ", "danger")
+                return render_template("reinitialisation.html")
+      
 #créer le compte
 @app.route("/moncompte/", methods=["GET", "POST"])
 def moncompte():
@@ -232,9 +231,8 @@ def aptInfo(add,hours,minutes):
                 opencage_resp = opencage.geocode(dest_add, language='fr', no_annotations=1, limit=1, bounds="1.19202,48.41462,3.36182,49.26780")
                 dest_coord = list(opencage_resp[0]['geometry'].values())
                 dest_coord = str(dest_coord[1])+";"+str(dest_coord[0])
-                navitia_param = {'from': origin_coord, 'to': dest_coord}
-                logging.exception(navitia_url, navitia_param)
-                navitia_call = requests.get(navitia_url, data = navitia_param, auth=(navitia_key, ""))
+                navitia_param = {'from': origin_coord, "to": dest_coord} 
+                navitia_call = requests.get(navitia_url, navitia_param, auth=(navitia_key, ""))
                 navitia_call = json.loads(navitia_call.text)
                 duration = navitia_call['journeys'][0]["duration"]
             except:

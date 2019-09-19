@@ -50,12 +50,10 @@ def forget_password(mail, username):
         ],
         "Subject": "Réinitialiser votre mot de passe FINDYOURNEST",
         "TextPart": "Réinitialisation",
-        "HTMLPart": "<h3>Bonjour, Veuillez réinitialiser votre mot de passe en cliquant sur le lien suivant <a href='http://127.0.0.1:8080/reinialisation_pwd/'>Mot_de_passe</a>!</h3><br /> Merci, en vous souhaitant une bonne journée"
+        "HTMLPart": "<h3>Bonjour</h3><p>Vous nous avez indiqué avoir oublié votre mot de passe. Si c'est vraiment le cas, cliquez sur le lien ci-dessous afin de le réinitialiser: </br> <a href='http://127.0.0.1:8080/reinitialisation_pwd/'>Réinitialiser le mot de passe</a>!</br>Si vous n'aviez pas l'intention de réinitialiser votre mot de passe, ignorez simplement cet e-mail, et votre mot de passe ne sera pas changé </br> Merci, en vous souhaitant une bonne journée</p>"
         }
     ]
     }
     result = mailjet.send.create(data=data)
     print(result.status_code)
     print(result.json())
-
-"<h3> Bonjour, vous nous avez indiqué avoir oublié votre mot de passe. Si c'est vraiment le cas, cliquez sur le lien ci-dessous afin de le réinitialiser: <a href='{{ url_for('reinitialisation_pwd')}}'>Réinitialiser votre mot de passe</a></h3></br>Si vous n'aviez pas l'intention de réinitialiser votre mot de passe ne sera pas changé." 
