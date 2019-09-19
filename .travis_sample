@@ -3,7 +3,7 @@ python:
   - "3.5"
 script:
   - sleep 10s
-  - pytest --ignore=tests/unit/
+  - pytest
 env:
   global:
     SAUCE_USERNAME: "prajes"
