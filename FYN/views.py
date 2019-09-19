@@ -9,7 +9,7 @@ import sqlite3, requests, json
 from pathlib import PurePath  
 from passlib.hash import sha256_crypt
 from werkzeug.utils import secure_filename
-from FYN.mail import envoyer_mail
+from FYN.mail import envoyer_mail, forget_password
 import os
 
 #Import Navitia key
@@ -83,6 +83,53 @@ def connexion():
         else :
             flash("Votre email et/ou votre mot de passe est incorrect. Veuillez les saisir à nouveau ", "danger")
             return render_template("connexion.html")
+
+#envoie du mail pour réinialiser le mot de passe 
+@app.route("/mail_reinitiate_pwd/", methods=["GET", "POST"])
+def mail_reinitiate_pwd():
+    if request.method == 'GET':
+        if current_user.is_anonymous:
+            return render_template("mail_pwd.html")
+        else:
+            return redirect(url_for('main'))
+    else:
+        email = request.form['email']
+
+        user_mail = c.execute("SELECT prenom FROM utilisateur where email=?", (email,)).fetchone()
+        if user_mail is not None :
+            prenom = user_mail[0]
+            forget_password(email, prenom)
+            flash("Le mail a bien été envoyé ! ", "success")
+            return redirect(url_for('connexion'))
+        else:
+            flash("Cet email n'est pas attribué ! Veuillez en entrer une nouvelle !", "danger")
+            return render_template("mail_pwd.html")
+
+#reinitialisation du mot de passe 
+@app.route("/reinialisation_pwd/", methods=["GET", "POST"])
+def reinialisation_pwd():
+    if request.method == 'GET':
+        if current_user.is_anonymous:
+            return render_template("reinitialisation.html")
+        else:
+            return redirect(url_for('main'))
+    else:
+        email = request.form['email']
+        password = request.form['password']
+        confirmer = request.form['confirmer']
+        secure_password = sha256_crypt.encrypt(password)
+
+        # user = c.execute("SELECT * FROM utilisateur where email=?", (email,)).fetchone()
+        # if user is None:
+        #     flash("Cet email n'est pas attribué ! Veuillez en entrer une nouvelle !", "danger")
+        #     return render_template("reinitialisation.html")
+        # else:
+
+        #     password == confirmer :
+        
+
+
+
 
 #créer le compte
 @app.route("/moncompte/", methods=["GET", "POST"])
