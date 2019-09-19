@@ -24,10 +24,10 @@ driver.get("https://flask-ywhzbcfbpq-ue.a.run.app")
 time.sleep(2)
 driver.find_element(By.LINK_TEXT, "Se connecter").click()
 driver.find_element(By.ID, "exampleInputMail").click()
-driver.find_element(By.ID, "exampleInputMail").send_keys("a")
+driver.find_element(By.ID, "exampleInputMail").send_keys("lola@gmail.com")
 driver.find_element(By.ID, "exampleInputMail").send_keys(Keys.DOWN)
 driver.find_element(By.ID, "exampleInputMail").send_keys(Keys.TAB)
-driver.find_element(By.ID, "exampleInputPassword").send_keys("alex")
+driver.find_element(By.ID, "exampleInputPassword").send_keys("lola")
 driver.find_element(By.CSS_SELECTOR, ".btn:nth-child(4)").click()
 
 if "Find Your Nest" not in driver.title:
