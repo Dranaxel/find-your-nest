@@ -12,11 +12,11 @@ from FYN.mail import envoyer_mail
 import os
 
 #Import Navitia key
-navitia_key = app.config['NAVITIA']
-navitia_url = "http://api.navitia.io/v1/journeys"
+navitia_key = app.config['NAVITIA_KEY']
+navitia_url = app.config['NAVITIA_URL']
 
 #initializing geocoder wrapper
-opencagedata_key = "3c853893fc37402eb2ef1473b6629218"
+opencagedata_key = app.config['OPENCAGE_KEY']
 opencage = OpenCageGeocode(opencagedata_key)
 
 database_file = PurePath('./FYN/findyournest.db')
