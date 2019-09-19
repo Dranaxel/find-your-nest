@@ -295,7 +295,7 @@ def infoscompte():
                 conn.commit()
                 id_adres= c.execute("SELECT id_adresse FROM adresse WHERE nb=? AND rue=? AND ville=?", (new_nb, new_rue, new_ville,)).fetchone()
                 id_adresse = id_adres[0]
-                c.execute("UPDATE utilisateur SET prenom=?, budget=?, id_adresse=? where email=?", (new_budget, new_prenom, id_adresse, current_user.id,))
+                c.execute("UPDATE utilisateur SET prenom=?, budget=?, id_adresse=? where email=?", (new_prenom, new_budget, id_adresse, current_user.id,))
                 conn.commit()     
                 return redirect(url_for('infoscompte'))
 
