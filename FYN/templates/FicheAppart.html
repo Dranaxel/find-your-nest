@@ -1,35 +1,43 @@
 {% extends "MASTER_BODY.html" %}
 {% block main_fct %}
-        <div class="container-fluid">
-            <div class="d-flex justify-content-center my-2">
-                    <div class="card w-75">
-                            <div class="card-body">
-			       {%include "_message.html"%}
-                    		<form method="POST">
-                              		<h2 class="card-title">{{titre}}</h2>
+    <div class="container-fluid">
+        <div class="d-flex justify-content-center my-2">
+			<div class="card w-75">
+				<div class="card-body">
+				{%include "_message.html"%}
+					<form method="POST">
+						<h2 class="card-title">{{titre}}</h2>
 			      		<h3 class="card-subtitle mb-2 text-muted">{{Prix}} €</h3>
-                              		<div class="row d-flex justify-content-center my-2">
-				      		<img src="{{url_for('static', filename=pic)}}" class="rounded" style="width: 500px">
-                              		</div>
-                              		<div class="row my-3">
-				      		<p class="card-text mx-3">{{describe}}</p>
-                                	</div>
-					<div class="row">
-						<div class="col-md-3">{{PostalCode}}</div>
-						<div class="col-md-3">{{nb_pieces}}  Pièces</div>
-					    <div class="col-md-3">{{nb_chambre}} Chambres</div>
-					    <div class="col-md-3">{{surface}} m²</div>
-					</div>
-					{% if current_user.is_authenticated %} 
-					<div><button type="submit" class="btn btn-primary float-right">Ajouter aux favoris</button></div>
-					{% else %}
-					{% endif %}
-				</form>
-                            </div>
-                    </div>
-            </div>
-
-        </div>
+						<div class="row d-flex justify-content-center my-2">
+							<img src="{{url_for('static', filename=pic)}}" class="rounded" style="width: 500px">
+						</div>
+						<div class="row my-3">
+							<p class="card-text mx-3">{{describe}}</p>
+						</div>
+						<div class="row">
+							<div class="col-md-3">{{PostalCode}}</div>
+							<div class="col-md-3">{{nb_pieces}}  Pièces</div>
+							<div class="col-md-3">{{nb_chambre}} Chambres</div>
+							<div class="col-md-3">{{surface}} m²</div>
+						</div>
+						{% if current_user.is_authenticated %} 
+						<div><button type="submit" class="btn btn-primary float-right">Ajouter aux favoris</button></div>
+						<div><button type="submit" class="btn btn-primary float-right">Ajouter aux favoris</button></div>
+						{% else %}
+						{% endif %}
+					</form>
+				</div>
+				<hr>
+				<h5 class="Card-title mx-3">Je souhaite entrer en contact avec le propriétaire : </h5>
+				<div class="card-body">
+				{%include "_message.html"%}
+					<form method="POST">
+						
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 
     <script>
         window.onload = function(){

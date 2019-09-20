@@ -305,6 +305,7 @@ def Fiche(id):
                 conn.commit()
                 return redirect(url_for('main'))
 
+
             
 #Partie pro
 @app.route("/infoscompte/", methods=["GET", "POST"])
