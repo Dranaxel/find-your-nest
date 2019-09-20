@@ -11,7 +11,7 @@
                     </div>
                     <div class="col-md-8">
                         <p class="card-text "> {{describe}} </br>
-                            <button id="btn_infos" type="button" class="btn btn-light"><a
+                            <button name="btn_infos" type="button" class="btn btn-light"><a
                                     href="{{url_for('Fiche', id=id_log)}}">+ d'infos</a></button>
                             {% if current_user.is_authenticated %} 
                             <button id="btn_fav" class="btn btn-primary float-right jsBtnFav" data-value={{id_log}}>
