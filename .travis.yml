@@ -11,7 +11,7 @@ jobs:
           branch: depot
         verbose: true
       if: "branch = depot"
-      script: "pytest --ignore=test/selenium/"
+      script: "pytest --ignore=tests/selenium/"
       stage: "Unitary tests"
     - 
       env: 
