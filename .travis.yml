@@ -16,7 +16,7 @@ jobs:
     - 
       env: 
         global: 
-          SAUCE_USERNAME: "prajes"
+          SAUCE_USERNAME: prajes
           SAUCE_ACCESS_KEY: "de77a5e8-de67-48bc-9d3e-6c724790c09d"
       if: "branch = master-1"
       script: "pytest --ignore=tests/unit/"
