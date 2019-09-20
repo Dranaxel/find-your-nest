@@ -260,14 +260,14 @@ def getFavorite(id):
     if id_fav is not None :
         response = {
             "is": False,
-            "msg": "Déjà dans tes favoris"
+            "msg": "L'annonce se trouve déjà dans vos favoris !"
         }
     else:
         c.execute("INSERT INTO favoris(id_logement, id_utilisateur) VALUES(? , ?)", (id_logement, id_utilisateur,))
         conn.commit()
         response = {
             "is": True,
-            "msg": "L'annonce a bien été ajouté dans tes favoris"
+            "msg": "L'annonce a bien été ajouté dans vos favoris"
         }
    
     return jsonify(response)
