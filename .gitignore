@@ -13,8 +13,3 @@ dist/
 build/
 *.egg-info/
 
-tests/*
-!tests/test_selenium.py
-.travis.yml
-.gitignore
-.push.sh

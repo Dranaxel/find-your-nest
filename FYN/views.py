@@ -13,7 +13,6 @@ import os
 
 #Import Navitia key
 navitia_key = app.config['NAVITIA_KEY']
-#navitia_url = "http://api.navitia.io/v1/journeys"
 navitia_url = app.config['NAVITIA_URL']
 
 
@@ -233,14 +232,9 @@ def aptInfo(add,hours,minutes):
                 opencage_resp = opencage.geocode(dest_add, language='fr', no_annotations=1, limit=1, bounds="1.19202,48.41462,3.36182,49.26780")
                 dest_coord = list(opencage_resp[0]['geometry'].values())
                 dest_coord = str(dest_coord[1])+";"+str(dest_coord[0])
-<<<<<<< HEAD
-                navitia_param = {'from': origin_coord, "to": dest_coord} 
-                navitia_call = requests.get(navitia_url, navitia_param, auth=(navitia_key, ""))
-=======
                 navitia_param = {'from': origin_coord, 'to': dest_coord}
                 logging.exception(navitia_param)
                 navitia_call = requests.get(navitia_url, data = navitia_param, auth=(navitia_key, ""))
->>>>>>> e4522cf25be2efe261c48f8536273aa27fb84896
                 navitia_call = json.loads(navitia_call.text)
                 duration = navitia_call['journeys'][0]["duration"]
             except:
