@@ -11,13 +11,13 @@ jobs:
           branch: depot
         verbose: true
       if: "branch = depot"
-      script: "pytest --ignore=tests/selenium/"
+      script: "pytest --ignore=tests/sele/"
       stage: "Unitary tests"
     - 
       env: 
         global: 
-          SAUCE_ACCESS_KEY: "de77a5e8-de67-48bc-9d3e-6c724790c09d"
           SAUCE_USERNAME: "prajes"
+          SAUCE_ACCESS_KEY: "de77a5e8-de67-48bc-9d3e-6c724790c09d"
       if: "branch = master-1"
       script: "pytest --ignore=tests/unit/"
       stage: "Selnium tests"
