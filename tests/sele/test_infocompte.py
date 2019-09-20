@@ -21,14 +21,14 @@ driver = webdriver.Remote(
    command_executor='https://{}:{}@ondemand.eu-central-1.saucelabs.com/wd/hub'.format(username, access_key),
    desired_capabilities=desired_cap)
 
-self.driver.get("https://find-your-nest-ywhzbcfbpq-ew.a.run.app/")
-self.driver.find_element(By.LINK_TEXT, "Se connecter").click()
-self.driver.find_element(By.ID, "exampleInputMail").click()
-self.driver.find_element(By.ID, "exampleInputMail").send_keys("testselenium@hotmail.fr")
-self.driver.find_element(By.ID, "exampleInputPassword").click()
-self.driver.find_element(By.ID, "exampleInputPassword").send_keys("testselenium")
-self.driver.find_element(By.CSS_SELECTOR, ".float-right").click()
-self.driver.find_element(By.LINK_TEXT, "Mon compte").click()
+driver.get("https://find-your-nest-ywhzbcfbpq-ew.a.run.app/")
+driver.find_element(By.LINK_TEXT, "Se connecter").click()
+driver.find_element(By.ID, "exampleInputMail").click()
+driver.find_element(By.ID, "exampleInputMail").send_keys("testselenium@hotmail.fr")
+driver.find_element(By.ID, "exampleInputPassword").click()
+driver.find_element(By.ID, "exampleInputPassword").send_keys("testselenium")
+driver.find_element(By.CSS_SELECTOR, ".float-right").click()
+driver.find_element(By.LINK_TEXT, "Mon compte").click()
 
 inputname = driver.find_element_by_id('exampleInputName')
 if "testselenium" not in inputname.get_property("testselenium"):
