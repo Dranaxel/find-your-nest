@@ -18,7 +18,7 @@ navitia_url = app.config['NAVITIA_URL']
 
 
 #initializing geocoder wrapper
-opencagedata_key = "3c853893fc37402eb2ef1473b6629218"
+opencagedata_key = "31dbec8c7f4844a6aafa18c738aea931"
 opencage = OpenCageGeocode(opencagedata_key)
 
 database_file = PurePath('./FYN/findyournest.db')
