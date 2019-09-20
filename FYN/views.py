@@ -1,5 +1,4 @@
 # vim: set ts=4 sw=4 et:
-import logging
 from FYN import app, login_manager 
 from flask import send_file, request, redirect, render_template, flash, url_for, redirect, flash
 from flask_login import login_required, UserMixin, login_user, current_user, logout_user
@@ -16,8 +15,9 @@ import os
 navitia_key = app.config['NAVITIA_KEY']
 navitia_url = app.config['NAVITIA_URL']
 
+
 #initializing geocoder wrapper
-opencagedata_key = app.config['OPENCAGE_KEY']
+opencagedata_key = "3c853893fc37402eb2ef1473b6629218"
 opencage = OpenCageGeocode(opencagedata_key)
 
 database_file = PurePath('./FYN/findyournest.db')
@@ -106,7 +106,7 @@ def mail_reinitiate_pwd():
             return render_template("mail_pwd.html")
 
 #reinitialisation du mot de passe 
-@app.route("/reinialisation_pwd/", methods=["GET", "POST"])
+@app.route("/reinitialisation_pwd/", methods=["GET", "POST"])
 def reinialisation_pwd():
     if request.method == 'GET':
         if current_user.is_anonymous:
@@ -119,18 +119,20 @@ def reinialisation_pwd():
         confirmer = request.form['confirmer']
         secure_password = sha256_crypt.encrypt(password)
 
-        # user = c.execute("SELECT * FROM utilisateur where email=?", (email,)).fetchone()
-        # if user is None:
-        #     flash("Cet email n'est pas attribué ! Veuillez en entrer une nouvelle !", "danger")
-        #     return render_template("reinitialisation.html")
-        # else:
-
-        #     password == confirmer :
-        
-
-
-
-
+        user = c.execute("SELECT * FROM utilisateur where email=?", (email,)).fetchone()
+        if user is None:
+            flash("Cet email n'est pas attribué ! Veuillez en entrer une nouvelle !", "danger")
+            return render_template("reinitialisation.html")
+        else:
+            if password == confirmer :
+                c.execute("UPDATE utilisateur SET password=? WHERE email=?", (secure_password, email,))
+                conn.commit()
+                flash("Le mot de passe a bien été enregistré", "success")
+                return redirect(url_for('connexion'))
+            else:
+                flash("Les mots de passes ne correspondent pas ! Veuillez resaisir les mots de passe ! ", "danger")
+                return render_template("reinitialisation.html")
+      
 #créer le compte
 @app.route("/moncompte/", methods=["GET", "POST"])
 def moncompte():
