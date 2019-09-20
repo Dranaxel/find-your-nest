@@ -10,6 +10,7 @@ from passlib.hash import sha256_crypt
 from werkzeug.utils import secure_filename
 from FYN.mail import envoyer_mail, forget_password
 import os, logging
+from flask import jsonify
 
 #Import Navitia key
 navitia_key = app.config['NAVITIA_KEY']
@@ -246,24 +247,32 @@ def aptInfo(add,hours,minutes):
             results.append(c.execute("select titre, prix, photo, description, id_logement from logement where id_logement=%s"%i).fetchone())
         return render_template("results.html", result= results)
 
-    else : 
-        if 'ad_fav' in request.form:
-            id_logement = request.form.get('ad_fav')
-            # logement_sql = c.execute("SELECT id_logement FROM logement WHERE id_logement=?", (id_logement,)).fetchone()
-            # id_log=logement_sql[0]
-            # favoris_log = request.form.get('log_fav')
-            id_user = c.execute("SELECT id_utilisateur FROM utilisateur where email=?", (current_user.id,)).fetchone()
-            id_utilisateur = id_user[0]
-            id_fav = c.execute("SELECT * FROM favoris where id_utilisateur=? and id_logement=?", (id_utilisateur, id_logement,)).fetchone()
-            print(id_fav)
-            # if favoris_log == 'on':
-            if id_fav is not None : 
-                return redirect(url_for('main'))
+@app.route("/getFavorite/<int:id>", methods=['POST'])
+def getFavorite(id):
+    id_logement = id
+    # logement_sql = c.execute("SELECT id_logement FROM logement WHERE id_logement=?", (id_logement,)).fetchone()
+    # id_log=logement_sql[0]
+    # favoris_log = request.form.get('log_fav')
+    id_user = c.execute("SELECT id_utilisateur FROM utilisateur where email=?", (current_user.id,)).fetchone()
+    id_utilisateur = id_user[0]
+    id_fav = c.execute("SELECT * FROM favoris where id_utilisateur=? and id_logement=?", (id_utilisateur, id_logement,)).fetchone()
+    # if favoris_log == 'on':
+    if id_fav is not None :
+        response = {
+            "is": False,
+            "msg": "Déjà dans tes favoris"
+        }
+    else:
+        c.execute("INSERT INTO favoris(id_logement, id_utilisateur) VALUES(? , ?)", (id_logement, id_utilisateur,))
+        conn.commit()
+        response = {
+            "is": True,
+            "msg": "L'annonce a bien été ajouté dans tes favoris"
+        }
+   
+    return jsonify(response)
 
-            else:
-                c.execute("INSERT INTO favoris(id_logement, id_utilisateur) VALUES(? , ?)", (id_logement, id_utilisateur,))
-                conn.commit()
-                return redirect(url_for('infoscompte'))
+
 
 @app.route("/Fiche/<int:id>", methods=["GET","POST"])
 def Fiche(id):
