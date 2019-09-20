@@ -10,9 +10,12 @@
                                     <img src="{{url_for('static', filename=pic)}}" style="width: 100%">
                                 </div>
                                 <div class="col-md-8">
-                                    <p class="card-text "> {{describe}} </br>
+                                        <p class="card-text "> {{describe}} </br> 
                                     <button id="btn_infos" type="button" class="btn btn-light"><a href="{{url_for('Fiche', id=id_log)}}">+ d'infos</a></button> 
+                                        {% if current_user.is_authenticated %} 
                                     <button id="btn_fav" type="submit" class="btn btn-primary float-right" name=ad_fav value={{id_log}}>Ajouter aux favoris</button></p>
+                                        {% else %}
+                                        {% endif %}
                                 </div>
                             </div>
                         </div>
