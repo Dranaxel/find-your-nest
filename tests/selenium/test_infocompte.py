@@ -14,25 +14,22 @@ desired_cap = {
     'build': "Onboarding Sample App - Python",
     'name': "2-user-site",
 }
-
 username = os.environ["SAUCE_USERNAME"]
 access_key = os.environ["SAUCE_ACCESS_KEY"]
 driver = webdriver.Remote(
    command_executor='https://{}:{}@ondemand.eu-central-1.saucelabs.com/wd/hub'.format(username, access_key),
    desired_capabilities=desired_cap)
 
-self.driver.get("https://find-your-nest-ywhzbcfbpq-ew.a.run.app/")
-self.driver.find_element(By.LINK_TEXT, "Se connecter").click()
-self.driver.find_element(By.ID, "exampleInputMail").click()
-self.driver.find_element(By.ID, "exampleInputMail").send_keys("testselenium@hotmail.fr")
-self.driver.find_element(By.ID, "exampleInputPassword").click()
-self.driver.find_element(By.ID, "exampleInputPassword").send_keys("testselenium")
-self.driver.find_element(By.CSS_SELECTOR, ".float-right").click()
-self.driver.find_element(By.LINK_TEXT, "Mon compte").click()
+driver.get("https://find-your-nest-ywhzbcfbpq-ew.a.run.app/")
+time.sleep(2)
+driver.find_element(By.LINK_TEXT, "Se connecter").click()
+driver.find_element(By.ID, "exampleInputMail").click()
+driver.find_element(By.ID, "exampleInputMail").send_keys("lola@gmail.com")
+driver.find_element(By.ID, "exampleInputMail").send_keys(Keys.DOWN)
+driver.find_element(By.ID, "exampleInputMail").send_keys(Keys.TAB)
+driver.find_element(By.ID, "exampleInputPassword").send_keys("lola")
+driver.find_element(By.CSS_SELECTOR, ".btn:nth-child(4)").click()
 
-inputname = driver.find_element_by_id('exampleInputName')
-if "testselenium" not in inputname.get_property("testselenium"):
-    raise Exception("Not the right name for this account!")
-driver.quit()  
-
-  
+if "Find Your Nest" not in driver.title:
+    raise Exception("Unable to load saucedemo page!")
+driver.quit()
