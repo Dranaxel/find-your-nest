@@ -1,16 +1,29 @@
 language: python
 python:
   - "3.5"
-script:
-  - pytest --ignore=test/selenium/
-after_success:
-  - cat .travis_sample > .travis.yml
-deploy:
-  provider: pages
-  skip_cleanup: true
-  target_branch: master-1
-  github_token: $GH_TOKEN
-  keep-history: true
-  verbose: true
-  on:
-    branch: depot
+jobs:
+        include:
+                stage: Unitary tests
+                if: branch = depot
+                - script:
+                  - pytest --ignore=test/selenium/
+                - after_success:
+                  - cat .travis_sample > .travis.yml
+                - deploy:
+                  provider: pages
+                  skip_cleanup: true
+                  target_branch: master-1
+                  github_token: $GH_TOKEN
+                  keep-history: true
+                  verbose: true
+                  on:
+                    branch: depot
+                stage: Selnium tests
+                if: branch = master-1
+                - script:
+                  - sleep 10s
+                  - pytest --ignore=tests/unit/
+                - env:
+                  global:
+                    SAUCE_USERNAME: "prajes"
+                    SAUCE_ACCESS_KEY: "de77a5e8-de67-48bc-9d3e-6c724790c09d"
