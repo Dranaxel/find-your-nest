@@ -1,10 +1,26 @@
+jobs: 
+  include: 
+    - 
+      deploy: 
+        github_token: $GH_TOKEN
+        keep-history: true
+        provider: pages
+        skip_cleanup: true
+        target_branch: master-1
+        true: 
+          branch: depot
+        verbose: true
+      if: "branch = depot"
+      script: "pytest --ignore=tests/selenium/"
+      stage: "Unitary tests"
+    - 
+      env: 
+        global: 
+          SAUCE_ACCESS_KEY: de77a5e8-de67-48bc-9d3e-6c724790c09d
+          SAUCE_USERNAME: prajes
+      if: "branch = master-1"
+      script: "pytest --ignore=tests/unit/"
+      stage: "Selnium tests"
 language: python
-python:
+python: 
   - "3.5"
-script:
-  - sleep 10s
-  - pytest --ignore=tests/unit/
-env:
-  global:
-    SAUCE_USERNAME: "prajes"
-    SAUCE_ACCESS_KEY: "de77a5e8-de67-48bc-9d3e-6c724790c09d"
