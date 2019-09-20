@@ -9,7 +9,7 @@ from pathlib import PurePath
 from passlib.hash import sha256_crypt
 from werkzeug.utils import secure_filename
 from FYN.mail import envoyer_mail, forget_password
-import os
+import os, logging
 
 #Import Navitia key
 navitia_key = app.config['NAVITIA_KEY']
