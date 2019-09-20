@@ -31,7 +31,7 @@ driver.find_element(By.CSS_SELECTOR, ".float-right").click()
 driver.find_element(By.LINK_TEXT, "Mon compte").click()
 
 inputname = driver.find_element_by_id('exampleInputName')
-if "testselenium" not in inputname.get_property("testselenium"):
+if "testselenium" not in inputname.get_value("testselenium"):
     raise Exception("Not the right name for this account!")
 driver.quit()  
 
