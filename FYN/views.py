@@ -8,7 +8,7 @@ import sqlite3, requests, json
 from pathlib import PurePath  
 from passlib.hash import sha256_crypt
 from werkzeug.utils import secure_filename
-from FYN.mail import envoyer_mail, forget_password
+from FYN.mail import envoyer_mail, forget_password, contact_mail
 import os, logging
 from flask import jsonify
 
@@ -288,6 +288,7 @@ def Fiche(id):
         return render_template("FicheAppart.html", titre=titre_sql[0], nb_chambre=nb_chambre_sql[0], Prix=prix_sql[0], PostalCode=PostalCode_sql[0], nb_pieces=nb_pieces_sql[0], surface=surface_sql[0], describe= describe_sql[0], pic=pic_sql[0])
 
     else : 
+        if 'add_favorites' in request.form:
             logement_sql = c.execute("SELECT id_logement FROM logement WHERE id_logement=?", (id,)).fetchone()
             id_log=logement_sql[0]
             # favoris_log = request.form.get('log_fav')
@@ -304,7 +305,22 @@ def Fiche(id):
                 c.execute("INSERT INTO favoris(id_logement, id_utilisateur) VALUES(? , ?)", (id, id_utilisateur))
                 conn.commit()
                 return redirect(url_for('main'))
+        
+        elif 'contact' in request.form:
+            user_prenom = request.form['prenom']
+            user_email = request.form['email']
+            user_number = request.form['phonenumber']
+            user_msg = request.form['message']
 
+            titre = c.execute("SELECT titre, id_logement from logement where id_logement=?", (id,)).fetchone()
+            title = titre[0]
+            id_log = titre[1]
+
+            pro_mail = c.execute("SELECT email, prenom from utilisateur u join bien b on u.id_utilisateur=b.id_utilisateur join logement l on b.id_logement=l.id_logement where l.id_logement=?", (id,)).fetchone()
+            pro_email = pro_mail[0]
+            pro_prenom = pro_mail[1]
+            contact_mail(user_prenom, user_email, user_number, user_msg, pro_email, pro_prenom, title)
+            return redirect(url_for('Fiche', id=id_log))
 
             
 #Partie pro
