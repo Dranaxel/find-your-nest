@@ -62,3 +62,42 @@ def forget_password(mail, username):
     result = mailjet.send.create(data=data)
     print(result.status_code)
     print(result.json())
+
+
+def contact_mail(username1, email1, phone, msg, email2, username2, bien):
+    api_key = '4758ff5a850d727d75cbc8e7bf09c958'
+    api_secret = '50594a1889d64dee6cbf9d98f5ee5c09'
+    mailjet = Client(auth=(api_key, api_secret), version='v3.1')
+    data = {
+    'Messages': [
+        {
+        "From": {
+            "Email": "rajesw.priya@gmail.com",
+            "Name": "FindYourNest"
+        },
+        "To": [
+            {
+            "Email": email2,
+            "Name": username2
+            }
+        ],
+        "Subject": "Demande de contact",
+        "TextPart": "Demande de contact",
+        "HTMLPart": """<b> Demande de contact : </b> <br/>
+                    Un utilisateur semble fortement intéressé par votre bien et il souhaiterait échanger avec vous. 
+                    De ce fait, vous trouverez ci-dessous les informations nécessaires pour le recontacter ultérieurement : <br/>
+                    <b> Prénom : </b>""" + username1 + 
+                    """ <br/>
+                    <b> Adresse email : </b>""" + email1 +
+                    """ <br/>
+                    <b> Numéro de téléphone : </b>""" + phone + 
+                    """<br/>
+                    <b> Message : </b>""" + msg +
+                    """<br/>
+                    Bien : </b>""" + bien
+        }
+    ]
+    }
+    result = mailjet.send.create(data=data)
+    print(result.status_code)
+    print(result.json())
