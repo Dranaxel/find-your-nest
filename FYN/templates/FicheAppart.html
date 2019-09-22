@@ -21,18 +21,35 @@
 							<div class="col-md-3">{{surface}} m²</div>
 						</div>
 						{% if current_user.is_authenticated %} 
-						<div><button type="submit" class="btn btn-primary float-right">Ajouter aux favoris</button></div>
-						<div><button type="submit" class="btn btn-primary float-right">Ajouter aux favoris</button></div>
+						<div><button type="submit" class="btn btn-primary float-right" name="add_favorites">Ajouter aux favoris</button></div>
 						{% else %}
 						{% endif %}
 					</form>
 				</div>
 				<hr>
-				<h5 class="Card-title mx-3">Je souhaite entrer en contact avec le propriétaire : </h5>
+				<h5 class="Card-title mx-3">Contacter le propriétaire : </h5>
 				<div class="card-body">
 				{%include "_message.html"%}
 					<form method="POST">
-						
+							<div class="form-group">
+								<label for="exampleInputName">Prénom</label>
+								<input type="text" name="prenom" class="form-control" id="exampleInputName" placeholder="Entrez votre prénom">
+								</div>
+							<div class="form-group">
+								<label for="exampleInputMail">Adresse e-mail</label>
+								<input type="email" name="email" class="form-control" aria-describedby="emailHelp" id="exampleInputMail"
+									  placeholder="Entrez votre adresse e-mail">
+							</div>
+							<div class="form-group">
+									<label for="exampleInputTel">Téléphone (facultatif)</label>
+									<input type="tel" name="phonenumber" class="form-control" aria-describedby="emailHelp" id="exampleInputMail"
+										  placeholder="Entrez votre numéro de téléphone">
+							</div>
+							<div class="form-group">
+								<label for="InputDesc">Message</label>
+								<textarea name="message" class="form-control" id="InputDesc" rows="5" placeholder="Entrez votre message destiné au propriétaire"></textarea>
+							</div>
+							<div><button type="submit" class="btn btn-primary float-right" name="contact">Contacter le propriétaire du bien</button></div>
 					</form>
 				</div>
 			</div>
