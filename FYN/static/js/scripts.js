@@ -1,3 +1,5 @@
+if (document.getElementsByClassName("jsBtnFav")) {  //is on result page ?
+
 let jsBtnFav = document.getElementsByClassName("jsBtnFav")
 let loader = `
     <div class="spinner-border" role="status">
@@ -42,6 +44,8 @@ for (let i = 0; i <= jsBtnFav.length - 1; ++i) {
     })
 }
 
+}
+
 
 function buildAlert(msg, type) {
     return `
@@ -49,4 +53,14 @@ function buildAlert(msg, type) {
         ${msg}
     </div>
     `
+}
+
+if (document.getElementById("map")) { // if is on main page
+
+let btn1 = document.getElementById("btn-1");
+
+btn1.addEventListener('click', () => {
+
+	console.log("ok")
+})
 }
