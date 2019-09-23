@@ -59,8 +59,9 @@ if (document.getElementById("map")) { // if is on main page
 
 let btn1 = document.getElementById("btn-1");
 
-btn1.addEventListener('click', () => {
+ btn1.addEventListener('click', () => {
 
-	console.log("ok")
-})
+	let carte = document.getElementsByClassName("lightbox")
+	carte[0].style.display = "flex"
+ })
 }

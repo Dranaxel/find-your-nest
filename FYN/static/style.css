@@ -2,6 +2,27 @@
     margin: 0;
     padding: 0; 
 }
+.lightbox {
+     display: none;
+     position: fixed;
+     z-index: 9999;
+     width: 100%;
+     height: 100%;
+     text-align: center;
+     top: 0;
+     left: 0;
+     background: rgba(0,0,0,0.8);
+     align-items: center;
+     justify-content: center;
+}
+
+.lb-item{
+	display: flex;
+	justify-content: center; 
+	align-items: center; 
+
+
+}
 .bg{
     background-image: url(bg.jpg);
     background-size: cover; 
