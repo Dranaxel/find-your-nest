@@ -35,24 +35,24 @@
 			<div class="card w-75">
 				<div class="card-body">
 					{%include "_message.html"%}
-					<form method="POST"></form>
-						<h3 class="card-title">Contacter le propriétaire : </h3>
+					<form method="POST">
+						<h3 class="card-title">Contacter le propriétaire </h3>
 						<div class="form-group mt-3">
-							<label for="exampleInputName">Prénom</label>
+							<label for="exampleInputName">Prénom : </label>
 							<input type="text" name="prenom" class="form-control" id="exampleInputName" placeholder="Entrez votre prénom">
 							</div>
 						<div class="form-group">
-							<label for="exampleInputMail">Adresse e-mail</label>
+							<label for="exampleInputMail">Adresse e-mail : * </label>
 							<input type="email" name="email" class="form-control" aria-describedby="emailHelp" id="exampleInputMail"
 									placeholder="Entrez votre adresse e-mail">
 						</div>
 						<div class="form-group">
-								<label for="exampleInputTel">Téléphone (facultatif)</label>
+								<label for="exampleInputTel">Téléphone (facultatif) : </label>
 								<input type="tel" name="phonenumber" class="form-control" aria-describedby="emailHelp" id="exampleInputMail"
 										placeholder="Entrez votre numéro de téléphone">
 						</div>
 						<div class="form-group">
-							<label for="InputDesc">Message</label>
+							<label for="InputDesc">Message : </label>
 							<textarea name="message" class="form-control" id="InputDesc" rows="5" placeholder="Entrez votre message destiné au propriétaire"></textarea>
 						</div>
 						<div><button type="submit" class="btn btn-primary float-right" name="contact">Contacter le propriétaire du bien</button></div>
