@@ -117,6 +117,8 @@ def mail_reinitiate_pwd():
         user_mail = c.execute("SELECT prenom FROM utilisateur where email=?", (email,)).fetchone()
         if user_mail is not None :
             prenom = user_mail[0]
+            lien = "./FYN/message_lien.html"
+            msg=open(lien, "r")
             forget_password(email, prenom)
             flash("Le mail a bien été envoyé ! ", "success")
             return redirect(url_for('connexion'))
