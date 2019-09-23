@@ -4,8 +4,7 @@
 }
 .bg{
     background-image: url(bg.jpg);
-    background-size: cover; 
-    height: 900px;
+    background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed; 
 }
