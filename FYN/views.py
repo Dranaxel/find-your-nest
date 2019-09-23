@@ -11,6 +11,7 @@ from werkzeug.utils import secure_filename
 from FYN.mail import envoyer_mail, forget_password, contact_mail
 import os, logging
 from flask import jsonify
+import asyncio, aiohttp
 
 #Import Navitia key
 navitia_key = app.config['NAVITIA_KEY']
@@ -27,6 +28,22 @@ c = conn.cursor()
 
 #Chargement images dans le dossier
 upload_pro = PurePath ('./FYN/ups/')
+
+async def getOpencage(address):
+    params = {'q': address, "key": opencagedata_key, 'language': 'fr', 'no_annotations': 1, 'limit': 1, 'bounds': "1.19202,48.41462,3.36182,49.26780" }
+    async with aiohttp.ClientSession() as session:
+        async with session.get('https://api.opencagedata.com/geocode/v1/json?', params=params) as resp:
+            print(resp.status)
+            print(await resp.text())
+
+
+async def getNavitia(origin, dest):
+    params = {'from': origin, 'to': dest}
+    auth = (navitia_key, "")
+    async with aiohttp.ClientSession() as session:
+        async with session.get(navitia_url, params=params, auth=auth) as resp:
+            print(resp.status)
+            print(await resp.text())
 
 #loading the login manager
 @login_manager.user_loader
