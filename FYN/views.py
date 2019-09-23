@@ -44,19 +44,22 @@ def load_user(user_id):
 @app.route("/", methods=["GET", "POST"])
 def main():
     if request.method == "GET":
-        if current_user.is_authenticated: 
-            adresse_user = c.execute('SELECT nb, rue, code_postal, ville FROM adresse a join utilisateur u on a.id_adresse=u.id_adresse where email=?', (current_user.id,)).fetchone()
-            nb_user = adresse_user[0]
-            rue_user = adresse_user[1]
-            ville_user = adresse_user[3]
-            code_postal_user = adresse_user[2]
-            user_adresse = str(nb_user) + ' ' + rue_user + ' ' + str(code_postal_user) + ' ' + ville_user
-            temps_user = c.execute('SELECT temps from utilisateur where email=?', (current_user.id,)).fetchone()
-            user_temps = temps_user[0]
-            temps_split = user_temps.split(':')
-            h = temps_split[0]
-            min = temps_split[1]
-            return render_template('index.html', user_adresse=user_adresse, h=h, min=min)
+        if current_user.is_authenticated:
+            if current_user.pro == 'on' : 
+                return render_template('index.html')
+            else:
+                adresse_user = c.execute('SELECT nb, rue, code_postal, ville FROM adresse a join utilisateur u on a.id_adresse=u.id_adresse where email=?', (current_user.id,)).fetchone()
+                nb_user = adresse_user[0]
+                rue_user = adresse_user[1]
+                ville_user = adresse_user[3]
+                code_postal_user = adresse_user[2]
+                user_adresse = str(nb_user) + ' ' + rue_user + ' ' + str(code_postal_user) + ' ' + ville_user
+                temps_user = c.execute('SELECT temps from utilisateur where email=?', (current_user.id,)).fetchone()
+                user_temps = temps_user[0]
+                temps_split = user_temps.split(':')
+                h = temps_split[0]
+                min = temps_split[1]
+                return render_template('index.html', user_adresse=user_adresse, h=h, min=min)
         else : 
             return render_template('index.html')
             
