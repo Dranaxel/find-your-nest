@@ -7,14 +7,14 @@
 				{%include "_message.html"%}
 					<form method="POST">
 						<h2 class="card-title">{{titre}}</h2>
-			      		<h3 class="card-subtitle mb-2 text-muted">{{Prix}} €</h3>
+			      		<h3 class="card-subtitle my-3 mb-2 text-muted">{{Prix}} €</h3>
 						<div class="row d-flex justify-content-center my-2">
 							<img src="{{url_for('static', filename=pic)}}" class="rounded" style="width: 500px">
 						</div>
-						<div class="row my-3">
-							<p class="card-text mx-3">{{describe}}</p>
+						<div class="row my-4">
+							<p class="card-text mx-5 text-justify ">{{describe}}</p>
 						</div>
-						<div class="row">
+						<div class="row mx-5">
 							<div class="col-md-3">{{PostalCode}}</div>
 							<div class="col-md-3">{{nb_pieces}}  Pièces</div>
 							<div class="col-md-3">{{nb_chambre}} Chambres</div>
@@ -26,30 +26,36 @@
 						{% endif %}
 					</form>
 				</div>
-				<hr>
-				<h5 class="Card-title mx-3">Contacter le propriétaire : </h5>
+			</div>
+		</div>
+	</div>
+
+	<div class="container-fluid">
+		<div class="d-flex justify-content-center my-2">
+			<div class="card w-75">
 				<div class="card-body">
-				{%include "_message.html"%}
-					<form method="POST">
-							<div class="form-group">
-								<label for="exampleInputName">Prénom</label>
-								<input type="text" name="prenom" class="form-control" id="exampleInputName" placeholder="Entrez votre prénom">
-								</div>
-							<div class="form-group">
-								<label for="exampleInputMail">Adresse e-mail</label>
-								<input type="email" name="email" class="form-control" aria-describedby="emailHelp" id="exampleInputMail"
-									  placeholder="Entrez votre adresse e-mail">
+					{%include "_message.html"%}
+					<form method="POST"></form>
+						<h3 class="card-title">Contacter le propriétaire : </h3>
+						<div class="form-group mt-3">
+							<label for="exampleInputName">Prénom</label>
+							<input type="text" name="prenom" class="form-control" id="exampleInputName" placeholder="Entrez votre prénom">
 							</div>
-							<div class="form-group">
-									<label for="exampleInputTel">Téléphone (facultatif)</label>
-									<input type="tel" name="phonenumber" class="form-control" aria-describedby="emailHelp" id="exampleInputMail"
-										  placeholder="Entrez votre numéro de téléphone">
-							</div>
-							<div class="form-group">
-								<label for="InputDesc">Message</label>
-								<textarea name="message" class="form-control" id="InputDesc" rows="5" placeholder="Entrez votre message destiné au propriétaire"></textarea>
-							</div>
-							<div><button type="submit" class="btn btn-primary float-right" name="contact">Contacter le propriétaire du bien</button></div>
+						<div class="form-group">
+							<label for="exampleInputMail">Adresse e-mail</label>
+							<input type="email" name="email" class="form-control" aria-describedby="emailHelp" id="exampleInputMail"
+									placeholder="Entrez votre adresse e-mail">
+						</div>
+						<div class="form-group">
+								<label for="exampleInputTel">Téléphone (facultatif)</label>
+								<input type="tel" name="phonenumber" class="form-control" aria-describedby="emailHelp" id="exampleInputMail"
+										placeholder="Entrez votre numéro de téléphone">
+						</div>
+						<div class="form-group">
+							<label for="InputDesc">Message</label>
+							<textarea name="message" class="form-control" id="InputDesc" rows="5" placeholder="Entrez votre message destiné au propriétaire"></textarea>
+						</div>
+						<div><button type="submit" class="btn btn-primary float-right" name="contact">Contacter le propriétaire du bien</button></div>
 					</form>
 				</div>
 			</div>
