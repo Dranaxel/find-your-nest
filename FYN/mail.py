@@ -53,7 +53,7 @@ def forget_password(mail, username):
         "HTMLPart": """<b> Réinitialiser votre mot de passe : </b> <br/>
     Vous nous avez indiqué avoir oublié votre mot de passe.
     Si c'est vraiment le cas, cliquez sur le lien ci-dessous afin de le réinitialiser: <br/>
-    <a href="https://find-your-nest-ywhzbcfbpq-ew.a.run.app/reinialisation_pwd">Réinitialiser le mot de passe</a> <br/>
+    <a href="https://find-your-nest-ywhzbcfbpq-ew.a.run.app/reinitialisation_pwd">Réinitialiser le mot de passe</a> <br/>
     Si vous n'aviez pas l'intention de réinitialiser votre mot de passe, ignorez simplement cet e-mail, et votre mot de passe ne sera pas changé <br/>
     Merci, en vous souhaitant une bonne journée."""
         }
