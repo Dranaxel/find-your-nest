@@ -328,15 +328,21 @@ def Fiche(id):
             user_number = request.form['phonenumber']
             user_msg = request.form['message']
 
-            titre = c.execute("SELECT titre, id_logement from logement where id_logement=?", (id,)).fetchone()
-            title = titre[0]
-            id_log = titre[1]
+            if not user_email : 
+                titre = c.execute("SELECT titre, id_logement from logement where id_logement=?", (id,)).fetchone()
+                id_log = titre[1]
+                flash("Il est nécessaire d'entrer une adresse email !", "danger")
+                return redirect(url_for('Fiche', id=id_log))
+            else:
+                titre = c.execute("SELECT titre, id_logement from logement where id_logement=?", (id,)).fetchone()
+                title = titre[0]
+                id_log = titre[1]
 
-            pro_mail = c.execute("SELECT email, prenom from utilisateur u join bien b on u.id_utilisateur=b.id_utilisateur join logement l on b.id_logement=l.id_logement where l.id_logement=?", (id,)).fetchone()
-            pro_email = pro_mail[0]
-            pro_prenom = pro_mail[1]
-            contact_mail(user_prenom, user_email, user_number, user_msg, pro_email, pro_prenom, title)
-            return redirect(url_for('Fiche', id=id_log))
+                pro_mail = c.execute("SELECT email, prenom from utilisateur u join bien b on u.id_utilisateur=b.id_utilisateur join logement l on b.id_logement=l.id_logement where l.id_logement=?", (id,)).fetchone()
+                pro_email = pro_mail[0]
+                pro_prenom = pro_mail[1]
+                contact_mail(user_prenom, user_email, user_number, user_msg, pro_email, pro_prenom, title)
+                return redirect(url_for('Fiche', id=id_log))
 
             
 #Partie pro
