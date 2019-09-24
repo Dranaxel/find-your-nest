@@ -21,6 +21,9 @@
             map.addLayer(layer);
             // Creating a layer to add marker in it
             var markerLayer = L.layerGroup().addTo(map)
+		{% for item in pins %}
+		L.marker({{item}}).addTo(markerLayer)
+		{% endfor %}
         }; 
     </script>
 {%endblock%}

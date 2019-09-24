@@ -31,10 +31,12 @@ upload_pro = PurePath ('./FYN/ups/')
 
 #Get the address from opencage asynchronously
 async def getOpencage(address):
+    resp = []
     params = {'q': address, "key": opencagedata_key, 'language': 'fr', 'no_annotations': 1, 'limit': 1, 'bounds': "1.19202,48.41462,3.36182,49.26780" }
     async with aiohttp.ClientSession() as session:
         async with session.get('https://api.opencagedata.com/geocode/v1/json?', params=params) as resp:
             resp = await resp.json()
+            print(resp)
             resp = str(resp['results'][0]['geometry']['lng'])+";"+str(resp['results'][0]['geometry']['lat'])
             return resp
 
@@ -277,6 +279,7 @@ def aptInfo(add,hours,minutes):
                 positions.append(c.execute("select adresse.nb, adresse.rue, adresse.ville from adresse inner JOIN logement on logement.id_logement=adresse.id_adresse where logement.id_logement=%s"%i).fetchone())
                 results.append(c.execute("select titre, prix, photo, description, id_logement from logement where id_logement=%s"%i).fetchone())
 
+        stack = []
         for ref in positions:
             ref = ",".join(map(str,ref)) + " FRANCE"
             stack.append(getOpencage(ref))
@@ -287,8 +290,8 @@ def aptInfo(add,hours,minutes):
         stack = loop.run_until_complete(gather)
         loop.close()
 
-        #locations = map(lambda x: x.replace(";",","), stack)
-        return render_template("results.html", result= results)
+        locations = list(map(lambda x: ",".join(x.split(";"[::-1])), stack))
+        return render_template("results.html", result= results, pin= locations)
 
 @app.route("/getFavorite/<int:id>", methods=['POST'])
 def getFavorite(id):
