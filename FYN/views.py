@@ -29,6 +29,7 @@ c = conn.cursor()
 #Chargement images dans le dossier
 upload_pro = PurePath ('./FYN/ups/')
 
+#Get the address from opencage asynchronously
 async def getOpencage(address):
     params = {'q': address, "key": opencagedata_key, 'language': 'fr', 'no_annotations': 1, 'limit': 1, 'bounds': "1.19202,48.41462,3.36182,49.26780" }
     async with aiohttp.ClientSession() as session:
@@ -37,7 +38,7 @@ async def getOpencage(address):
             resp = str(resp['results'][0]['geometry']['lng'])+";"+str(resp['results'][0]['geometry']['lat'])
             return resp
 
-
+#Get the journey form Navitia asynchronously, takes GPS coord
 async def getNavitia(origin, dest):
     params = {'from': origin, 'to': dest, 'depth': 0, 'max_nb_journeys': 1}
     auth = aiohttp.BasicAuth(navitia_key, "")
@@ -47,6 +48,7 @@ async def getNavitia(origin, dest):
             resp = resp['journeys'][0]["duration"]
             return resp
 
+#Return true if the journey fits in the limit time, False otherwise
 async def isInTime(origin, dest, limit):
     origin = await getOpencage(origin)
     print(dest)
