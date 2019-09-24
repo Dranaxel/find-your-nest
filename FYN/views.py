@@ -35,7 +35,6 @@ async def getOpencage(address):
     async with aiohttp.ClientSession() as session:
         async with session.get('https://api.opencagedata.com/geocode/v1/json?', params=params) as resp:
             resp = await resp.json()
-            print(resp)
             resp = str(resp['results'][0]['geometry']['lng'])+";"+str(resp['results'][0]['geometry']['lat'])
             return resp
 
@@ -254,6 +253,7 @@ def aptInfo(add,hours,minutes):
     if request.method == 'GET':
         results = []
         stack =[]
+        positions = []
         #convert time in seconds
         max_time = hours*3600 + minutes*60
 
@@ -274,7 +274,20 @@ def aptInfo(add,hours,minutes):
         for i,v in enumerate(stack):
             if v == True:
                 i = apt_list[i]
+                positions.append(c.execute("select adresse.nb, adresse.rue, adresse.ville from adresse inner JOIN logement on logement.id_logement=adresse.id_adresse where logement.id_logement=%s"%i).fetchone())
                 results.append(c.execute("select titre, prix, photo, description, id_logement from logement where id_logement=%s"%i).fetchone())
+
+        for ref in positions:
+            ref = ",".join(map(str,ref)) + " FRANCE"
+            stack.append(getOpencage(ref))
+
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        gather = asyncio.gather(*stack)
+        stack = loop.run_until_complete(gather)
+        loop.close()
+
+        #locations = map(lambda x: x.replace(";",","), stack)
         return render_template("results.html", result= results)
 
 @app.route("/getFavorite/<int:id>", methods=['POST'])
