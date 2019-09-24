@@ -182,41 +182,31 @@ def moncompte():
             return render_template("moncompte.html")
         elif password == confirmer:
             adress = c.execute("SELECT rue, nb, ville FROM adresse where nb=? and rue=? and ville=?", (nb, rue, ville,)).fetchone()
-            if adress is None:
-                c.execute("INSERT INTO adresse (nb, rue, ville, code_postal) VALUES(?,?,?,?)", (nb, rue, ville, code_postal,))
-                conn.commit()
-                c.execute("DELETE FROM adresse WHERE nb IS NULL AND rue IS NULL AND ville IS NULL")
-                conn.commit()
-                
-                one_user = c.execute("SELECT * FROM utilisateur where email=?", (email,)).fetchone()
-                id_adres = c.execute("SELECT id_adresse FROM adresse WHERE nb=? AND rue=? AND ville=?", (nb, rue, ville,)).fetchone()
-                id_adresse = id_adres[0]
-                
-                if one_user is not None:
-                    flash("L'adresse email est déjà utilisée ! Veuiller en entrez une autre ! ", "danger")
-                    return render_template("moncompte.html")
-                
-                elif one_user is None:
-                    c.execute("INSERT INTO utilisateur (prenom, email, password, pro, temps, budget, maison, appartement) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", (prenom, email, secure_password, pro, temps, budget, maison, appart,))
-                    conn.commit()
-                    c.execute("UPDATE utilisateur SET id_adresse=? WHERE email=?", (id_adresse, email,))
-                    conn.commit()
+            one_user = c.execute("SELECT * FROM utilisateur where email=?", (email,)).fetchone()
+            if one_user is not None:
+                flash("L'adresse email est déjà utilisée ! Veuillez en entrer une autre ! ", "danger")
+                return render_template("moncompte.html")
             else:
-                one_user = c.execute("SELECT * FROM utilisateur where email=?", (email,)).fetchone()
-                id_adres = c.execute("SELECT id_adresse FROM adresse WHERE nb=? AND rue=? AND ville=?", (nb, rue, ville,)).fetchone()
-                id_adresse = id_adres[0]
-                if one_user is not None:
-                    flash("L'adresse email est déjà utilisée ! Veuiller en entrez une autre ! ", "danger")
-                    return render_template("moncompte.html")
-                
-                elif one_user is None:
-                    c.execute("INSERT INTO utilisateur (prenom, email, password, pro, temps, budget, maison, appartement) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", (prenom, email, secure_password, pro, temps, budget, maison, appart,))
+                c.execute("INSERT INTO utilisateur (prenom, email, password, pro, temps, budget, maison, appartement) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", (prenom, email, secure_password, pro, temps, budget, maison, appart,))
+                conn.commit()
+                adress = c.execute("SELECT id_adresse FROM adresse where nb=? and rue=? and ville=?", (nb, rue, ville,)).fetchone()
+
+                if adress is None:
+                    c.execute("INSERT INTO adresse (nb, rue, ville, code_postal) VALUES(?,?,?,?)", (nb, rue, ville, code_postal,))
                     conn.commit()
+                    c.execute("delete from adresse where nb='' AND rue='' AND ville='' AND code_postal=''")
+                    conn.commit()
+                    id_adres = c.execute("SELECT id_adresse FROM adresse WHERE nb=? AND rue=? AND ville=?", (nb, rue, ville,)).fetchone()
+                    if id_adres is not None :
+                        id_adresse = id_adres[0]
+                        c.execute("UPDATE utilisateur SET id_adresse=? WHERE email=?", (id_adresse, email,))
+                        conn.commit() 
+                else:
+                    id_adresse = adress[0]
                     c.execute("UPDATE utilisateur SET id_adresse=? WHERE email=?", (id_adresse, email,))
                     conn.commit()
-
-            envoyer_mail(email,prenom)    
-            return redirect(url_for('connexion'))
+                envoyer_mail(email,prenom)    
+                return redirect(url_for('connexion'))
         else:
             flash("Les mots de passe ne correspondent pas", "danger")
             return render_template("moncompte.html")
@@ -314,12 +304,13 @@ def Fiche(id):
             print(id)
             # if favoris_log == 'on':
             if id_fav is not None : 
-                flash("Le logement est déjà dans vos favoris !", "danger")
+                flash("L'annonce se trouve déjà dans votre favoris !", "warning")
                 return redirect(url_for('Fiche', id=id_log))
 
             else:
                 c.execute("INSERT INTO favoris(id_logement, id_utilisateur) VALUES(? , ?)", (id, id_utilisateur))
                 conn.commit()
+                flash("L'annonce a bien été ajouté dans vos favoris", "success")
                 return redirect(url_for('main'))
         
         elif 'contact' in request.form:
@@ -328,15 +319,21 @@ def Fiche(id):
             user_number = request.form['phonenumber']
             user_msg = request.form['message']
 
-            titre = c.execute("SELECT titre, id_logement from logement where id_logement=?", (id,)).fetchone()
-            title = titre[0]
-            id_log = titre[1]
+            if not user_email : 
+                titre = c.execute("SELECT titre, id_logement from logement where id_logement=?", (id,)).fetchone()
+                id_log = titre[1]
+                flash("Il est nécessaire d'entrer une adresse email !", "danger")
+                return redirect(url_for('Fiche', id=id_log))
+            else:
+                titre = c.execute("SELECT titre, id_logement from logement where id_logement=?", (id,)).fetchone()
+                title = titre[0]
+                id_log = titre[1]
 
-            pro_mail = c.execute("SELECT email, prenom from utilisateur u join bien b on u.id_utilisateur=b.id_utilisateur join logement l on b.id_logement=l.id_logement where l.id_logement=?", (id,)).fetchone()
-            pro_email = pro_mail[0]
-            pro_prenom = pro_mail[1]
-            contact_mail(user_prenom, user_email, user_number, user_msg, pro_email, pro_prenom, title)
-            return redirect(url_for('Fiche', id=id_log))
+                pro_mail = c.execute("SELECT email, prenom from utilisateur u join bien b on u.id_utilisateur=b.id_utilisateur join logement l on b.id_logement=l.id_logement where l.id_logement=?", (id,)).fetchone()
+                pro_email = pro_mail[0]
+                pro_prenom = pro_mail[1]
+                contact_mail(user_prenom, user_email, user_number, user_msg, pro_email, pro_prenom, title)
+                return redirect(url_for('Fiche', id=id_log))
 
             
 #Partie pro
