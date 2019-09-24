@@ -1,8 +1,26 @@
 {% extends "MASTER_BODY.html" %}
 {% block main_fct %}
+        <!-- MAP-->
+        <div row class="mapBlock mt-4 mb-3  d-flex justify-content-center">
+            <div row id="map"></div>
+        </div>
 	{% for item in result %}
 		{% with name=item[0], price=item[1], pic=item[2], describe=item[3], id_log=item[4] %}
 			{% include "_resultCards.html" %}
 		{% endwith %}
 	{% endfor %}
+
+    <script>
+        // API
+        window.onload = function () {
+            // Adding map function 
+            var map = L.map('map').setView([48.853411, 2.348802], 12);
+            var layer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
+            });
+            map.addLayer(layer);
+            // Creating a layer to add marker in it
+            var markerLayer = L.layerGroup().addTo(map)
+        }; 
+    </script>
 {%endblock%}
