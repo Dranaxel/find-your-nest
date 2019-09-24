@@ -51,7 +51,6 @@ async def getNavitia(origin, dest):
 #Return true if the journey fits in the limit time, False otherwise
 async def isInTime(origin, dest, limit):
     origin = await getOpencage(origin)
-    print(dest)
     dest = await getOpencage(dest)
     time = await getNavitia(origin, dest)
     return True if (time < limit) else False
@@ -259,7 +258,6 @@ def aptInfo(add,hours,minutes):
 
         #get a list of all the apt in the database
         apt_list = c.execute("select adresse.nb, adresse.rue, adresse.ville, logement.id_logement from adresse inner JOIN logement on logement.id_adresse=adresse.id_adresse").fetchall()
-        print(apt_list)
         for ref in apt_list:
             ref = ",".join(map(str,ref[:3])) + " FRANCE"
             stack.append(isInTime(add, ref, max_time))
