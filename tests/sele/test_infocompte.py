@@ -28,7 +28,6 @@ driver.find_element(By.ID, "exampleInputMail").send_keys("testselenium@hotmail.f
 driver.find_element(By.ID, "exampleInputPassword").click()
 driver.find_element(By.ID, "exampleInputPassword").send_keys("testselenium")
 driver.find_element(By.CSS_SELECTOR, ".float-right").click()
-driver.implicitly_wait(10)
 driver.find_element(By.LINK_TEXT, "Mon compte").click()
 
 inputname = driver.find_element_by_id('exampleInputName')
