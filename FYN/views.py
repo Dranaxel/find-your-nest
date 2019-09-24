@@ -49,6 +49,7 @@ async def getNavitia(origin, dest):
 
 async def isInTime(origin, dest, limit):
     origin = await getOpencage(origin)
+    print(dest)
     dest = await getOpencage(dest)
     time = await getNavitia(origin, dest)
     return True if (time < limit) else False
@@ -259,7 +260,6 @@ def deconnexion():
 @app.route("/results/add=<string:add>&h=<int:hours>&m=<int:minutes>", methods=["GET", "POST"])
 def aptInfo(add,hours,minutes):
     if request.method == 'GET':
-        saved_ref =[]
         results = []
         stack =[]
         #convert time in seconds
@@ -267,18 +267,23 @@ def aptInfo(add,hours,minutes):
 
         #get a list of all the apt in the database
         apt_list = c.execute("select adresse.nb, adresse.rue, adresse.ville, logement.id_logement from adresse inner JOIN logement on logement.id_adresse=adresse.id_adresse").fetchall()
+        print(apt_list)
         for ref in apt_list:
+            ref = ",".join(map(str,ref[:3])) + " FRANCE"
             stack.append(isInTime(add, ref, max_time))
         
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         gather = asyncio.gather(*stack)
-        print(gather)
         stack = loop.run_until_complete(gather)
         loop.close()
+        
+        apt_list =list( map(lambda x: x[3], apt_list))
 
-        for i in saved_ref:
-            results.append(c.execute("select titre, prix, photo, description, id_logement from logement where id_logement=%s"%i).fetchone())
+        for i,v in enumerate(stack):
+            if v == True:
+                i = apt_list[i]
+                results.append(c.execute("select titre, prix, photo, description, id_logement from logement where id_logement=%s"%i).fetchone())
         return render_template("results.html", result= results)
 
 @app.route("/getFavorite/<int:id>", methods=['POST'])
