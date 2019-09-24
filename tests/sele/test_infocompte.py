@@ -32,8 +32,7 @@ driver.implicitly_wait(10)
 driver.find_element(By.LINK_TEXT, "Mon compte").click()
 
 inputname = driver.find_element_by_id('exampleInputName')
-print(inputname.get_attribute("value"))
-if "testselenium" not in inputname.get_value("testselenium"):
+if "testselenium" not in inputname.get_attribute("value"):
     raise Exception("Not the right name for this account!")
 driver.quit()  
 
