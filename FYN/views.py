@@ -11,6 +11,7 @@ from werkzeug.utils import secure_filename
 from FYN.mail import envoyer_mail, forget_password, contact_mail
 import os, logging
 from flask import jsonify
+import asyncio, aiohttp
 
 #Import Navitia key
 navitia_key = app.config['NAVITIA_KEY']
@@ -27,6 +28,33 @@ c = conn.cursor()
 
 #Chargement images dans le dossier
 upload_pro = PurePath ('./FYN/ups/')
+
+#Get the address from opencage asynchronously
+async def getOpencage(address):
+    params = {'q': address, "key": opencagedata_key, 'language': 'fr', 'no_annotations': 1, 'limit': 1, 'bounds': "1.19202,48.41462,3.36182,49.26780" }
+    async with aiohttp.ClientSession() as session:
+        async with session.get('https://api.opencagedata.com/geocode/v1/json?', params=params) as resp:
+            resp = await resp.json()
+            resp = str(resp['results'][0]['geometry']['lng'])+";"+str(resp['results'][0]['geometry']['lat'])
+            return resp
+
+#Get the journey form Navitia asynchronously, takes GPS coord
+async def getNavitia(origin, dest):
+    params = {'from': origin, 'to': dest, 'depth': 0, 'max_nb_journeys': 1}
+    auth = aiohttp.BasicAuth(navitia_key, "")
+    async with aiohttp.ClientSession( auth=auth) as session:
+        async with session.get(navitia_url, data=params) as resp:
+            resp = await resp.json()
+            resp = resp['journeys'][0]["duration"]
+            return resp
+
+#Return true if the journey fits in the limit time, False otherwise
+async def isInTime(origin, dest, limit):
+    origin = await getOpencage(origin)
+    dest = await getOpencage(dest)
+    time = await getNavitia(origin, dest)
+    return True if (time < limit) else False
+
 
 #loading the login manager
 @login_manager.user_loader
@@ -223,36 +251,29 @@ def deconnexion():
 @app.route("/results/add=<string:add>&h=<int:hours>&m=<int:minutes>", methods=["GET", "POST"])
 def aptInfo(add,hours,minutes):
     if request.method == 'GET':
-        saved_ref =[]
         results = []
-        #convert the main address in GPS position with opencau
-        opencage_resp = opencage.geocode(add)
-        origin_coord = list(opencage_resp[0]['geometry'].values())      
-        origin_coord = str(origin_coord[1]) +";"+ str(origin_coord[0])
-
+        stack =[]
         #convert time in seconds
         max_time = hours*3600 + minutes*60
 
         #get a list of all the apt in the database
         apt_list = c.execute("select adresse.nb, adresse.rue, adresse.ville, logement.id_logement from adresse inner JOIN logement on logement.id_adresse=adresse.id_adresse").fetchall()
         for ref in apt_list:
-            try:
-                dest_add = ",".join(map(str,ref[:3]))+",FRANCE"
-                opencage_resp = opencage.geocode(dest_add, language='fr', no_annotations=1, limit=1, bounds="1.19202,48.41462,3.36182,49.26780")
-                dest_coord = list(opencage_resp[0]['geometry'].values())
-                dest_coord = str(dest_coord[1])+";"+str(dest_coord[0])
-                navitia_param = {'from': origin_coord, 'to': dest_coord}
-                logging.exception(navitia_param)
-                navitia_call = requests.get(navitia_url, data = navitia_param, auth=(navitia_key, ""))
-                navitia_call = json.loads(navitia_call.text)
-                duration = navitia_call['journeys'][0]["duration"]
-            except:
-                print("error")
-                continue
-            if duration <=  max_time:
-                saved_ref.append(ref[3])
-        for i in saved_ref:
-            results.append(c.execute("select titre, prix, photo, description, id_logement from logement where id_logement=%s"%i).fetchone())
+            ref = ",".join(map(str,ref[:3])) + " FRANCE"
+            stack.append(isInTime(add, ref, max_time))
+        
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        gather = asyncio.gather(*stack)
+        stack = loop.run_until_complete(gather)
+        loop.close()
+        
+        apt_list =list( map(lambda x: x[3], apt_list))
+
+        for i,v in enumerate(stack):
+            if v == True:
+                i = apt_list[i]
+                results.append(c.execute("select titre, prix, photo, description, id_logement from logement where id_logement=%s"%i).fetchone())
         return render_template("results.html", result= results)
 
 @app.route("/getFavorite/<int:id>", methods=['POST'])

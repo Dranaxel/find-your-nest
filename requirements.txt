@@ -6,3 +6,4 @@ passlib
 mailjet_rest
 pytest
 selenium
+aiohttp
