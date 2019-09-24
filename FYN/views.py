@@ -313,8 +313,13 @@ def Fiche(id):
         surface_sql =  c.execute("SELECT superficie FROM logement WHERE id_logement=?", (id,)).fetchone()
         describe_sql = c.execute("SELECT description FROM logement where id_logement=?", (id,)).fetchone()
         pic_sql = c.execute("SELECT photo FROM logement where id_logement=?", (id,)).fetchone()
-        user_info = c.execute("SELECT prenom, email from utilisateur where email=?", (current_user.id,)).fetchone()
-        return render_template("FicheAppart.html", prenom=user_info[0], email=user_info[1], titre=titre_sql[0], id_log=titre_sql[1], nb_chambre=nb_chambre_sql[0], Prix=prix_sql[0], PostalCode=PostalCode_sql[0], nb_pieces=nb_pieces_sql[0], surface=surface_sql[0], describe= describe_sql[0], pic=pic_sql[0])
+        if current_user.is_authenticated:
+            user_info = c.execute("SELECT prenom, email from utilisateur where email=?", (current_user.id,)).fetchone()
+            prenom = user_info[0]
+            email = user_info[1]
+            return render_template("FicheAppart.html", prenom=prenom, email=email, titre=titre_sql[0], id_log=titre_sql[1], nb_chambre=nb_chambre_sql[0], Prix=prix_sql[0], PostalCode=PostalCode_sql[0], nb_pieces=nb_pieces_sql[0], surface=surface_sql[0], describe= describe_sql[0], pic=pic_sql[0])
+        else:
+            return render_template("FicheAppart.html", titre=titre_sql[0], id_log=titre_sql[1], nb_chambre=nb_chambre_sql[0], Prix=prix_sql[0], PostalCode=PostalCode_sql[0], nb_pieces=nb_pieces_sql[0], surface=surface_sql[0], describe= describe_sql[0], pic=pic_sql[0])
 
     else :      
         user_prenom = request.form['prenom']
