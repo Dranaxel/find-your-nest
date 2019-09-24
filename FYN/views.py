@@ -19,7 +19,7 @@ navitia_url = app.config['NAVITIA_URL']
 
 
 #initializing geocoder wrapper
-opencagedata_key = "31dbec8c7f4844a6aafa18c738aea931"
+opencagedata_key = app.config['OPENCAGE_KEY'] 
 opencage = OpenCageGeocode(opencagedata_key)
 
 database_file = PurePath('./FYN/findyournest.db')
@@ -35,6 +35,7 @@ async def getOpencage(address):
     async with aiohttp.ClientSession() as session:
         async with session.get('https://api.opencagedata.com/geocode/v1/json?', params=params) as resp:
             resp = await resp.json()
+            print(resp)
             resp = str(resp['results'][0]['geometry']['lng'])+";"+str(resp['results'][0]['geometry']['lat'])
             return resp
 
