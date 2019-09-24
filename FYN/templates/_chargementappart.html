@@ -1,4 +1,3 @@
-<!-- Partie pro-->
 <div class="d-flex justify-content-center my-5">
   <div class="card w-75">
     <div class="card-body">
@@ -42,6 +41,10 @@
           <input name="nb_chambre" type="text" class="form-control" id="InputSurface" placeholder="Entrez le nombre de chambres">
         </div>
         <div class="form-group">
+          <label for="InputSurface">Nombre de pièces : </label>
+          <input name="nb_piece" type="text" class="form-control" id="InputSurface" placeholder="Entrez le nombre de pieces">
+        </div>
+        <div class="form-group">
           <label for="InputPrice">Prix €</label>
           <input name="prix" type="number" class="form-control" id="InputPrice" placeholder="Entrez le prix de votre bien">
         </div>
@@ -70,6 +73,7 @@
       </form>
     </div>
   </div>
+
 <script>
   $('.custom-file input').change(function (e) {
          $(this).next('.custom-file-label').text(e.target.files[0].name);
