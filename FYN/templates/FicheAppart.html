@@ -21,9 +21,10 @@
 							<div class="col-md-3">{{nb_chambre}} Chambres</div>
 							<div class="col-md-3">{{surface}} m²</div>
 						</div>
-						{% if current_user.is_authenticated %} 
-						<div><button id="jsBtnFav" class="btn btn-primary float-right" data-value="{{id_log}}">Ajouter aux favoris</button></div>
+						{% if current_user.pro == 'on' %}
+						{% elif current_user.is_anonymous %}
 						{% else %}
+						<div><button id="jsBtnFav" class="btn btn-primary float-right" data-value="{{id_log}}">Ajouter aux favoris</button></div>
 						{% endif %}
 					</div>
 				</div>
@@ -35,9 +36,9 @@
 	<div class="d-flex justify-content-center my-2">
 		<div class="card w-75">
 			<div class="card-body">
-				{%include "_message.html"%}
 				<form method="POST">
 					<h3 class="card-title">Contacter le propriétaire </h3>
+					{%include "_message.html"%}
 					<div class="form-group mt-3">
 						<label for="exampleInputName">Prénom : </label>
 						<input type="text" name="prenom" class="form-control" id="exampleInputName" placeholder="Entrez votre prénom">

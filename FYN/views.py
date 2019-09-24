@@ -293,47 +293,27 @@ def Fiche(id):
         pic_sql = c.execute("SELECT photo FROM logement where id_logement=?", (id,)).fetchone()
         return render_template("FicheAppart.html", titre=titre_sql[0], id_log=titre_sql[1], nb_chambre=nb_chambre_sql[0], Prix=prix_sql[0], PostalCode=PostalCode_sql[0], nb_pieces=nb_pieces_sql[0], surface=surface_sql[0], describe= describe_sql[0], pic=pic_sql[0])
 
-    else : 
-    #     if 'add_favorites' in request.form:
-    #         logement_sql = c.execute("SELECT id_logement FROM logement WHERE id_logement=?", (id,)).fetchone()
-    #         id_log=logement_sql[0]
-    #         # favoris_log = request.form.get('log_fav')
-    #         id_user = c.execute("SELECT id_utilisateur FROM utilisateur where email=?", (current_user.id,)).fetchone()
-    #         id_utilisateur = id_user[0]
-    #         id_fav = c.execute("SELECT * FROM favoris where id_utilisateur=? and id_logement=?", (id_utilisateur, id,)).fetchone()
-    #         print(id)
-    #         # if favoris_log == 'on':
-    #         if id_fav is not None : 
-    #             flash("L'annonce se trouve déjà dans votre favoris !", "warning")
-    #             return redirect(url_for('Fiche', id=id_log))
+    else :
+        user_prenom = request.form['prenom']
+        user_email = request.form['email']
+        user_number = request.form['phonenumber']
+        user_msg = request.form['message']
 
-    #         else:
-    #             c.execute("INSERT INTO favoris(id_logement, id_utilisateur) VALUES(? , ?)", (id, id_utilisateur))
-    #             conn.commit()
-    #             flash("L'annonce a bien été ajouté dans vos favoris", "success")
-    #             return redirect(url_for('main'))
-        
-        if 'contact' in request.form:
-            user_prenom = request.form['prenom']
-            user_email = request.form['email']
-            user_number = request.form['phonenumber']
-            user_msg = request.form['message']
+        if not user_email : 
+            titre = c.execute("SELECT titre, id_logement from logement where id_logement=?", (id,)).fetchone()
+            id_log = titre[1]
+            flash("Il est nécessaire d'entrer une adresse email !", "danger")
+            return redirect(url_for('Fiche', id=id_log))
+        else:
+            titre = c.execute("SELECT titre, id_logement from logement where id_logement=?", (id,)).fetchone()
+            title = titre[0]
+            id_log = titre[1]
 
-            if not user_email : 
-                titre = c.execute("SELECT titre, id_logement from logement where id_logement=?", (id,)).fetchone()
-                id_log = titre[1]
-                flash("Il est nécessaire d'entrer une adresse email !", "danger")
-                return redirect(url_for('Fiche', id=id_log))
-            else:
-                titre = c.execute("SELECT titre, id_logement from logement where id_logement=?", (id,)).fetchone()
-                title = titre[0]
-                id_log = titre[1]
-
-                pro_mail = c.execute("SELECT email, prenom from utilisateur u join bien b on u.id_utilisateur=b.id_utilisateur join logement l on b.id_logement=l.id_logement where l.id_logement=?", (id,)).fetchone()
-                pro_email = pro_mail[0]
-                pro_prenom = pro_mail[1]
-                contact_mail(user_prenom, user_email, user_number, user_msg, pro_email, pro_prenom, title)
-                return redirect(url_for('Fiche', id=id_log))
+            pro_mail = c.execute("SELECT email, prenom from utilisateur u join bien b on u.id_utilisateur=b.id_utilisateur join logement l on b.id_logement=l.id_logement where l.id_logement=?", (id,)).fetchone()
+            pro_email = pro_mail[0]
+            pro_prenom = pro_mail[1]
+            contact_mail(user_prenom, user_email, user_number, user_msg, pro_email, pro_prenom, title)
+            return redirect(url_for('Fiche', id=id_log))
 
             
 #Partie pro
