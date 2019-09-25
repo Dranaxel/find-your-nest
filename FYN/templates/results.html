@@ -18,11 +18,11 @@
             var layer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
             });
-            L.map.addLayer(layer);
+            map.addLayer(layer);
             // Creating a layer to add marker in it
             var markerLayer = L.layerGroup().addTo(map)
 		{% for item in pins %}
-	    var pin_{{loop.index}} = L.marker([{{item}}]).addTo(map)
+	    var pin_{{loop.index}} = L.marker([{{item}}]).addTo(markerLayer)
 		{% endfor %}
         }; 
     </script>

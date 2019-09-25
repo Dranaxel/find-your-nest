@@ -290,7 +290,7 @@ def aptInfo(add,hours,minutes):
         stack = loop.run_until_complete(gather)
         loop.close()
 
-        locations = list(map(lambda x: ",".join(x.split(";"[::-1])), stack))
+        locations = list(map(lambda x: ",".join(x.split(";")[::-1]), stack))
         return render_template("results.html", result= results, pins= locations)
 
 @app.route("/getFavorite/<int:id>", methods=['POST'])
