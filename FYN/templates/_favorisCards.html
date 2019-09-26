@@ -16,9 +16,7 @@
                 {{description}}
               </p>
               {% if current_user.pro == 'on' %}
-              <div class="d-flex justify-content-end">
-                  <button type="submit" class="btn btn-outline-danger" name="del_bien" value={{id_log}}>Retirer le bien</button>
-              </div>
+
               {% else %}
               <div class="d-flex justify-content-end">
                 <button type="submit" class="btn btn-outline-danger" name="del_fav" value={{id_log}}>Retirer des favoris</button>
