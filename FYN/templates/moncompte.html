@@ -63,18 +63,11 @@
               <input type="password" name="confirmer" class="form-control" id="exampleInputPassword" placeholder="Confirmez votre mot de passe">
             </div>
             <div class="form-check">
-              <input class="form-check-input" name="pro" type="checkbox" id="checkBoxPro" onclick="DoCheckUncheckDisplay(this,'checkbox-checked','checkbox-unchecked')">
+              <input class="form-check-input" name="pro" type="checkbox" id="checkBoxPro">
               <label class="form-check-label" for="checkboxPro">Je suis un(e) professionnel(le)</label>
-              <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Vous souhaitez louer ou mettre en vente votre bien ? Le compte profesionnel est fait pour vous. 
-Gratuit et sans engagement, notre service permet de faciliter l'échange avec de potentiel client. 
-Donc n'hésitez plus !">
-                <i class="far fa-question-circle"></i>
-              </span>
             </div>
           <hr>
-          <div id="checkbox-unchecked" style="display:block">
             <h4 class="Card-title">Ce que vous recherchez</h4>
-            <div id="checkbox-unchecked" style="display:block">
               <div class="form-group">
                 <label for="exampleInputNumber">Numéro</label>
                 <input type="number" name="nb" class="form-control" id="exampleInputNumber" placeholder="Entrez le numéro de rue">
@@ -114,8 +107,6 @@ Donc n'hésitez plus !">
                   <label class="form-check-label" for="checkboxHouse">Maison</label>
                 </div>
               </div>
-            </div>
-          </div>
           <div><button type="submit" class="btn btn-primary float-right">S'inscrire</button></div>
         </form>
       </div>
@@ -130,22 +121,4 @@ Donc n'hésitez plus !">
     $("#formControlSlider").html(val);
   }
 </script>
-
-<!-- Fonction pour retirer la partir vous recherchez lorsqu'on coche une case   -->
-<script>
-  function DoCheckUncheckDisplay(d,dchecked,dunchecked)
-  {
-     if( d.checked == true )
-     {
-        document.getElementById(dunchecked).style.display = "none";
-     }
-     else
-     {
-        document.getElementById(dunchecked).style.display = "block";
-     }
-  }
-  </script>
- 
- 
 </html>
-

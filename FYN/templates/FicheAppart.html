@@ -1,67 +1,28 @@
 {% extends "MASTER_BODY.html" %}
 {% block main_fct %}
+        <div class="container-fluid">
+            <div class="d-flex justify-content-center my-2">
+                    <div class="card w-75">
+                            <div class="card-body">
+                              <h2 class="card-title">Appartement</h2>
+			      <h3 class="card-subtitle mb-2 text-muted">{{Prix}} €</h3>
+                              <div class="row d-flex justify-content-center my-2">
+                                      <img src="images/bg.jpg" style="width: 500px">
+                              </div>
+                              <div class="row my-3">
+                                    <p class="card-text ">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec consequat ipsum vitae metus molestie vestibulum. Vivamus id quam nunc. Sed at eleifend libero. Suspendisse vel sapien id sem laoreet molestie. Nulla in felis eu sapien volutpat fringilla. Vivamus pharetra imperdiet est, et tincidunt sapien viverra sit amet. </p>
+                                </div>
+                                <div class="row">
+					<div class="col-md-3">{{PostalCode}}</div>
+					<div class="col-md-3">{{nb_pieces}}  Pièces</div>
+                                    <div class="col-md-3">1 Chambre</div>
+				    <div class="col-md-3">{{surface}} m²</div>
+                                </div>
+                            </div>
+                    </div>
+            </div>
 
-	<div class="d-flex justify-content-center my-2">
-		<div class="card w-75">
-			<div class="card-body">
-				<div class="form-group">
-					<div id="cardresult" class="card card-body h-100 justify-content-center">
-						<h2 class="card-title ">{{titre}}</h2>
-						<div class="alertFav"></div>
-						<h3 class="card-subtitle mt-1 mb-2 text-muted">{{Prix}} €</h3>
-						<div class="row d-flex justify-content-center my-3">
-							<img src="{{url_for('static', filename=pic)}}" class="rounded" style="width: 500px">
-						</div>
-						<div class="row my-2">
-							<p class="card-text mx-4 text-justify ">{{describe}}</p>
-						</div>
-						<div class="row mx-5">
-							<div class="col-md-3">{{PostalCode}}</div>
-							<div class="col-md-3">{{nb_pieces}}  Pièces</div>
-							<div class="col-md-3">{{nb_chambre}} Chambres</div>
-							<div class="col-md-3">{{surface}} m²</div>
-						</div>
-						{% if current_user.pro == 'on' %}
-						{% elif current_user.is_anonymous %}
-						{% else %}
-						<div><button id="jsBtnFav" class="btn btn-primary float-right" data-value="{{id_log}}">Ajouter aux favoris</button></div>
-						{% endif %}
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-    
-	<div class="d-flex justify-content-center my-2">
-		<div class="card w-75">
-			<div class="card-body">
-				<form method="POST">
-					<h3 class="card-title">Contacter le propriétaire </h3>
-					{%include "_message.html"%}
-					<div class="form-group mt-3">
-						<label for="exampleInputName">Prénom : </label>
-						<input type="text" name="prenom" class="form-control" value="{{prenom}}" id="exampleInputName" placeholder="Entrez votre prénom">
-						</div>
-					<div class="form-group">
-						<label for="exampleInputMail">Adresse e-mail : * </label>
-						<input type="email" name="email" value="{{email}}" class="form-control" aria-describedby="emailHelp" id="exampleInputMail"
-								placeholder="Entrez votre adresse e-mail">
-					</div>
-					<div class="form-group">
-							<label for="exampleInputTel">Téléphone (facultatif) : </label>
-							<input type="tel" name="phonenumber" class="form-control" aria-describedby="emailHelp" id="exampleInputMail"
-									placeholder="Entrez votre numéro de téléphone">
-					</div>
-					<div class="form-group">
-						<label for="InputDesc">Message : </label>
-						<textarea name="message" class="form-control" id="InputDesc" rows="5" placeholder="Entrez votre message destiné au propriétaire"></textarea>
-					</div>
-					<div><button type="submit" class="btn btn-primary float-right" name="contact">Contacter le propriétaire du bien</button></div>
-				</form>
-			</div>
-		</div>
-	</div>
+        </div>
 
     <script>
         window.onload = function(){
