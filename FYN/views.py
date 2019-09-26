@@ -8,7 +8,6 @@ import sqlite3, requests, json
 from pathlib import PurePath  
 from passlib.hash import sha256_crypt
 from werkzeug.utils import secure_filename
-<<<<<<< HEAD
 from FYN.mail import envoyer_mail, forget_password, contact_mail
 import os, logging
 from flask import jsonify
@@ -21,15 +20,6 @@ navitia_url = app.config['NAVITIA_URL']
 
 #initializing geocoder wrapper
 opencagedata_key = app.config['OPENCAGE_KEY'] 
-=======
-
-#Import Navitia key
-navitia_key = app.config['NAVITIA']
-navitia_url = "http://api.navitia.io/v1/journeys"
-
-#initializing geocoder wrapper
-opencagedata_key = "3c853893fc37402eb2ef1473b6629218"
->>>>>>> parent of 04dca8f... Add files via upload
 opencage = OpenCageGeocode(opencagedata_key)
 
 database_file = PurePath('./FYN/findyournest.db')
@@ -39,7 +29,6 @@ c = conn.cursor()
 #Chargement images dans le dossier
 upload_pro = PurePath ('./FYN/ups/')
 
-<<<<<<< HEAD
 #Get the address from opencage asynchronously
 async def getOpencage(address):
     params = {'q': address, "key": opencagedata_key, 'language': 'fr', 'no_annotations': 1, 'limit': 1, 'bounds': "1.19202,48.41462,3.36182,49.26780" }
@@ -75,8 +64,6 @@ async def isInTime(origin, dest, limit):
         return "ko"
 
 
-=======
->>>>>>> parent of 04dca8f... Add files via upload
 #loading the login manager
 @login_manager.user_loader
 def load_user(user_id):
@@ -93,7 +80,6 @@ def load_user(user_id):
 @app.route("/", methods=["GET", "POST"])
 def main():
     if request.method == "GET":
-<<<<<<< HEAD
         if current_user.is_authenticated:
             if current_user.pro == 'on' : 
                 return render_template('index.html')
@@ -113,9 +99,6 @@ def main():
         else : 
             return render_template('index.html')
             
-=======
-        return render_template('index.html')
->>>>>>> parent of 04dca8f... Add files via upload
     elif request.method =="POST":
         #get response from the form
         address = request.form['addresse']
@@ -156,7 +139,6 @@ def connexion():
             flash("Votre email et/ou votre mot de passe est incorrect. Veuillez les saisir à nouveau ", "danger")
             return render_template("connexion.html")
 
-<<<<<<< HEAD
 #envoie du mail pour réinialiser le mot de passe 
 @app.route("/mail_reinitiate_pwd/", methods=["GET", "POST"])
 def mail_reinitiate_pwd():
@@ -206,8 +188,6 @@ def reinialisation_pwd():
                 flash("Les mots de passes ne correspondent pas ! Veuillez resaisir les mots de passe ! ", "danger")
                 return render_template("reinitialisation.html")
       
-=======
->>>>>>> parent of 04dca8f... Add files via upload
 #créer le compte
 @app.route("/moncompte/", methods=["GET", "POST"])
 def moncompte():
@@ -238,7 +218,6 @@ def moncompte():
             return render_template("moncompte.html")
         elif password == confirmer:
             adress = c.execute("SELECT rue, nb, ville FROM adresse where nb=? and rue=? and ville=?", (nb, rue, ville,)).fetchone()
-<<<<<<< HEAD
             one_user = c.execute("SELECT * FROM utilisateur where email=?", (email,)).fetchone()
             if one_user is not None:
                 flash("L'adresse email est déjà utilisée ! Veuillez en entrer une autre ! ", "danger")
@@ -264,42 +243,6 @@ def moncompte():
                     conn.commit()
                 envoyer_mail(email,prenom)    
                 return redirect(url_for('connexion'))
-=======
-            if adress is None:
-                c.execute("INSERT INTO adresse (nb, rue, ville, code_postal) VALUES(?,?,?,?)", (nb, rue, ville, code_postal,))
-                conn.commit()
-                c.execute("DELETE FROM adresse WHERE nb IS NULL AND rue IS NULL AND ville IS NULL")
-                conn.commit()
-                
-                one_user = c.execute("SELECT * FROM utilisateur where email=?", (email,)).fetchone()
-                id_adres = c.execute("SELECT id_adresse FROM adresse WHERE nb=? AND rue=? AND ville=?", (nb, rue, ville,)).fetchone()
-                id_adresse = id_adres[0]
-                
-                if one_user is not None:
-                    flash("L'adresse email est déjà utilisée ! Veuiller en entrez une autre ! ", "danger")
-                    return render_template("moncompte.html")
-                
-                elif one_user is None:
-                    c.execute("INSERT INTO utilisateur (prenom, email, password, pro, temps, budget, maison, appartement) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", (prenom, email, secure_password, pro, temps, budget, maison, appart,))
-                    conn.commit()
-                    c.execute("UPDATE utilisateur SET id_adresse=? WHERE email=?", (id_adresse, email,))
-                    conn.commit()
-            else:
-                one_user = c.execute("SELECT * FROM utilisateur where email=?", (email,)).fetchone()
-                id_adres = c.execute("SELECT id_adresse FROM adresse WHERE nb=? AND rue=? AND ville=?", (nb, rue, ville,)).fetchone()
-                id_adresse = id_adres[0]
-                if one_user is not None:
-                    flash("L'adresse email est déjà utilisée ! Veuiller en entrez une autre ! ", "danger")
-                    return render_template("moncompte.html")
-                
-                elif one_user is None:
-                    c.execute("INSERT INTO utilisateur (prenom, email, password, pro, temps, budget, maison, appartement) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", (prenom, email, secure_password, pro, temps, budget, maison, appart,))
-                    conn.commit()
-                    c.execute("UPDATE utilisateur SET id_adresse=? WHERE email=?", (id_adresse, email,))
-                    conn.commit()
-                    
-            return redirect(url_for('connexion'))
->>>>>>> parent of 04dca8f... Add files via upload
         else:
             flash("Les mots de passe ne correspondent pas", "danger")
             return render_template("moncompte.html")
@@ -313,7 +256,6 @@ def deconnexion():
     return redirect(url_for('connexion'))
 
 
-<<<<<<< HEAD
 @app.route("/results/add=<string:add>&h=<int:hours>&m=<int:minutes>", methods=["GET", "POST"])
 def aptInfo(add,hours,minutes):
     if request.method == 'GET':
@@ -449,69 +391,12 @@ def infoscompte():
             infos_user = c.execute("SELECT maison, appartement, id_adresse FROM  utilisateur where email=?", (current_user.id,)).fetchone()
             maison = infos_user[0]
             appartement = infos_user[1]
-=======
-@app.route("/results/add=<string:add>&h=<int:hours>&m=<int:minutes>")
-def aptInfo(add,hours,minutes):
-    saved_ref =[]
-    results = []
-    #convert the main address in GPS position with opencau
-    opencage_resp = opencage.geocode(add)
-    origin_coord = list(opencage_resp[0]['geometry'].values())      
-    origin_coord = str(origin_coord[1]) +";"+ str(origin_coord[0])
-    
-    #convert time in seconds
-    max_time = hours*3600 + minutes*60
-
-    #get a list of all the apt in the database
-    apt_list = c.execute("select adresse.nb, adresse.rue, adresse.ville, logement.id_logement from adresse inner JOIN logement on logement.id_adresse=adresse.id_adresse").fetchall()
-    for ref in apt_list:
-        try:
-            dest_add = ",".join(map(str,ref[:3]))+",FRANCE"
-            opencage_resp = opencage.geocode(dest_add, language='fr', no_annotations=1, limit=1, bounds="1.19202,48.41462,3.36182,49.26780")
-            dest_coord = list(opencage_resp[0]['geometry'].values())
-            dest_coord = str(dest_coord[1])+";"+str(dest_coord[0])
-            navitia_param = {'from': origin_coord, "to": dest_coord} 
-            navitia_call = requests.get(navitia_url, navitia_param, auth=(navitia_key, ""))
-            navitia_call = json.loads(navitia_call.text)
-            duration = navitia_call['journeys'][0]["duration"]
-        except:
-            print("error")
-            continue
-        if duration <=  max_time:
-            saved_ref.append(ref[3])
-    for i in saved_ref:
-        results.append(c.execute("select titre, prix, photo, description from logement where id_logement=%s"%i).fetchone())
-    return render_template("results.html", result= results)
-
-@app.route("/Fiche/<int:id>")
-def Fiche(id):
-    prix_sql = c.execute("SELECT prix FROM logement WHERE id_logement=?", (id,)).fetchone()
-    PostalCode_sql = c.execute("select code_postal from adresse inner JOIN logement on logement.id_adresse=adresse.id_adresse where logement.id_logement= ?", (id,)).fetchone() 
-    nb_pieces_sql = c.execute("SELECT nb_piece FROM logement WHERE id_logement=?", (id,)).fetchone()
-    surface_sql =  c.execute("SELECT superficie FROM logement WHERE id_logement=?", (id,)).fetchone()
-    return render_template("FicheAppart.html", Prix=prix_sql[0], PostalCode=PostalCode_sql[0], nb_pieces=nb_pieces_sql[0], surface=surface_sql[0])
-
-#Partie pro
-
-@app.route("/infoscompte/")
-@login_required
-def infoscompte():
-    if current_user.is_authenticated:
-        #infoscompte.pro
-        if current_user.pro == 'on':
-            email = current_user.id
-            infos_pro = c.execute("select prenom, email, temps, budget, maison, appartement, id_utilisateur FROM utilisateur where email=?", (email,)).fetchone()    
-            maison = infos_pro[4]
-            appartement = infos_pro[5]
-            infos_adresse = c.execute("select nb, rue, ville, code_postal from adresse inner join utilisateur on adresse.id_adresse=utilisateur.id_adresse where email=?", (email,)).fetchone()
->>>>>>> parent of 04dca8f... Add files via upload
             if maison == 'on':
                 type_logement = 'maison'
             elif appartement == 'on':
                 type_logement = 'appartement'
             else:
                 type_logement = 'Non précisé'
-<<<<<<< HEAD
             infos = []
             info_favoris = []
             #infos utilisateur
@@ -643,36 +528,3 @@ def checkextension(namefile):
     return '.' in namefile and namefile.rsplit('.', 1)[1] in ('png', 'jpg', 'jpeg')
 
 
-=======
-            return render_template("infoscomptepro.html", prenom=infos_pro[0], email=infos_pro[1], temps=infos_pro[2], budget=infos_pro[3], type_logement=type_logement, nb=infos_adresse[0], rue=infos_adresse[1], ville=infos_adresse[2], code_postal=infos_adresse[3])
-        #infoscompte
-
-        else:
-            email =  current_user.id
-            infos = c.execute("select prenom, email, temps, budget, maison, appartement, id_utilisateur FROM  utilisateur where email=?", (email,)).fetchone()    
-            
-            maison = infos[4]
-            appartement = infos[5]
-            
-            if maison == 'on':
-                type_logement = 'maison'
-            elif appartement == 'on':
-                type_logement = 'appartement'
-            else:
-                type_logement = 'Non précisé'
-
-            infos_adresse = c.execute("select nb, rue, ville, code_postal from adresse inner join utilisateur on adresse.id_adresse=utilisateur.id_adresse where email=?", (email,)).fetchone()
-            id_user=infos[6]
-            infos_favoris = c.execute("SELECT titre, prix, photo, description from logement inner join favoris on logement.id_logement=favoris.id_logement where favoris.id_utilisateur=?", (id_user,)).fetchone()
-            
-            if infos_favoris is None :
-                return render_template("infoscompte.html", prenom=infos[0], email=infos[1], temps=infos[2], budget=infos[3], type_logement=type_logement, nb=infos_adresse[0], rue=infos_adresse[1], ville=infos_adresse[2], code_postal=infos_adresse[3])
-            else:
-                return render_template("infoscompte.html", prenom=infos[0], email=infos[1], temps=infos[2], budget=infos[3], type_logement=type_logement, nb=infos_adresse[0], rue=infos_adresse[1], ville=infos_adresse[2], code_postal=infos_adresse[3], titre=infos_favoris[0], prix=infos_favoris[1], photo=infos_favoris[2], description=infos_favoris[3])
-
-    else:
-        return redirect(url_for('main'))
-
-
-        
->>>>>>> parent of 04dca8f... Add files via upload

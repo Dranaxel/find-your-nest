@@ -36,28 +36,19 @@
         {% if current_user.is_anonymous %}   
             <div id="btn-login" class="p-2"><button type="button" class="btn btn-outline-light right mt-3 mr-3 pb-1"><a href="{{url_for('connexion')}}">Se connecter</a></button></div>
         {% else %}
-<<<<<<< HEAD
             <div id="btn-logout" class="deco p-2"><a href="{{url_for('infoscompte')}}" class="btn btn-outline-light right mt-3 mr-3 pb-1">Mon compte</a></div>
-=======
-            <div id="btn-logout" class="deco p-2"><a href="{{url_for('infoscompte')}}" class="btn btn-outline-danger right mt-3 mr-3 pb-1">Mon compte</a></div>
->>>>>>> parent of 04dca8f... Add files via upload
         {% endif %}    
         </div>   
     </header>
 
   
         <div class="h2 mt-4">Le moyen le plus rapide pour trouver un logement adapté à vos déplacements</div>
-<<<<<<< HEAD
 	<hr id="first_hr">
 	
-=======
-	<hr>
->>>>>>> parent of 04dca8f... Add files via upload
 	{% block main_fct %}
 	{% endblock %}
 
 	{% block scnd_fct %}
-<<<<<<< HEAD
     {% endblock %}
 
     {% if current_user.pro == 'on' %}
@@ -66,10 +57,6 @@
     {% endif %}
     
     <script src="{{url_for('static', filename='js/scripts.js')}}"></script>
-=======
-	{% endblock %}
-
->>>>>>> parent of 04dca8f... Add files via upload
 </body>
 
 </html>

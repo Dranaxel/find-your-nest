@@ -3,10 +3,7 @@ flask
 Flask-login
 opencage
 passlib
-<<<<<<< HEAD
 mailjet_rest
 pytest
 selenium
 aiohttp
-=======
->>>>>>> parent of 04dca8f... Add files via upload
