@@ -32,11 +32,14 @@ upload_pro = PurePath ('./FYN/ups/')
 #Get the address from opencage asynchronously
 async def getOpencage(address):
     resp = []
-    params = {'q': address, "key": opencagedata_key, 'language': 'fr', 'no_annotations': 1, 'limit': 1, 'bounds': "1.19202,48.41462,3.36182,49.26780" }
+    params = {'q': address, 'limit': 1}
     async with aiohttp.ClientSession() as session:
-        async with session.get('https://api.opencagedata.com/geocode/v1/json?', params=params) as resp:
+        async with session.get('https://api-adresse.data.gouv.fr/search/?', params=params) as resp:
             resp = await resp.json()
-            resp = str(resp['results'][0]['geometry']['lng'])+";"+str(resp['results'][0]['geometry']['lat'])
+            latitude = resp['features'][0]['geometry']['coordinates'][0]
+            longitude = resp['features'][0]['geometry']['coordinates'][1]
+            resp = str(latitude)+";"+str(longitude)
+            print(resp)
             return resp
 
 #Get the journey form Navitia asynchronously, takes GPS coord
