@@ -36,6 +36,7 @@ async def getOpencage(address):
     async with aiohttp.ClientSession() as session:
         async with session.get('https://api.opencagedata.com/geocode/v1/json?', params=params) as resp:
             resp = await resp.json()
+            print(resp)
             resp = str(resp['results'][0]['geometry']['lng'])+";"+str(resp['results'][0]['geometry']['lat'])
             return resp
 
