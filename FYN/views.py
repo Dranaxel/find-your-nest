@@ -384,8 +384,13 @@ def Fiche(id):
 def infoscompte(): 
     if request.method == 'GET':
         if current_user.pro == 'on':
+            biens = []
             infos = c.execute("select prenom, email, temps, budget, nb, ville, code_postal, rue FROM  utilisateur JOIN adresse on utilisateur.id_adresse=adresse.id_adresse where email=?", (current_user.id,)).fetchall()
-            return render_template("infoscompte.html", infos=infos)
+            biens = c.execute("SELECT titre, prix, photo, description, l.id_logement from logement l join bien b on l.id_logement=b.id_logement join utilisateur u on u.id_utilisateur=b.id_utilisateur where email=?", (current_user.id,)).fetchall()
+            if biens is None :
+                return render_template("infoscompte.html", infos=infos)
+            else :
+                return render_template("infoscompte.html", infos=infos, infos_favoris=biens)
         else:
             infos_user = c.execute("SELECT maison, appartement, id_adresse FROM  utilisateur where email=?", (current_user.id,)).fetchone()
             maison = infos_user[0]
