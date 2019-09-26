@@ -15,9 +15,13 @@
               <p class="card-text mb-5">
                 {{description}}
               </p>
+              {% if current_user.pro == 'on' %}
+
+              {% else %}
               <div class="d-flex justify-content-end">
                 <button type="submit" class="btn btn-outline-danger" name="del_fav" value={{id_log}}>Retirer des favoris</button>
               </div>
+              {% endif %}
             </div>
           </div>
         </form>
