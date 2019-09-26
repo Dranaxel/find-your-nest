@@ -8,13 +8,18 @@ import sqlite3, requests, json
 from pathlib import PurePath  
 from passlib.hash import sha256_crypt
 from werkzeug.utils import secure_filename
+from FYN.mail import envoyer_mail, forget_password, contact_mail
+import os, logging
+from flask import jsonify
+import asyncio, aiohttp
 
 #Import Navitia key
-navitia_key = app.config['NAVITIA']
-navitia_url = "http://api.navitia.io/v1/journeys"
+navitia_key = app.config['NAVITIA_KEY']
+navitia_url = app.config['NAVITIA_URL']
+
 
 #initializing geocoder wrapper
-opencagedata_key = "3c853893fc37402eb2ef1473b6629218"
+opencagedata_key = app.config['OPENCAGE_KEY'] 
 opencage = OpenCageGeocode(opencagedata_key)
 
 database_file = PurePath('./FYN/findyournest.db')
@@ -23,6 +28,41 @@ c = conn.cursor()
 
 #Chargement images dans le dossier
 upload_pro = PurePath ('./FYN/ups/')
+
+#Get the address from opencage asynchronously
+async def getOpencage(address):
+    params = {'q': address, "key": opencagedata_key, 'language': 'fr', 'no_annotations': 1, 'limit': 1, 'bounds': "1.19202,48.41462,3.36182,49.26780" }
+    async with aiohttp.ClientSession() as session:
+        async with session.get('https://api.opencagedata.com/geocode/v1/json?', params=params) as resp:
+            resp = await resp.json()
+            if resp["total_results"] == 0 :
+                resp = False
+            else :
+                resp = str(resp['results'][0]['geometry']['lng'])+";"+str(resp['results'][0]['geometry']['lat'])
+            return resp
+
+            
+
+#Get the journey form Navitia asynchronously, takes GPS coord
+async def getNavitia(origin, dest):
+    params = {'from': origin, 'to': dest, 'depth': 0, 'max_nb_journeys': 1}
+    auth = aiohttp.BasicAuth(navitia_key, "")
+    async with aiohttp.ClientSession( auth=auth) as session:
+        async with session.get(navitia_url, data=params) as resp:
+            resp = await resp.json()
+            resp = resp['journeys'][0]["duration"]
+            return resp
+
+#Return true if the journey fits in the limit time, False otherwise
+async def isInTime(origin, dest, limit):
+    origin = await getOpencage(origin)
+    if origin is not False : 
+        dest = await getOpencage(dest)
+        time = await getNavitia(origin, dest)
+        return True if (time < limit) else False
+    else : 
+        return "ko"
+
 
 #loading the login manager
 @login_manager.user_loader
@@ -40,7 +80,25 @@ def load_user(user_id):
 @app.route("/", methods=["GET", "POST"])
 def main():
     if request.method == "GET":
-        return render_template('index.html')
+        if current_user.is_authenticated:
+            if current_user.pro == 'on' : 
+                return render_template('index.html')
+            else:
+                adresse_user = c.execute('SELECT nb, rue, code_postal, ville FROM adresse a join utilisateur u on a.id_adresse=u.id_adresse where email=?', (current_user.id,)).fetchone()
+                nb_user = adresse_user[0]
+                rue_user = adresse_user[1]
+                ville_user = adresse_user[3]
+                code_postal_user = adresse_user[2]
+                user_adresse = str(nb_user) + ' ' + rue_user + ' ' + str(code_postal_user) + ' ' + ville_user
+                temps_user = c.execute('SELECT temps from utilisateur where email=?', (current_user.id,)).fetchone()
+                user_temps = temps_user[0]
+                temps_split = user_temps.split(':')
+                h = temps_split[0]
+                min = temps_split[1]
+                return render_template('index.html', user_adresse=user_adresse, h=h, min=min)
+        else : 
+            return render_template('index.html')
+            
     elif request.method =="POST":
         #get response from the form
         address = request.form['addresse']
@@ -81,6 +139,55 @@ def connexion():
             flash("Votre email et/ou votre mot de passe est incorrect. Veuillez les saisir à nouveau ", "danger")
             return render_template("connexion.html")
 
+#envoie du mail pour réinialiser le mot de passe 
+@app.route("/mail_reinitiate_pwd/", methods=["GET", "POST"])
+def mail_reinitiate_pwd():
+    if request.method == 'GET':
+        if current_user.is_anonymous:
+            return render_template("mail_pwd.html")
+        else:
+            return redirect(url_for('main'))
+    else:
+        email = request.form['email']
+
+        user_mail = c.execute("SELECT prenom FROM utilisateur where email=?", (email,)).fetchone()
+        if user_mail is not None :
+            prenom = user_mail[0]
+            forget_password(email, prenom)
+            flash("Le mail a bien été envoyé ! ", "success")
+            return redirect(url_for('connexion'))
+        else:
+            flash("Cet email n'est pas attribué ! Veuillez en entrer une nouvelle !", "danger")
+            return render_template("mail_pwd.html")
+
+#reinitialisation du mot de passe 
+@app.route("/reinitialisation_pwd/", methods=["GET", "POST"])
+def reinialisation_pwd():
+    if request.method == 'GET':
+        if current_user.is_anonymous:
+            return render_template("reinitialisation.html")
+        else:
+            return redirect(url_for('main'))
+    else:
+        email = request.form['email']
+        password = request.form['password']
+        confirmer = request.form['confirmer']
+        secure_password = sha256_crypt.encrypt(password)
+
+        user = c.execute("SELECT * FROM utilisateur where email=?", (email,)).fetchone()
+        if user is None:
+            flash("Cet email n'est pas attribué ! Veuillez en entrer une nouvelle !", "danger")
+            return render_template("reinitialisation.html")
+        else:
+            if password == confirmer :
+                c.execute("UPDATE utilisateur SET password=? WHERE email=?", (secure_password, email,))
+                conn.commit()
+                flash("Le mot de passe a bien été enregistré", "success")
+                return redirect(url_for('connexion'))
+            else:
+                flash("Les mots de passes ne correspondent pas ! Veuillez resaisir les mots de passe ! ", "danger")
+                return render_template("reinitialisation.html")
+      
 #créer le compte
 @app.route("/moncompte/", methods=["GET", "POST"])
 def moncompte():
@@ -111,40 +218,31 @@ def moncompte():
             return render_template("moncompte.html")
         elif password == confirmer:
             adress = c.execute("SELECT rue, nb, ville FROM adresse where nb=? and rue=? and ville=?", (nb, rue, ville,)).fetchone()
-            if adress is None:
-                c.execute("INSERT INTO adresse (nb, rue, ville, code_postal) VALUES(?,?,?,?)", (nb, rue, ville, code_postal,))
-                conn.commit()
-                c.execute("DELETE FROM adresse WHERE nb IS NULL AND rue IS NULL AND ville IS NULL")
-                conn.commit()
-                
-                one_user = c.execute("SELECT * FROM utilisateur where email=?", (email,)).fetchone()
-                id_adres = c.execute("SELECT id_adresse FROM adresse WHERE nb=? AND rue=? AND ville=?", (nb, rue, ville,)).fetchone()
-                id_adresse = id_adres[0]
-                
-                if one_user is not None:
-                    flash("L'adresse email est déjà utilisée ! Veuiller en entrez une autre ! ", "danger")
-                    return render_template("moncompte.html")
-                
-                elif one_user is None:
-                    c.execute("INSERT INTO utilisateur (prenom, email, password, pro, temps, budget, maison, appartement) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", (prenom, email, secure_password, pro, temps, budget, maison, appart,))
-                    conn.commit()
-                    c.execute("UPDATE utilisateur SET id_adresse=? WHERE email=?", (id_adresse, email,))
-                    conn.commit()
+            one_user = c.execute("SELECT * FROM utilisateur where email=?", (email,)).fetchone()
+            if one_user is not None:
+                flash("L'adresse email est déjà utilisée ! Veuillez en entrer une autre ! ", "danger")
+                return render_template("moncompte.html")
             else:
-                one_user = c.execute("SELECT * FROM utilisateur where email=?", (email,)).fetchone()
-                id_adres = c.execute("SELECT id_adresse FROM adresse WHERE nb=? AND rue=? AND ville=?", (nb, rue, ville,)).fetchone()
-                id_adresse = id_adres[0]
-                if one_user is not None:
-                    flash("L'adresse email est déjà utilisée ! Veuiller en entrez une autre ! ", "danger")
-                    return render_template("moncompte.html")
-                
-                elif one_user is None:
-                    c.execute("INSERT INTO utilisateur (prenom, email, password, pro, temps, budget, maison, appartement) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", (prenom, email, secure_password, pro, temps, budget, maison, appart,))
+                c.execute("INSERT INTO utilisateur (prenom, email, password, pro, temps, budget, maison, appartement) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", (prenom, email, secure_password, pro, temps, budget, maison, appart,))
+                conn.commit()
+                adress = c.execute("SELECT id_adresse FROM adresse where nb=? and rue=? and ville=?", (nb, rue, ville,)).fetchone()
+
+                if adress is None:
+                    c.execute("INSERT INTO adresse (nb, rue, ville, code_postal) VALUES(?,?,?,?)", (nb, rue, ville, code_postal,))
                     conn.commit()
+                    c.execute("delete from adresse where nb='' AND rue='' AND ville='' AND code_postal=''")
+                    conn.commit()
+                    id_adres = c.execute("SELECT id_adresse FROM adresse WHERE nb=? AND rue=? AND ville=?", (nb, rue, ville,)).fetchone()
+                    if id_adres is not None :
+                        id_adresse = id_adres[0]
+                        c.execute("UPDATE utilisateur SET id_adresse=? WHERE email=?", (id_adresse, email,))
+                        conn.commit() 
+                else:
+                    id_adresse = adress[0]
                     c.execute("UPDATE utilisateur SET id_adresse=? WHERE email=?", (id_adresse, email,))
                     conn.commit()
-                    
-            return redirect(url_for('connexion'))
+                envoyer_mail(email,prenom)    
+                return redirect(url_for('connexion'))
         else:
             flash("Les mots de passe ne correspondent pas", "danger")
             return render_template("moncompte.html")
@@ -158,94 +256,275 @@ def deconnexion():
     return redirect(url_for('connexion'))
 
 
-@app.route("/results/add=<string:add>&h=<int:hours>&m=<int:minutes>")
+@app.route("/results/add=<string:add>&h=<int:hours>&m=<int:minutes>", methods=["GET", "POST"])
 def aptInfo(add,hours,minutes):
-    saved_ref =[]
-    results = []
-    #convert the main address in GPS position with opencau
-    opencage_resp = opencage.geocode(add)
-    origin_coord = list(opencage_resp[0]['geometry'].values())      
-    origin_coord = str(origin_coord[1]) +";"+ str(origin_coord[0])
-    
-    #convert time in seconds
-    max_time = hours*3600 + minutes*60
+    if request.method == 'GET':
+        results = []
+        stack =[]
+        positions = []
 
-    #get a list of all the apt in the database
-    apt_list = c.execute("select adresse.nb, adresse.rue, adresse.ville, logement.id_logement from adresse inner JOIN logement on logement.id_adresse=adresse.id_adresse").fetchall()
-    for ref in apt_list:
-        try:
-            dest_add = ",".join(map(str,ref[:3]))+",FRANCE"
-            opencage_resp = opencage.geocode(dest_add, language='fr', no_annotations=1, limit=1, bounds="1.19202,48.41462,3.36182,49.26780")
-            dest_coord = list(opencage_resp[0]['geometry'].values())
-            dest_coord = str(dest_coord[1])+";"+str(dest_coord[0])
-            navitia_param = {'from': origin_coord, "to": dest_coord} 
-            navitia_call = requests.get(navitia_url, navitia_param, auth=(navitia_key, ""))
-            navitia_call = json.loads(navitia_call.text)
-            duration = navitia_call['journeys'][0]["duration"]
-        except:
-            print("error")
-            continue
-        if duration <=  max_time:
-            saved_ref.append(ref[3])
-    for i in saved_ref:
-        results.append(c.execute("select titre, prix, photo, description from logement where id_logement=%s"%i).fetchone())
-    return render_template("results.html", result= results)
-
-@app.route("/Fiche/<int:id>")
-def Fiche(id):
-    prix_sql = c.execute("SELECT prix FROM logement WHERE id_logement=?", (id,)).fetchone()
-    PostalCode_sql = c.execute("select code_postal from adresse inner JOIN logement on logement.id_adresse=adresse.id_adresse where logement.id_logement= ?", (id,)).fetchone() 
-    nb_pieces_sql = c.execute("SELECT nb_piece FROM logement WHERE id_logement=?", (id,)).fetchone()
-    surface_sql =  c.execute("SELECT superficie FROM logement WHERE id_logement=?", (id,)).fetchone()
-    return render_template("FicheAppart.html", Prix=prix_sql[0], PostalCode=PostalCode_sql[0], nb_pieces=nb_pieces_sql[0], surface=surface_sql[0])
-
-#Partie pro
-
-@app.route("/infoscompte/")
-@login_required
-def infoscompte():
-    if current_user.is_authenticated:
-        #infoscompte.pro
-        if current_user.pro == 'on':
-            email = current_user.id
-            infos_pro = c.execute("select prenom, email, temps, budget, maison, appartement, id_utilisateur FROM utilisateur where email=?", (email,)).fetchone()    
-            maison = infos_pro[4]
-            appartement = infos_pro[5]
-            infos_adresse = c.execute("select nb, rue, ville, code_postal from adresse inner join utilisateur on adresse.id_adresse=utilisateur.id_adresse where email=?", (email,)).fetchone()
-            if maison == 'on':
-                type_logement = 'maison'
-            elif appartement == 'on':
-                type_logement = 'appartement'
-            else:
-                type_logement = 'Non précisé'
-            return render_template("infoscomptepro.html", prenom=infos_pro[0], email=infos_pro[1], temps=infos_pro[2], budget=infos_pro[3], type_logement=type_logement, nb=infos_adresse[0], rue=infos_adresse[1], ville=infos_adresse[2], code_postal=infos_adresse[3])
-        #infoscompte
-
-        else:
-            email =  current_user.id
-            infos = c.execute("select prenom, email, temps, budget, maison, appartement, id_utilisateur FROM  utilisateur where email=?", (email,)).fetchone()    
-            
-            maison = infos[4]
-            appartement = infos[5]
-            
-            if maison == 'on':
-                type_logement = 'maison'
-            elif appartement == 'on':
-                type_logement = 'appartement'
-            else:
-                type_logement = 'Non précisé'
-
-            infos_adresse = c.execute("select nb, rue, ville, code_postal from adresse inner join utilisateur on adresse.id_adresse=utilisateur.id_adresse where email=?", (email,)).fetchone()
-            id_user=infos[6]
-            infos_favoris = c.execute("SELECT titre, prix, photo, description from logement inner join favoris on logement.id_logement=favoris.id_logement where favoris.id_utilisateur=?", (id_user,)).fetchone()
-            
-            if infos_favoris is None :
-                return render_template("infoscompte.html", prenom=infos[0], email=infos[1], temps=infos[2], budget=infos[3], type_logement=type_logement, nb=infos_adresse[0], rue=infos_adresse[1], ville=infos_adresse[2], code_postal=infos_adresse[3])
-            else:
-                return render_template("infoscompte.html", prenom=infos[0], email=infos[1], temps=infos[2], budget=infos[3], type_logement=type_logement, nb=infos_adresse[0], rue=infos_adresse[1], ville=infos_adresse[2], code_postal=infos_adresse[3], titre=infos_favoris[0], prix=infos_favoris[1], photo=infos_favoris[2], description=infos_favoris[3])
-
-    else:
-        return redirect(url_for('main'))
-
-
+        #convert time in seconds
+        max_time = hours*3600 + minutes*60
+        #get a list of all the apt in the database
+        apt_list = c.execute("select adresse.nb, adresse.rue, adresse.ville, logement.id_logement from adresse inner JOIN logement on logement.id_adresse=adresse.id_adresse").fetchall()
+        for ref in apt_list:
+            ref = ",".join(map(str,ref[:3])) + " FRANCE"
+            stack.append(isInTime(add, ref, max_time))
         
+        resp = True
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        gather = asyncio.gather(*stack)
+        stack = loop.run_until_complete(gather)
+        for s in stack: 
+            if s is "ko": 
+                resp = False
+        loop.close()
+        if resp is False : 
+            flash("Votre recherche n'a retourné aucun logement", "warning")
+            resp = redirect(url_for('main')) 
+        else : 
+            apt_list =list( map(lambda x: x[3], apt_list))
+            for i,v in enumerate(stack):
+                if v == True:
+                    i = apt_list[i]
+                    results.append(c.execute("select titre, prix, photo, description, id_logement from logement where id_logement=%s"%i).fetchone())
+                    resp = render_template("results.html", result= results)
+        return resp
+
+@app.route("/getFavorite/<int:id>", methods=['POST'])
+def getFavorite(id):
+    id_logement = id
+    # logement_sql = c.execute("SELECT id_logement FROM logement WHERE id_logement=?", (id_logement,)).fetchone()
+    # id_log=logement_sql[0]
+    # favoris_log = request.form.get('log_fav')
+    id_user = c.execute("SELECT id_utilisateur FROM utilisateur where email=?", (current_user.id,)).fetchone()
+    id_utilisateur = id_user[0]
+    id_fav = c.execute("SELECT * FROM favoris where id_utilisateur=? and id_logement=?", (id_utilisateur, id_logement,)).fetchone()
+    # if favoris_log == 'on':
+    if id_fav is not None :
+        response = {
+            "is": False,
+            "msg": "L'annonce se trouve déjà dans vos favoris !"
+        }
+    else:
+        c.execute("INSERT INTO favoris(id_logement, id_utilisateur) VALUES(? , ?)", (id_logement, id_utilisateur,))
+        conn.commit()
+        response = {
+            "is": True,
+            "msg": "L'annonce a bien été ajouté dans vos favoris"
+        }
+   
+    return jsonify(response)
+
+@app.route("/Fiche/<int:id>", methods=["GET","POST"])
+        stack = []
+        for ref in positions:
+            ref = ",".join(map(str,ref)) + " FRANCE"
+            stack.append(getOpencage(ref))
+        stack.append(getOpencage(add +" FRANCE"))
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        gather = asyncio.gather(*stack)
+        stack = loop.run_until_complete(gather)
+        loop.close()
+        depart =  ",".join(stack[-1].split(";")[::-1]) 
+        locations = list(map(lambda x: ",".join(x.split(";")[::-1]), stack))
+        results = list(zip(results, locations))
+        return render_template("results.html", result= results, depart=depart)
+def Fiche(id):
+    if request.method == 'GET':
+        titre_sql = c.execute("SELECT titre, id_logement FROM logement where id_logement=?", (id,)).fetchone()
+        nb_chambre_sql = c.execute("SELECT nb_chambre FROM logement where id_logement=?", (id,)).fetchone()
+        prix_sql = c.execute("SELECT prix FROM logement WHERE id_logement=?", (id,)).fetchone()
+        PostalCode_sql = c.execute("select code_postal from adresse inner JOIN logement on logement.id_adresse=adresse.id_adresse where logement.id_logement= ?", (id,)).fetchone() 
+        nb_pieces_sql = c.execute("SELECT nb_piece FROM logement WHERE id_logement=?", (id,)).fetchone()
+        surface_sql =  c.execute("SELECT superficie FROM logement WHERE id_logement=?", (id,)).fetchone()
+        describe_sql = c.execute("SELECT description FROM logement where id_logement=?", (id,)).fetchone()
+        pic_sql = c.execute("SELECT photo FROM logement where id_logement=?", (id,)).fetchone()
+        if current_user.is_authenticated:
+            user_info = c.execute("SELECT prenom, email from utilisateur where email=?", (current_user.id,)).fetchone()
+            prenom = user_info[0]
+            email = user_info[1]
+            return render_template("FicheAppart.html", prenom=prenom, email=email, titre=titre_sql[0], id_log=titre_sql[1], nb_chambre=nb_chambre_sql[0], Prix=prix_sql[0], PostalCode=PostalCode_sql[0], nb_pieces=nb_pieces_sql[0], surface=surface_sql[0], describe= describe_sql[0], pic=pic_sql[0])
+        else:
+            return render_template("FicheAppart.html", titre=titre_sql[0], id_log=titre_sql[1], nb_chambre=nb_chambre_sql[0], Prix=prix_sql[0], PostalCode=PostalCode_sql[0], nb_pieces=nb_pieces_sql[0], surface=surface_sql[0], describe= describe_sql[0], pic=pic_sql[0])
+
+    else :      
+        user_prenom = request.form['prenom']
+        user_email = request.form['email']
+        user_number = request.form['phonenumber']
+        user_msg = request.form['message']
+
+        if not user_email : 
+            titre = c.execute("SELECT titre, id_logement from logement where id_logement=?", (id,)).fetchone()
+            id_log = titre[1]
+            flash("Il est nécessaire d'entrer une adresse email !", "danger")
+            return redirect(url_for('Fiche', id=id_log))
+        else:
+            titre = c.execute("SELECT titre, id_logement from logement where id_logement=?", (id,)).fetchone()
+            title = titre[0]
+            id_log = titre[1]
+
+            pro_mail = c.execute("SELECT email, prenom from utilisateur u join bien b on u.id_utilisateur=b.id_utilisateur join logement l on b.id_logement=l.id_logement where l.id_logement=?", (id,)).fetchone()
+            pro_email = pro_mail[0]
+            pro_prenom = pro_mail[1]
+            contact_mail(user_prenom, user_email, user_number, user_msg, pro_email, pro_prenom, title)
+            return redirect(url_for('Fiche', id=id_log))
+
+            
+#Partie pro
+@app.route("/infoscompte/", methods=["GET", "POST"])
+@login_required
+def infoscompte(): 
+    if request.method == 'GET':
+        if current_user.pro == 'on':
+            biens = []
+            infos = c.execute("select prenom, email, temps, budget, nb, ville, code_postal, rue FROM  utilisateur JOIN adresse on utilisateur.id_adresse=adresse.id_adresse where email=?", (current_user.id,)).fetchall()
+            biens = c.execute("SELECT titre, prix, photo, description, l.id_logement from logement l join bien b on l.id_logement=b.id_logement join utilisateur u on u.id_utilisateur=b.id_utilisateur where email=?", (current_user.id,)).fetchall()
+            if biens is None :
+                return render_template("infoscompte.html", infos=infos)
+            else : 
+                print(biens)
+                return render_template("infoscompte.html", infos=infos, infos_favoris=biens)
+        else:
+            infos_user = c.execute("SELECT maison, appartement, id_adresse FROM  utilisateur where email=?", (current_user.id,)).fetchone()
+            maison = infos_user[0]
+            appartement = infos_user[1]
+            if maison == 'on':
+                type_logement = 'maison'
+            elif appartement == 'on':
+                type_logement = 'appartement'
+            else:
+                type_logement = 'Non précisé'
+            infos = []
+            info_favoris = []
+            #infos utilisateur
+            infos = c.execute("select prenom, email, temps, budget, nb, ville, code_postal, rue FROM  utilisateur JOIN adresse on utilisateur.id_adresse=adresse.id_adresse where email=?", (current_user.id,)).fetchall()
+            # info_favoris = c.execute("SELECT titre, prix, photo, description from logement join favoris on logement.id_logement=favoris.id_logement where favoris.id_utilisateur=?", (apt_ref,)).fetchone()
+            info_favoris = c.execute("select titre, prix, photo, description, l.id_logement from logement as l join favoris as f on f.id_logement = l.id_logement join utilisateur as u on u.id_utilisateur = f.id_utilisateur where u.email=?", (current_user.id,)).fetchall()
+            if info_favoris is None: 
+                return render_template("infoscompte.html", infos=infos, type_logement=type_logement)
+            else:
+                return render_template("infoscompte.html", infos=infos, infos_favoris=info_favoris, type_logement=type_logement)
+
+#partie pour update les informations
+    else:
+        #modification des informations utilisateur
+        if 'infos_user' in request.form:
+            new_prenom = request.form['prenom']
+            new_nb = request.form['nb']
+            new_rue = request.form['rue']
+            new_ville = request.form['ville']
+            new_code_postal = request.form['code_postal']
+            new_budget = request.form.get('budget')
+            infos_user = c.execute("SELECT email FROM utilisateur where email=?", (current_user.id,)).fetchone()
+            infos_adresse = c.execute("SELECT nb, rue, ville, code_postal FROM adresse where nb=? and rue=? and ville=? and code_postal=?", (new_nb, new_rue, new_ville, new_code_postal,)).fetchone()
+
+            if infos_adresse is None:
+                c.execute("INSERT INTO adresse (nb, rue, ville, code_postal) VALUES(?, ?, ?, ?)", (new_nb, new_rue, new_ville, new_code_postal,))
+                conn.commit()
+                c.execute("DELETE FROM adresse WHERE nb IS NULL AND rue IS NULL AND ville IS NULL")
+                conn.commit()
+                id_adres= c.execute("SELECT id_adresse FROM adresse WHERE nb=? AND rue=? AND ville=?", (new_nb, new_rue, new_ville,)).fetchone()
+                id_adresse = id_adres[0]
+                c.execute("UPDATE utilisateur SET prenom=?, budget=?, id_adresse=? where email=?", (new_prenom, new_budget, id_adresse, current_user.id,))
+                conn.commit()     
+                return redirect(url_for('infoscompte'))
+
+            else : 
+                id_adres= c.execute("SELECT id_adresse FROM adresse WHERE nb=? AND rue=? AND ville=?", (new_nb, new_rue, new_ville,)).fetchone()
+                id_adresse = id_adres[0]
+                c.execute("UPDATE utilisateur SET prenom=?, budget=?, id_adresse=? where email=?",(new_prenom, new_budget, id_adresse, current_user.id,))
+                conn.commit()
+                print(id_adres)
+                return redirect(url_for('infoscompte'))
+        
+        # suppresion des favoris
+        elif 'del_fav' in request.form: 
+            id_logement = request.form.get('del_fav')
+            id_user = c.execute("SELECT id_utilisateur FROM utilisateur where email=?", (current_user.id,)).fetchone()
+            id_utilisateur = id_user[0]
+            c.execute("DELETE FROM favoris where id_logement=? and id_utilisateur=?", (id_logement, id_utilisateur,))    
+            conn.commit()
+            return redirect(url_for('infoscompte'))
+
+        #upload d'image 
+        elif 'uploadbien' in request.form:
+            registerbien()
+            return redirect(url_for('infoscompte'))
+
+
+#Enregistrement données du bien pro
+def registerbien():
+    titre = request.form['titre']
+    nb = request.form['nb']
+    rue = request.form['rue']
+    ville = request.form['ville']
+    code_postal = request.form['code_postal']
+    description = request.form['description']
+    superficie = request.form['superficie']
+    nb_chambre = request.form['nb_chambre']
+    maison = request.form.get('maison')
+    appart = request.form.get('appart')
+    prix = request.form['prix']
+    f = request.files['photo']
+
+    id_user=c.execute("SELECT id_utilisateur FROM utilisateur WHERE email=?", (current_user.id,)).fetchone()
+    id_utilisateur=id_user[0]
+
+    logement_ex=c.execute("SELECT * from logement l join adresse a on l.id_adresse=a.id_adresse where nb=? and rue=? and ville=? and code_postal=?", (nb, rue, ville, code_postal,)).fetchone()
+    
+    if f: # on vérifie qu'un fichier a bien été envoyé
+        if checkextension(f.filename): # on vérifie que son extension est valide
+            name=secure_filename(f.filename)
+            f.save(os.path.join('./FYN/static/image', name))
+            photo = 'image/'+ name
+            print(photo)
+
+            if logement_ex is not None :
+                flash('Cet adresse est déjà attribué à un logement', 'danger')
+                return render_template('infoscompte.html')
+            else:
+                # insertion de l'adresse
+                c.execute("INSERT INTO logement(titre, description, nb_chambre, prix, superficie, maison, appartement) VALUES(?, ?, ?, ?, ?, ?, ?)", (titre, description, nb_chambre, prix, superficie, maison, appart,))
+                conn.commit()
+                c.execute("INSERT INTO adresse(nb, rue, code_postal, ville) VALUES(?,?,?,?)", (nb, rue, code_postal, ville,))
+                conn.commit()
+                id_ad=c.execute("SELECT * FROM adresse where nb=? and rue=? and code_postal=? and ville=?", (nb, rue, code_postal, ville,)).fetchone()
+                id_adresse=id_ad[0]
+                c.execute("UPDATE logement SET id_adresse=? where titre=? and description=? and prix=? and nb_chambre=?", (id_adresse, titre, description, prix, nb_chambre,))
+                conn.commit()
+                c.execute("UPDATE logement SET photo=? where titre=? and description=? and prix=? and nb_chambre=?", (photo, titre, description, prix, nb_chambre,))
+                conn.commit()
+                
+                id_log=c.execute("SELECT * FROM logement WHERE titre=? AND description=? AND nb_chambre=? AND prix=? AND superficie=?", (titre, description, nb_chambre, prix, superficie,)).fetchone()
+                id_loge=id_log[0]
+                c.execute("INSERT INTO bien(id_logement, id_utilisateur) VALUES(?, ?)", (id_loge, id_utilisateur,))
+                conn.commit()
+
+                type_loge=c.execute("select maison, appartement from logement where id_logement=?", (id_loge,)).fetchone()
+                maison = type_loge[0]
+                appartement = type_loge[1]
+                if maison == 'on':
+                    c.execute("UPDATE logement SET type_logement=? where id_logement=?", ('maison', id_loge,))
+                    conn.commit()
+                elif appartement == 'on':
+                    c.execute("UPDATE logement SET type_logement=? where id_logement=?", ('appartement', id_loge,))
+                    conn.commit()
+                else:
+                    pass
+                flash ('Votre bien a été enregistré' , 'success')
+                return redirect(url_for('infoscompte'))
+        else:
+            flash('Ce fichier n\'est pas dans une extension autorisée!', 'danger')
+            return render_template("infoscompte.html")
+    else:
+        flash('Vous avez oublié de joindre une image !', 'danger')
+        return render_template('infoscompte.html')
+
+def checkextension(namefile):
+    print(namefile.rsplit('.', 1)[1])
+    return '.' in namefile and namefile.rsplit('.', 1)[1] in ('png', 'jpg', 'jpeg')
+
+

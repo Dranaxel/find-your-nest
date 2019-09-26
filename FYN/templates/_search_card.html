@@ -1,5 +1,18 @@
 {% block main_fct %}
 
+<div class="lightbox">
+	<div class = "row" >
+		<div class="col-lg-12 lb-item">
+<p class="round">
+		  <span class="ouro ouro3">
+		    <span class="left"><span class="anim"></span></span>
+		    <span class="right"><span class="anim"></span></span>
+		  </span>
+		</div>
+</p>
+	</div>
+</div>
+
         <!-- MAP-->
         <div row class="mapBlock mt-4 mb-3  d-flex justify-content-center">
             <div row id="map"></div>
@@ -7,17 +20,20 @@
 
         <!-- BARRE DE RECHERCHE -->
     <form method="POST">
+        <p class="d-flex justify-content-center my-1">
+            {%include "_message.html"%}
+        </p>
         <div action="" method="POST" class="row d-flex justify-content-center">
             <div class="row m-0">
                 <div class="back col-12 col-lg-6 pt-3 px-2">
-                    <input name="addresse" type="text" class="case form-control" id="exampleInputAddress" placeholder="Entrez une adresse" autocomplete="off" >
+                    <input name="addresse" type="text" class="case form-control" id="exampleInputAddress" value="{{user_adresse}}" placeholder="Entrez une adresse" autocomplete="off" >
                 </div>
                 <div class="back col-12 col-lg-6 d-flex row m-0 px-2">
                     <div class="col-5 pt-3 px-2">
-                        <input name="hours" type="number" class="case form-control" id="exampleInputHour" placeholder="Heure"  autocomplete="off" >
+                        <input name="hours" type="number" class="case form-control" id="exampleInputHour" value="{{h}}"placeholder="Heure"  autocomplete="off" >
                     </div>
                     <div class="col-5 pt-3 px-2">
-                        <input name="minutes" type="number" class="case form-control" id="exampleInputMin" placeholder="Minutes" autocomplete="off">
+                        <input name="minutes" type="number" class="case form-control" id="exampleInputMin" value="{{min}}"placeholder="Minutes" autocomplete="off">
                     </div>
                     <div class="col-2 pt-3 px-2">
                         <button id="btn-1" type="button submit" disabled="disabled" class="btn btn-primary align-top" formmethod="POST">GO</button>
@@ -26,7 +42,6 @@
             </div>
         </div>
      </form>
-    </div>
 
     <script>
         // API

@@ -1,0 +1,25 @@
+{% extends "MASTER_BODY.html" %}
+{% block main_fct %}
+    <div class="d-flex justify-content-center my-2">
+      <div class="card w-75">
+        <div class="card-body">
+            <h4 class="card-title">Réinitialisation du mot de passe</h4>
+            <h5 class="card-subtitle mb-2 text-muted">Vous avez oublié votre mot de passe ? Indiquez-nous votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe. Pensez à regarder dans votre dossier Spam si vous ne voyez pas arriver notre email.</h5> 
+            {%include "_message.html"%}
+            <form method="POST", action="/mail_reinitiate_pwd/">    
+                <div class="form-group">
+                <label for="exampleInputMail">Adresse e-mail</label>
+                <input type="email" name="email" class="form-control" id="exampleInputMail" aria-describedby="emailHelp"
+                    placeholder="Entrez votre adresse e-mail">
+                </div>
+                <button type="submit" class="btn btn-primary float-right">M'envoyer le mail de réinitialisation</button>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>
+{%endblock%}
