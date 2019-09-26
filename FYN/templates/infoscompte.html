@@ -16,6 +16,15 @@
   {% endfor %}
 {% endblock %}
 
+
+{% block listepro_fct %}
+  {% for item in infos_biens %}
+    {% with titre=item[0], prix=item[1], photo=item[2], description=item[3] %}
+      {% include "_biensProCards.html" %}
+    {% endwith %}
+  {% endfor %}
+{% endblock %}
+
 {% block mainpro_fct %}
   {% include "_chargementappart.html" %}
 {% endblock %}

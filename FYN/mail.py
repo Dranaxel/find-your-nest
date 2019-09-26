@@ -22,7 +22,7 @@ def envoyer_mail(mail,username):
         "Subject": "Inscription",
         "TextPart": "Bienvenue",
         "HTMLPart": """<center><h2>Bienvenue</h2><br/>
-                    Bonjour """+ username +""",<br/> 
+                    Bonjour """+ username+""",<br/> 
                     Nous vous souhaitons la bienvenue sur notre site FindYourNest. 
                     Vous pouvez maintenant accéder aux diverses fonctionnalités proposé par notre plateforme entièrement gratuite.<br/>
                     Nous vous donnons donc rendez-vous sur notre site en suivant le lien suivant : <br/>
@@ -100,7 +100,7 @@ def contact_mail(username1, email1, phone, msg, email2, username2, bien):
                     """<br/>
                     <b> Message : </b>""" + msg +
                     """<br/>
-                    <b> Bien : </b>""" + bien + """</center>"""
+                    Bien : </b>""" + bien + """</center>"""
         }
     ]
     }
