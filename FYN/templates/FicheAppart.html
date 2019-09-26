@@ -20,9 +20,10 @@
 							<div class="col-md-3">{{nb_chambre}} Chambres</div>
 							<div class="col-md-3">{{surface}} m²</div>
 						</div>
-						{% if current_user.is_authenticated %} 
-						<div><button type="submit" class="btn btn-primary float-right" name="add_favorites">Ajouter aux favoris</button></div>
+						{% if current_user.pro =='on' %}
+						{% elif current_user.is_anonymous %}
 						{% else %}
+							<div><button type="submit" class="btn btn-primary float-right" name="add_favorites">Ajouter aux favoris</button></div>
 						{% endif %}
 					</form>
 				</div>

@@ -14,7 +14,7 @@
                             <button id="btn_infos" type="button" class="btn btn-light"><a
                                     href="{{url_for('Fiche', id=id_log)}}">+ d'infos</a></button>
                             {% if current_user.is_authenticated %} 
-                            <button id="btn_fav" class="btn btn-primary float-right jsBtnFav" data-value={{id_log}}>
+                            <button id="jsBtn_Fav" class="btn btn-primary float-right jsBtnFav" data-value={{id_log}}>
                                 Ajouter aux favoris
                             </button>
                             {% else %}
