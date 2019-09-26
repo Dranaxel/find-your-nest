@@ -5,7 +5,7 @@
             <div row id="map"></div>
         </div>
 	{% for item in result %}
-		{% with name=item[0], price=item[1], pic=item[2], describe=item[3], id_log=item[4] %}
+		{% with name=item[0][0], price=item[0][1], pic=item[0][2], describe=item[0][3], id_log=item[0][4] %}
 			{% include "_resultCards.html" %}
 		{% endwith %}
 	{% endfor %}
@@ -21,8 +21,15 @@
             map.addLayer(layer);
             // Creating a layer to add marker in it
             var markerLayer = L.layerGroup().addTo(map)
-		{% for item in pins %}
-	    var pin_{{loop.index}} = L.marker([{{item}}]).addTo(markerLayer)
+		    var departIcon = new L.icon({
+			    markerColor: "green"
+		    })
+	    var depart = L.marker([{{depart}}], {icon: departIcon}).addTo(markerLayer)
+		{% for item in result %}
+	    {% with name=item[0][0], price=item[0][1], pic=item[0][2], coordinates=item[1] %}
+	    var pin_{{loop.index}} = L.marker([{{coordinates}}]).addTo(markerLayer)
+		    pin_{{loop.index}}.bindPopup("<h5> {{name}}</h5> <img src={{url_for('static', filename=pic)}}> <b>{{price}} €</b>").openPopup();
+	    {% endwith %}
 		{% endfor %}
         }; 
     </script>

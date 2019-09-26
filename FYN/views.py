@@ -283,6 +283,7 @@ def aptInfo(add,hours,minutes):
         for ref in positions:
             ref = ",".join(map(str,ref)) + " FRANCE"
             stack.append(getOpencage(ref))
+        stack.append(getOpencage(add +" FRANCE"))
 
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
@@ -290,8 +291,10 @@ def aptInfo(add,hours,minutes):
         stack = loop.run_until_complete(gather)
         loop.close()
 
+        depart =  ",".join(stack[-1].split(";")[::-1]) 
         locations = list(map(lambda x: ",".join(x.split(";")[::-1]), stack))
-        return render_template("results.html", result= results, pins= locations)
+        results = list(zip(results, locations))
+        return render_template("results.html", result= results, depart=depart)
 
 @app.route("/getFavorite/<int:id>", methods=['POST'])
 def getFavorite(id):
