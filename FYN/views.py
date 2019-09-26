@@ -261,9 +261,10 @@ def aptInfo(add,hours,minutes):
     if request.method == 'GET':
         results = []
         stack =[]
+        positions = []
+
         #convert time in seconds
         max_time = hours*3600 + minutes*60
-
         #get a list of all the apt in the database
         apt_list = c.execute("select adresse.nb, adresse.rue, adresse.ville, logement.id_logement from adresse inner JOIN logement on logement.id_adresse=adresse.id_adresse").fetchall()
         for ref in apt_list:
