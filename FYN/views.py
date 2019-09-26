@@ -261,9 +261,10 @@ def aptInfo(add,hours,minutes):
     if request.method == 'GET':
         results = []
         stack =[]
+        positions = []
+
         #convert time in seconds
         max_time = hours*3600 + minutes*60
-
         #get a list of all the apt in the database
         apt_list = c.execute("select adresse.nb, adresse.rue, adresse.ville, logement.id_logement from adresse inner JOIN logement on logement.id_adresse=adresse.id_adresse").fetchall()
         for ref in apt_list:
@@ -317,6 +318,20 @@ def getFavorite(id):
     return jsonify(response)
 
 @app.route("/Fiche/<int:id>", methods=["GET","POST"])
+        stack = []
+        for ref in positions:
+            ref = ",".join(map(str,ref)) + " FRANCE"
+            stack.append(getOpencage(ref))
+        stack.append(getOpencage(add +" FRANCE"))
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        gather = asyncio.gather(*stack)
+        stack = loop.run_until_complete(gather)
+        loop.close()
+        depart =  ",".join(stack[-1].split(";")[::-1]) 
+        locations = list(map(lambda x: ",".join(x.split(";")[::-1]), stack))
+        results = list(zip(results, locations))
+        return render_template("results.html", result= results, depart=depart)
 def Fiche(id):
     if request.method == 'GET':
         titre_sql = c.execute("SELECT titre, id_logement FROM logement where id_logement=?", (id,)).fetchone()
