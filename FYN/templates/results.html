@@ -21,14 +21,12 @@
             map.addLayer(layer);
             // Creating a layer to add marker in it
             var markerLayer = L.layerGroup().addTo(map)
-		    var departIcon = new L.icon({
-			    markerColor: "green"
-		    })
-	    var depart = L.marker([{{depart}}], {icon: departIcon}).addTo(markerLayer)
+	    var depart = L.marker([{{depart}}]).addTo(markerLayer)
+	    depart.bindPopup("Vous partez d'ici").openPopup();
 		{% for item in result %}
 	    {% with name=item[0][0], price=item[0][1], pic=item[0][2], coordinates=item[1] %}
 	    var pin_{{loop.index}} = L.marker([{{coordinates}}]).addTo(markerLayer)
-		    pin_{{loop.index}}.bindPopup("<h5> {{name}}</h5> <img src={{url_for('static', filename=pic)}}> <b>{{price}} €</b>").openPopup();
+		    pin_{{loop.index}}.bindPopup("<h5> {{name}}</h5> <img src={{url_for('static', filename=pic)}}> <b>{{price}} €</b>");
 	    {% endwith %}
 		{% endfor %}
         }; 
