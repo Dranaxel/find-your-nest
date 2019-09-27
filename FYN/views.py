@@ -325,7 +325,7 @@ def getFavorite(id):
 @app.route("/Fiche/<int:id>", methods=["GET","POST"])
 def Fiche(id):
     if request.method == 'GET':
-        titre_sql = c.execute("SELECT titre FROM logement where id_logement=?", (id,)).fetchone()
+        titre_sql = c.execute("SELECT titre, id_logement FROM logement where id_logement=?", (id,)).fetchone()
         nb_chambre_sql = c.execute("SELECT nb_chambre FROM logement where id_logement=?", (id,)).fetchone()
         prix_sql = c.execute("SELECT prix FROM logement WHERE id_logement=?", (id,)).fetchone()
         PostalCode_sql = c.execute("select code_postal from adresse inner JOIN logement on logement.id_adresse=adresse.id_adresse where logement.id_logement= ?", (id,)).fetchone() 
@@ -333,9 +333,9 @@ def Fiche(id):
         surface_sql =  c.execute("SELECT superficie FROM logement WHERE id_logement=?", (id,)).fetchone()
         describe_sql = c.execute("SELECT description FROM logement where id_logement=?", (id,)).fetchone()
         pic_sql = c.execute("SELECT photo FROM logement where id_logement=?", (id,)).fetchone()
-        return render_template("FicheAppart.html", titre=titre_sql[0], nb_chambre=nb_chambre_sql[0], Prix=prix_sql[0], PostalCode=PostalCode_sql[0], nb_pieces=nb_pieces_sql[0], surface=surface_sql[0], describe= describe_sql[0], pic=pic_sql[0])
+        return render_template("FicheAppart.html", titre=titre_sql[0], id_log=titre_sql[1], nb_chambre=nb_chambre_sql[0], Prix=prix_sql[0], PostalCode=PostalCode_sql[0], nb_pieces=nb_pieces_sql[0], surface=surface_sql[0], describe= describe_sql[0], pic=pic_sql[0])
 
-    else : 
+    else :      
         user_prenom = request.form['prenom']
         user_email = request.form['email']
         user_number = request.form['phonenumber']
