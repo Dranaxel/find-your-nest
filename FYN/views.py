@@ -466,40 +466,40 @@ def registerbien():
             photo = 'image/'+ name
             print(photo)
 
-            if logement_ex is not None :
-                flash('Cette adresse est déjà attribuée à un logement', 'danger')
-                return render_template('infoscompte.html')
-            else:
+            # if logement_ex is not None :
+            #     flash('Cette adresse est déjà attribuée à un logement', 'danger')
+            #     return render_template('infoscompte.html')
+            # else:
                 # insertion de l'adresse
-                c.execute("INSERT INTO logement(titre, description, nb_chambre, prix, superficie, maison, appartement) VALUES(?, ?, ?, ?, ?, ?, ?)", (titre, description, nb_chambre, prix, superficie, maison, appart,))
-                conn.commit()
-                c.execute("INSERT INTO adresse(nb, rue, code_postal, ville) VALUES(?,?,?,?)", (nb, rue, code_postal, ville,))
-                conn.commit()
-                id_ad=c.execute("SELECT * FROM adresse where nb=? and rue=? and code_postal=? and ville=?", (nb, rue, code_postal, ville,)).fetchone()
-                id_adresse=id_ad[0]
-                c.execute("UPDATE logement SET id_adresse=? where titre=? and description=? and prix=? and nb_chambre=?", (id_adresse, titre, description, prix, nb_chambre,))
-                conn.commit()
-                c.execute("UPDATE logement SET photo=? where titre=? and description=? and prix=? and nb_chambre=?", (photo, titre, description, prix, nb_chambre,))
-                conn.commit()
-                
-                id_log=c.execute("SELECT * FROM logement WHERE titre=? AND description=? AND nb_chambre=? AND prix=? AND superficie=?", (titre, description, nb_chambre, prix, superficie,)).fetchone()
-                id_loge=id_log[0]
-                c.execute("INSERT INTO bien(id_logement, id_utilisateur) VALUES(?, ?)", (id_loge, id_utilisateur,))
-                conn.commit()
+            c.execute("INSERT INTO logement(titre, description, nb_chambre, prix, superficie, maison, appartement) VALUES(?, ?, ?, ?, ?, ?, ?)", (titre, description, nb_chambre, prix, superficie, maison, appart,))
+            conn.commit()
+            c.execute("INSERT INTO adresse(nb, rue, code_postal, ville) VALUES(?,?,?,?)", (nb, rue, code_postal, ville,))
+            conn.commit()
+            id_ad=c.execute("SELECT * FROM adresse where nb=? and rue=? and code_postal=? and ville=?", (nb, rue, code_postal, ville,)).fetchone()
+            id_adresse=id_ad[0]
+            c.execute("UPDATE logement SET id_adresse=? where titre=? and description=? and prix=? and nb_chambre=?", (id_adresse, titre, description, prix, nb_chambre,))
+            conn.commit()
+            c.execute("UPDATE logement SET photo=? where titre=? and description=? and prix=? and nb_chambre=?", (photo, titre, description, prix, nb_chambre,))
+            conn.commit()
+            
+            id_log=c.execute("SELECT * FROM logement WHERE titre=? AND description=? AND nb_chambre=? AND prix=? AND superficie=?", (titre, description, nb_chambre, prix, superficie,)).fetchone()
+            id_loge=id_log[0]
+            c.execute("INSERT INTO bien(id_logement, id_utilisateur) VALUES(?, ?)", (id_loge, id_utilisateur,))
+            conn.commit()
 
-                type_loge=c.execute("select maison, appartement from logement where id_logement=?", (id_loge,)).fetchone()
-                maison = type_loge[0]
-                appartement = type_loge[1]
-                if maison == 'on':
-                    c.execute("UPDATE logement SET type_logement=? where id_logement=?", ('maison', id_loge,))
-                    conn.commit()
-                elif appartement == 'on':
-                    c.execute("UPDATE logement SET type_logement=? where id_logement=?", ('appartement', id_loge,))
-                    conn.commit()
-                else:
-                    pass
-                flash ('Votre bien a été enregistré' , 'success')
-                return redirect(url_for('infoscompte'))
+            type_loge=c.execute("select maison, appartement from logement where id_logement=?", (id_loge,)).fetchone()
+            maison = type_loge[0]
+            appartement = type_loge[1]
+            if maison == 'on':
+                c.execute("UPDATE logement SET type_logement=? where id_logement=?", ('maison', id_loge,))
+                conn.commit()
+            elif appartement == 'on':
+                c.execute("UPDATE logement SET type_logement=? where id_logement=?", ('appartement', id_loge,))
+                conn.commit()
+            else:
+                pass
+            flash ('Votre bien a été enregistré' , 'success')
+            return redirect(url_for('infoscompte'))
         else:
             flash('Ce fichier n\'est pas dans une extension autorisée!', 'danger')
             return render_template("infoscompte.html")
