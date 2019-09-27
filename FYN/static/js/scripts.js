@@ -104,6 +104,7 @@ function buildAlert(msg, type) {
     `
 }
 
+
 if (document.getElementById("map")) { // if is on main page
 
 let btn1 = document.getElementById("btn-1");
